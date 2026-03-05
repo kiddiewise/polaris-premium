@@ -8,6 +8,11 @@ if (!defined('ABSPATH')) exit;
 
 function polaris_customize_register($wp_customize) {
   
+  // Check if we have the Image Control class
+  if (!class_exists('WP_Customize_Image_Control')) {
+    return;
+  }
+  
   // ========================================
   // SECTION: Hero Banner Settings
   // ========================================
@@ -20,7 +25,7 @@ function polaris_customize_register($wp_customize) {
   // HERO 1
   $wp_customize->add_setting('polaris_hero_1', [
     'default'           => '',
-    'sanitize_callback' => 'esc_url_raw',
+    'sanitize_callback' => 'sanitize_url',
     'transport'         => 'refresh',
   ]);
   $wp_customize->add_control(
@@ -35,7 +40,7 @@ function polaris_customize_register($wp_customize) {
   // HERO 2
   $wp_customize->add_setting('polaris_hero_2', [
     'default'           => '',
-    'sanitize_callback' => 'esc_url_raw',
+    'sanitize_callback' => 'sanitize_url',
     'transport'         => 'refresh',
   ]);
   $wp_customize->add_control(
@@ -50,7 +55,7 @@ function polaris_customize_register($wp_customize) {
   // HERO 3
   $wp_customize->add_setting('polaris_hero_3', [
     'default'           => '',
-    'sanitize_callback' => 'esc_url_raw',
+    'sanitize_callback' => 'sanitize_url',
     'transport'         => 'refresh',
   ]);
   $wp_customize->add_control(
@@ -65,12 +70,12 @@ function polaris_customize_register($wp_customize) {
   // AUTO-PLAY TOGGLE
   $wp_customize->add_setting('polaris_hero_autoplay', [
     'default'           => true,
-    'sanitize_callback' => 'rest_sanitize_boolean',
+    'sanitize_callback' => function($val) { return (bool) $val; },
     'transport'         => 'postMessage',
   ]);
   $wp_customize->add_control('polaris_hero_autoplay_control', [
-    'label'       => esc_html__('Otomatik Keyif', 'polaris'),
-    'description' => esc_html__('Slider otomatik olarak ileri gitsini mi?', 'polaris'),
+    'label'       => esc_html__('Otomatik Oynatma', 'polaris'),
+    'description' => esc_html__('Slider otomatik olarak ileri gitsin mi?', 'polaris'),
     'section'     => 'polaris_hero_section',
     'settings'    => 'polaris_hero_autoplay',
     'type'        => 'checkbox',
@@ -82,23 +87,27 @@ add_action('customize_register', 'polaris_customize_register');
 /**
  * Helper: Get hero banners (3 image URLs)
  */
-function polaris_get_hero_banners() {
-  $images = [];
-  
-  for ($i = 1; $i <= 3; $i++) {
-    $url = get_theme_mod("polaris_hero_$i", '');
-    if ($url) {
-      $images[] = $url;
+if (!function_exists('polaris_get_hero_banners')) {
+  function polaris_get_hero_banners() {
+    $images = [];
+    
+    for ($i = 1; $i <= 3; $i++) {
+      $url = get_theme_mod("polaris_hero_$i", '');
+      if (!empty($url) && is_string($url)) {
+        $images[] = esc_url($url);
+      }
     }
-  }
 
-  // Fallback: eğer settings'ten hiç resim yoksa boş array ver
-  return $images;
+    // Fallback: eğer settings'ten hiç resim yoksa boş array ver
+    return $images;
+  }
 }
 
 /**
  * Helper: Check if autoplay enabled
  */
-function polaris_hero_autoplay() {
-  return (bool) get_theme_mod('polaris_hero_autoplay', true);
+if (!function_exists('polaris_hero_autoplay')) {
+  function polaris_hero_autoplay() {
+    return (bool) get_theme_mod('polaris_hero_autoplay', true);
+  }
 }

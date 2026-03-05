@@ -13,27 +13,39 @@ require_once get_template_directory() . '/inc/seo.php';
 /**
  * WooCommerce
  */
-foreach (glob(get_template_directory() . '/inc/woocommerce/*.php') as $file) {
-    require_once $file;
+$woo_dir = get_template_directory() . '/inc/woocommerce/';
+if (is_dir($woo_dir)) {
+    foreach (glob($woo_dir . '*.php') as $file) {
+        require_once $file;
+    }
 }
 
 /**
  * AJAX
  */
-foreach (glob(get_template_directory() . '/inc/ajax/*.php') as $file) {
-    require_once $file;
+$ajax_dir = get_template_directory() . '/inc/ajax/';
+if (is_dir($ajax_dir)) {
+    foreach (glob($ajax_dir . '*.php') as $file) {
+        require_once $file;
+    }
 }
 
 /**
  * Admin
  */
-foreach (glob(get_template_directory() . '/inc/admin/*.php') as $file) {
-    require_once $file;
+$admin_dir = get_template_directory() . '/inc/admin/';
+if (is_dir($admin_dir)) {
+    foreach (glob($admin_dir . '*.php') as $file) {
+        require_once $file;
+    }
 }
 
 /**
  * Integrations
  */
-foreach (glob(get_template_directory() . '/inc/integrations/*.php') as $file) {
-    require_once $file;
+$integrations_dir = get_template_directory() . '/inc/integrations/';
+if (is_dir($integrations_dir)) {
+    foreach (glob($integrations_dir . '*.php') as $file) {
+        require_once $file;
+    }
 }
