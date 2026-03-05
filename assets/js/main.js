@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const freeshipFill = $("#polarisFreeShipFill");
 
   const searchState = { timer: null, controller: null };
+  const cartState = new Map();
 
   async function parseJsonResponse(response) {
     const raw = await response.text();
@@ -64,6 +65,62 @@ document.addEventListener("DOMContentLoaded", () => {
     cartIcon.classList.remove("cart-bump");
     void cartIcon.offsetWidth;
     cartIcon.classList.add("cart-bump");
+  }
+
+  function setCardBusy(card, busy) {
+    if (!card) return;
+
+    $$("[data-card-plus], [data-card-minus], .js-add-to-cart", card).forEach((el) => {
+      el.disabled = !!busy;
+    });
+  }
+
+  function applyCardState(card, item) {
+    if (!card) return;
+
+    const addBtn = $(".js-add-to-cart", card);
+    const qtyWrap = $("[data-card-qty-wrap]", card);
+    const qtyVal = $("[data-card-qty]", card);
+
+    if (!addBtn || !qtyWrap || !qtyVal) return;
+
+    if (item && Number(item.qty) > 0) {
+      addBtn.classList.add("hidden");
+      qtyWrap.classList.remove("hidden");
+      qtyVal.textContent = String(item.qty);
+    } else {
+      qtyWrap.classList.add("hidden");
+      addBtn.classList.remove("hidden");
+      qtyVal.textContent = "1";
+    }
+  }
+
+  function syncAllProductCards() {
+    $$(".p-card[data-product-id]").forEach((card) => {
+      const productId = String(card.getAttribute("data-product-id") || "");
+      const item = cartState.get(productId) || null;
+      applyCardState(card, item);
+    });
+  }
+
+  function updateCartState(items) {
+    cartState.clear();
+
+    if (Array.isArray(items)) {
+      items.forEach((item) => {
+        const pid = String(item?.product_id || "");
+        const qty = Number(item?.qty || 0);
+        if (!pid || qty <= 0) return;
+
+        cartState.set(pid, {
+          product_id: pid,
+          qty,
+          cart_key: String(item.cart_key || ""),
+        });
+      });
+    }
+
+    syncAllProductCards();
   }
 
   function openSearch() {
@@ -270,12 +327,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!data?.success) return;
 
       miniCartEl.innerHTML = data.data?.html || "";
-
       if (cartCountEl) {
         cartCountEl.textContent = String(data.data?.count || 0);
       }
-
       updateFreeship(data.data?.freeship);
+      updateCartState(data.data?.items || []);
     } catch {
       miniCartEl.innerHTML = '<div class="search-empty">Sepet yüklenemedi.</div>';
     }
@@ -331,17 +387,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     event.preventDefault();
 
-    const productId = addButton.getAttribute("data-product-id");
+    const card = addButton.closest(".p-card");
+    const productId = addButton.getAttribute("data-product-id") || card?.getAttribute("data-product-id");
     if (!productId) return;
 
-    addButton.disabled = true;
+    setCardBusy(card, true);
 
     try {
       await addToCart(productId, 1);
-      if (cartCountEl) {
-        const current = parseInt(cartCountEl.textContent || "0", 10) || 0;
-        cartCountEl.textContent = String(current + 1);
-      }
       await fetchMiniCart();
       openCartDrawer();
       bumpCartIcon();
@@ -349,7 +402,51 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch {
       showToast("Ürün sepete eklenemedi.");
     } finally {
-      addButton.disabled = false;
+      setCardBusy(card, false);
+    }
+  });
+
+  document.addEventListener("click", async (event) => {
+    const plus = event.target.closest("[data-card-plus]");
+    const minus = event.target.closest("[data-card-minus]");
+    if (!plus && !minus) return;
+
+    event.preventDefault();
+
+    const card = event.target.closest(".p-card");
+    const productId = String(card?.getAttribute("data-product-id") || "");
+    if (!productId) return;
+
+    const current = cartState.get(productId);
+    setCardBusy(card, true);
+
+    try {
+      if (plus) {
+        if (current?.cart_key) {
+          await setCartQuantity(current.cart_key, Number(current.qty) + 1);
+        } else {
+          await addToCart(productId, 1);
+        }
+        await fetchMiniCart();
+        bumpCartIcon();
+        showToast("Sepet adedi artırıldı.");
+      }
+
+      if (minus) {
+        if (!current?.cart_key) {
+          setCardBusy(card, false);
+          return;
+        }
+        const nextQty = Math.max(0, Number(current.qty) - 1);
+        await setCartQuantity(current.cart_key, nextQty);
+        await fetchMiniCart();
+        showToast(nextQty === 0 ? "Ürün sepetten kaldırıldı." : "Sepet adedi azaltıldı.");
+      }
+    } catch {
+      showToast("Sepet güncellenemedi.");
+      await fetchMiniCart();
+    } finally {
+      setCardBusy(card, false);
     }
   });
 

@@ -17,6 +17,7 @@ function polaris_get_minicart() {
 
     $cart = WC()->cart;
 
+    $items = [];
     ob_start();
 
     if ($cart->is_empty()) {
@@ -33,6 +34,15 @@ function polaris_get_minicart() {
             $image      = $product->get_image('woocommerce_thumbnail');
             $title      = $product->get_name();
             $price      = $product->get_price_html();
+
+            if (!isset($items[$product_id])) {
+                $items[$product_id] = [
+                    'product_id' => (int) $product_id,
+                    'qty'        => 0,
+                    'cart_key'   => (string) $cart_item_key,
+                ];
+            }
+            $items[$product_id]['qty'] += $qty;
 
             echo '<div class="polaris-minicart-item" data-cart-key="' . esc_attr($cart_item_key) . '">';
             echo '  <a class="polaris-minicart-thumb" href="' . esc_url(get_permalink($product_id)) . '">' . $image . '</a>';
@@ -66,6 +76,7 @@ function polaris_get_minicart() {
     wp_send_json_success([
         'html'     => $html,
         'count'    => $count,
+        'items'    => array_values($items),
         'freeship' => [
             'threshold' => $threshold,
             'subtotal'  => $subtotal,

@@ -499,6 +499,58 @@ body.is-locked {
   color: var(--muted);
 }
 
+.p-card__cart-actions {
+  display: block;
+}
+
+.p-card__qty {
+  min-height: 42px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid rgba(243, 135, 47, 0.35);
+  background: rgba(243, 135, 47, 0.12);
+  padding: 4px;
+}
+
+.p-card__qty-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(8, 16, 26, 0.62);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.p-card__qty-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.p-card__qty-center {
+  flex: 1 1 auto;
+  text-align: center;
+  line-height: 1.05;
+}
+
+.p-card__qty-label {
+  display: block;
+  color: rgba(238, 244, 251, 0.85);
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+}
+
+.p-card__qty-value {
+  display: block;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
 .polaris-search-overlay,
 .polaris-drawer {
   position: fixed;

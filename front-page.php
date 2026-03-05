@@ -4,6 +4,30 @@ if (!defined('ABSPATH')) {
 }
 
 if (!function_exists('polaris_render_product_card')) {
+    function polaris_get_cart_qty_map() {
+        static $qty_map = null;
+
+        if (is_array($qty_map)) {
+            return $qty_map;
+        }
+
+        $qty_map = [];
+
+        if (!function_exists('WC') || !WC()->cart) {
+            return $qty_map;
+        }
+
+        foreach (WC()->cart->get_cart() as $cart_item) {
+            $pid = isset($cart_item['variation_id']) && (int) $cart_item['variation_id'] > 0
+                ? (int) $cart_item['variation_id']
+                : (int) $cart_item['product_id'];
+
+            $qty_map[$pid] = ($qty_map[$pid] ?? 0) + (int) $cart_item['quantity'];
+        }
+
+        return $qty_map;
+    }
+
     function polaris_render_product_card($product) {
         if (!is_object($product) || !method_exists($product, 'get_id')) {
             return;
@@ -14,6 +38,8 @@ if (!function_exists('polaris_render_product_card')) {
         $link       = get_permalink($product_id);
         $image      = $product->get_image('woocommerce_thumbnail', ['loading' => 'lazy']);
         $price_html = $product->get_price_html();
+        $cart_qty_map = polaris_get_cart_qty_map();
+        $initial_qty = isset($cart_qty_map[$product_id]) ? (int) $cart_qty_map[$product_id] : 0;
 
         $badge = '';
         if ($product->is_on_sale()) {
@@ -37,9 +63,19 @@ if (!function_exists('polaris_render_product_card')) {
         echo '    <div class="p-card__price">' . wp_kses_post($price_html) . '</div>';
 
         if ($product->is_purchasable() && $product->is_in_stock()) {
-            echo '    <button class="p-card__cta js-add-to-cart" type="button" data-product-id="' . esc_attr($product_id) . '">';
-            echo          esc_html__('Sepete ekle', 'polaris');
-            echo '    </button>';
+            echo '    <div class="p-card__cart-actions" data-card-actions>';
+            echo '      <button class="p-card__cta js-add-to-cart' . ($initial_qty > 0 ? ' hidden' : '') . '" type="button" data-product-id="' . esc_attr($product_id) . '">';
+            echo            esc_html__('Sepete ekle', 'polaris');
+            echo '      </button>';
+            echo '      <div class="p-card__qty' . ($initial_qty > 0 ? '' : ' hidden') . '" data-card-qty-wrap>';
+            echo '        <button class="p-card__qty-btn" type="button" data-card-minus aria-label="' . esc_attr__('Azalt', 'polaris') . '">-</button>';
+            echo '        <div class="p-card__qty-center">';
+            echo '          <span class="p-card__qty-label">' . esc_html__('Sepette', 'polaris') . '</span>';
+            echo '          <span class="p-card__qty-value" data-card-qty>' . (int) max(1, $initial_qty) . '</span>';
+            echo '        </div>';
+            echo '        <button class="p-card__qty-btn" type="button" data-card-plus aria-label="' . esc_attr__('Arttır', 'polaris') . '">+</button>';
+            echo '      </div>';
+            echo '    </div>';
         } else {
             echo '    <button class="p-card__cta p-card__cta--disabled" type="button" disabled>' . esc_html__('Stokta yok', 'polaris') . '</button>';
         }
