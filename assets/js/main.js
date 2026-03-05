@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const cartDrawer = $("#polarisCartDrawer");
   const miniCartEl = $("#polarisMiniCart");
-  const cartCountEl = $(".cart-count");
-  const cartIcon = $(".cart-icon");
+  const cartCountEls = $$(".cart-count");
+  const cartIcons = $$(".cart-icon");
 
   const toastEl = $("#polarisToast");
   const freeshipWrap = $("#polarisFreeShip");
@@ -61,10 +61,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function bumpCartIcon() {
-    if (!cartIcon) return;
-    cartIcon.classList.remove("cart-bump");
-    void cartIcon.offsetWidth;
-    cartIcon.classList.add("cart-bump");
+    if (!cartIcons.length) return;
+
+    cartIcons.forEach((icon) => {
+      icon.classList.remove("cart-bump");
+      void icon.offsetWidth;
+      icon.classList.add("cart-bump");
+    });
+  }
+
+  function updateCartCounts(count) {
+    if (!cartCountEls.length) return;
+    cartCountEls.forEach((countEl) => {
+      countEl.textContent = String(count || 0);
+    });
   }
 
   function setCardBusy(card, busy) {
@@ -327,9 +337,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!data?.success) return;
 
       miniCartEl.innerHTML = data.data?.html || "";
-      if (cartCountEl) {
-        cartCountEl.textContent = String(data.data?.count || 0);
-      }
+      updateCartCounts(data.data?.count || 0);
       updateFreeship(data.data?.freeship);
       updateCartState(data.data?.items || []);
     } catch {

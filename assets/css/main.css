@@ -898,6 +898,21 @@ body.is-locked {
   font-size: 1.08rem;
 }
 
+.bottom-nav__icon-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottom-nav .bottom-nav__icon-wrap .cart-count {
+  top: -8px;
+  right: -10px;
+  width: 16px;
+  height: 16px;
+  font-size: .6rem;
+}
+
 .bottom-nav a.is-active,
 .bottom-nav a:hover {
   color: var(--accent);
