@@ -87,25 +87,65 @@ $category_slugs_in_order = [
   // 'pater-noster-2-igneli-surf-casting-takimi',
 ];
 
-// Hero banner(lar) — istersen çoğalt
-$hero_banners = [
-  get_template_directory_uri() . '/assets/img/banners/banner1.jpg',
-  // get_template_directory_uri() . '/assets/img/banners/banner2.jpg',
-  // get_template_directory_uri() . '/assets/img/banners/banner3.jpg',
-];
+// Hero banners — Theme Customizer'dan çek
+$hero_banners = polaris_get_hero_banners();
+$hero_autoplay = polaris_hero_autoplay();
 
 ?>
 
 <div class="container">
 
-  <!-- HERO (şimdilik basit; slider için hazır yapı) -->
+  <!-- HERO SLIDER (2026 Modern Standards) -->
   <section class="polaris-section fade-up">
-    <div class="hero-slider" aria-label="<?php echo esc_attr__('Ana banner', 'polaris'); ?>">
-      <?php foreach ($hero_banners as $src): ?>
-        <div class="slide">
-          <img src="<?php echo esc_url($src); ?>" alt="<?php echo esc_attr__('Polaris Banner', 'polaris'); ?>" loading="eager">
+    <div class="polaris-hero-slider" 
+         id="polarisHeroSlider"
+         data-autoplay="<?php echo $hero_autoplay ? 'true' : 'false'; ?>"
+         aria-label="<?php echo esc_attr__('Ana banner', 'polaris'); ?>"
+         role="region">
+      
+      <!-- SLIDES -->
+      <div class="polaris-hero-slider__viewport">
+        <?php if (!empty($hero_banners)): ?>
+          <?php foreach ($hero_banners as $idx => $src): ?>
+            <div class="polaris-hero-slide" data-slide="<?php echo (int) $idx; ?>">
+              <img src="<?php echo esc_url($src); ?>" 
+                   alt="<?php echo esc_attr__('Hero Banner', 'polaris'); ?>" 
+                   loading="eager"
+                   decoding="async">
+            </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <div class="polaris-hero-slide">
+            <div class="polaris-hero-placeholder">
+              <p><?php echo esc_html__('Admin panelinden banner resimlerini yükleyin', 'polaris'); ?></p>
+            </div>
+          </div>
+        <?php endif; ?>
+      </div>
+
+      <!-- CONTROLS (sadece 2+ resim varsa göster) -->
+      <?php if (count($hero_banners) > 1): ?>
+        <!-- Navigation Buttons -->
+        <button class="polaris-hero-btn polaris-hero-btn--prev" type="button" aria-label="<?php echo esc_attr__('Önceki', 'polaris'); ?>">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <button class="polaris-hero-btn polaris-hero-btn--next" type="button" aria-label="<?php echo esc_attr__('Sonraki', 'polaris'); ?>">
+          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+
+        <!-- Indicators (dot pagination) -->
+        <div class="polaris-hero-indicators" role="tablist" aria-label="<?php echo esc_attr__('Slide indicators', 'polaris'); ?>">
+          <?php foreach ($hero_banners as $idx => $src): ?>
+            <button class="polaris-hero-indicator<?php echo $idx === 0 ? ' is-active' : ''; ?}" 
+                    type="button"
+                    data-slide="<?php echo (int) $idx; ?>"
+                    role="tab"
+                    aria-label="<?php echo sprintf(esc_attr__('Slide %d', 'polaris'), $idx + 1); ?>"
+                    <?php echo $idx === 0 ? 'aria-selected="true"' : 'aria-selected="false"'; ?>>
+            </button>
+          <?php endforeach; ?>
         </div>
-      <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </section>
 

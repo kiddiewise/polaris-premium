@@ -568,4 +568,78 @@ document.addEventListener("DOMContentLoaded", () => {
       await fetchMiniCart();
     }
   });
+
+  // =========================================================
+  // Hero Slider (2026 Modern)
+  // =========================================================
+  const heroSlider = $("#polarisHeroSlider");
+  if (heroSlider) {
+    const slides = $$(".polaris-hero-slide", heroSlider);
+    const indicators = $$(".polaris-hero-indicator", heroSlider);
+    const prevBtn = $(".polaris-hero-btn--prev", heroSlider);
+    const nextBtn = $(".polaris-hero-btn--next", heroSlider);
+    const autoplay = heroSlider.getAttribute("data-autoplay") === "true";
+
+    let currentIndex = 0;
+    let autoplayTimer = null;
+
+    function goToSlide(index) {
+      if (slides.length === 0) return;
+      
+      // Normalize index
+      currentIndex = ((index % slides.length) + slides.length) % slides.length;
+      
+      // Update slides
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle("is-active", idx === currentIndex);
+      });
+
+      // Update indicators
+      indicators.forEach((indicator, idx) => {
+        indicator.classList.toggle("is-active", idx === currentIndex);
+        indicator.setAttribute("aria-selected", idx === currentIndex ? "true" : "false");
+      });
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+      resetAutoplay();
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1);
+      resetAutoplay();
+    }
+
+    function resetAutoplay() {
+      if (autoplayTimer) clearInterval(autoplayTimer);
+      if (autoplay) {
+        autoplayTimer = setInterval(nextSlide, 4500);
+      }
+    }
+
+    // Set initial active slide
+    goToSlide(0);
+
+    // Attach click handlers
+    if (prevBtn) prevBtn.addEventListener("click", prevSlide);
+    if (nextBtn) nextBtn.addEventListener("click", nextSlide);
+
+    indicators.forEach((indicator, idx) => {
+      indicator.addEventListener("click", () => {
+        goToSlide(idx);
+        resetAutoplay();
+      });
+    });
+
+    // Keyboard nav (left/right arrows)
+    document.addEventListener("keydown", (e) => {
+      if (!heroSlider.closest("body")) return; // ensure visible
+      if (e.key === "ArrowLeft") prevSlide();
+      if (e.key === "ArrowRight") nextSlide();
+    });
+
+    // Start autoplay
+    resetAutoplay();
+  }
 });
