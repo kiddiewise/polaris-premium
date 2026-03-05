@@ -1,10 +1,14 @@
 <?php
-// temporary debug helpers for front-end
-@ini_set('display_errors', 1);
-@ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 if (!defined('ABSPATH')) exit;
+
+// Enable error reporting
+error_reporting(E_ALL);
+@ini_set('display_errors', 0);
+
+// Start output buffering to catch render errors
+ob_start();
+
+try {
 
 /**
  * ===========================
@@ -12,9 +16,6 @@ if (!defined('ABSPATH')) exit;
  * (Template içinde kalsın diye burada)
  * ===========================
  */
-
-try {
-
 if (!function_exists('polaris_render_product_card')) :
   function polaris_render_product_card($product) {
     if (!$product) return;
@@ -92,12 +93,11 @@ $new_products_limit  = 12;
 $category_slugs_in_order = [
   'asansor-sistem-olta-bedeni',
   'polaris-firdondulu-fosforlu-aparatli-surf-kursun',
-  // 'pater-noster-2-igneli-surf-casting-takimi',
 ];
 
-// Hero banners — Theme Customizer'dan çek
-$hero_banners = polaris_get_hero_banners();
-$hero_autoplay = polaris_hero_autoplay();
+// Hero banners — Theme Customizer'dan çek (GÜVENLE)
+$hero_banners = function_exists('polaris_get_hero_banners') ? polaris_get_hero_banners() : [];
+$hero_autoplay = function_exists('polaris_hero_autoplay') ? polaris_hero_autoplay() : true;
 
 ?>
 
@@ -273,8 +273,25 @@ $hero_autoplay = polaris_hero_autoplay();
 </div><!-- /.container -->
 
 <?php get_footer();
+
 } catch (\Throwable $e) {
-    // display error on screen
-    echo '<pre style="color:red;">FrontPage error: ' . esc_html($e->getMessage()) . '\n' . esc_html($e->getTraceAsString()) . '</pre>';
-    wp_die('FrontPage rendering error.');
-} ?>
+    // Output buffering temizle
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    
+    // Hata logla
+    error_log("[FrontPage Fatal Error] " . $e->getMessage() . " | Trace: " . $e->getTraceAsString());
+    
+    // Admin'de göster (production'da sadece localhsot)
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        wp_die('<pre style="color: red; font-size: 14px; margin: 20px; background: #fdd; padding: 20px; border: 1px solid #f00; border-radius: 4px;">
+<strong>Frontend Error:</strong> ' . esc_html($e->getMessage()) . '
+<strong>File:</strong> ' . esc_html($e->getFile()) . ':' . esc_html($e->getLine()) . '
+<strong>Trace:</strong>
+' . esc_html($e->getTraceAsString()) . '
+        </pre>', 'Polaris Frontend Error', ['back_link' => true]);
+    } else {
+        wp_die('Sitede bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+    }
+}

@@ -634,7 +634,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Keyboard nav (left/right arrows)
     document.addEventListener("keydown", (e) => {
-      if (!heroSlider.closest("body")) return; // ensure visible
+      if (!heroSlider || !document.body.contains(heroSlider)) return; // ensure visible
       if (e.key === "ArrowLeft") prevSlide();
       if (e.key === "ArrowRight") nextSlide();
     });

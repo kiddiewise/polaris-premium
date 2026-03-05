@@ -10,7 +10,12 @@ set_error_handler(function($severity, $message, $file, $line) {
     if (!(error_reporting() & $severity)) {
         return false;
     }
-    throw new ErrorException($message, 0, $severity, $file, $line);
+    // Only convert fatal errors and user errors
+    if ($severity === E_USER_ERROR || $severity === E_ERROR) {
+        throw new ErrorException($message, 0, $severity, $file, $line);
+    }
+    // Let WP handle others
+    return false;
 });
 
 
