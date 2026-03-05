@@ -1,4 +1,9 @@
 <?php
+// temporary debug helpers for front-end
+@ini_set('display_errors', 1);
+@ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if (!defined('ABSPATH')) exit;
 
 /**
@@ -7,6 +12,9 @@ if (!defined('ABSPATH')) exit;
  * (Template içinde kalsın diye burada)
  * ===========================
  */
+
+try {
+
 if (!function_exists('polaris_render_product_card')) :
   function polaris_render_product_card($product) {
     if (!$product) return;
@@ -264,4 +272,9 @@ $hero_autoplay = polaris_hero_autoplay();
 
 </div><!-- /.container -->
 
-<?php get_footer(); ?>
+<?php get_footer();
+} catch (\Throwable $e) {
+    // display error on screen
+    echo '<pre style="color:red;">FrontPage error: ' . esc_html($e->getMessage()) . '\n' . esc_html($e->getTraceAsString()) . '</pre>';
+    wp_die('FrontPage rendering error.');
+} ?>
