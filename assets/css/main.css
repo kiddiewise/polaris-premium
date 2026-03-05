@@ -744,7 +744,26 @@ p{
   width:0%;
   border-radius: 999px;
   background: rgba(246,130,32,.9);
-  transition: width 520ms var(--ease);
+  transition: width 520ms var(--ease), background 420ms var(--ease), box-shadow 420ms var(--ease);
+}
+
+/* Ücretsiz kargo başarıldı: yeşil animasyon */
+.polaris-freeship.is-done .polaris-freeship__fill{
+  background: linear-gradient(90deg, #10b981, #059669, #10b981);
+  background-size: 200% 100%;
+  animation: freeship-pulse 2s var(--ease) infinite;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), inset 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+@keyframes freeship-pulse {
+  0%, 100% {
+    background-position: 100% 0;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), inset 0 0 10px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    background-position: 0% 0;
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.6), inset 0 0 15px rgba(16, 185, 129, 0.3);
+  }
 }
 
 .polaris-drawer__body{
