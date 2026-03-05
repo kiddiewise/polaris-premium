@@ -1,264 +1,221 @@
-<?php
-if (!defined('ABSPATH')) exit;
+﻿<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-/**
- * ===========================
- * Product card renderer
- * ===========================
- */
-if (!function_exists('polaris_render_product_card')) :
-  function polaris_render_product_card($product) {
-    if (!$product) return;
+if (!function_exists('polaris_render_product_card')) {
+    function polaris_render_product_card($product) {
+        if (!is_object($product) || !method_exists($product, 'get_id')) {
+            return;
+        }
 
-    $pid   = $product->get_id();
-    $link  = get_permalink($pid);
-    $title = $product->get_name();
+        $product_id = $product->get_id();
+        $title      = $product->get_name();
+        $link       = get_permalink($product_id);
+        $image      = $product->get_image('woocommerce_thumbnail', ['loading' => 'lazy']);
+        $price_html = $product->get_price_html();
 
-    $img_id = $product->get_image_id();
-    $img    = $img_id ? wp_get_attachment_image_url($img_id, 'woocommerce_thumbnail') : '';
-    if (!$img) $img = wc_placeholder_img_src('woocommerce_thumbnail');
+        $badge = '';
+        if ($product->is_on_sale()) {
+            $regular = (float) $product->get_regular_price();
+            $sale    = (float) $product->get_sale_price();
+            if ($regular > 0 && $sale > 0 && $sale < $regular) {
+                $badge = sprintf('-%d%%', (int) round((($regular - $sale) / $regular) * 100));
+            }
+        }
 
-    $is_sale    = $product->is_on_sale();
-    $price_html = $product->get_price_html();
+        echo '<article class="p-card" data-product-id="' . esc_attr($product_id) . '">';
+        echo '  <a class="p-card__media" href="' . esc_url($link) . '">';
+        if ($badge !== '') {
+            echo '    <span class="badge badge-sale">' . esc_html($badge) . '</span>';
+        }
+        echo      $image;
+        echo '  </a>';
 
-    // Sale badge %
-    $sale_badge = '';
-    if ($is_sale) {
-      $reg = (float) $product->get_regular_price();
-      $sal = (float) $product->get_sale_price();
-      if ($reg > 0 && $sal > 0 && $sal < $reg) {
-        $pct = (int) round((($reg - $sal) / $reg) * 100);
-        $sale_badge = '%' . max(1, $pct);
-      } else {
-        $sale_badge = '%';
-      }
+        echo '  <div class="p-card__body">';
+        echo '    <a class="p-card__title" href="' . esc_url($link) . '">' . esc_html($title) . '</a>';
+        echo '    <div class="p-card__price">' . wp_kses_post($price_html) . '</div>';
+
+        if ($product->is_purchasable() && $product->is_in_stock()) {
+            echo '    <button class="p-card__cta js-add-to-cart" type="button" data-product-id="' . esc_attr($product_id) . '">';
+            echo          esc_html__('Add to cart', 'polaris');
+            echo '    </button>';
+        } else {
+            echo '    <button class="p-card__cta p-card__cta--disabled" type="button" disabled>' . esc_html__('Out of stock', 'polaris') . '</button>';
+        }
+
+        echo '  </div>';
+        echo '</article>';
     }
+}
 
-    echo '<article class="p-card" data-product-id="' . esc_attr($pid) . '">';
-    echo '  <a class="p-card__media" href="' . esc_url($link) . '">';
-    echo '    <div class="p-card__badges">';
-    if ($is_sale) echo '      <span class="badge badge-sale">' . esc_html($sale_badge) . '</span>';
-    echo '    </div>';
-    echo '    <img src="' . esc_url($img) . '" alt="' . esc_attr($title) . '" loading="lazy">';
-    echo '  </a>';
+$hero_banners  = function_exists('polaris_get_hero_banners') ? polaris_get_hero_banners() : [];
+$hero_autoplay = function_exists('polaris_hero_autoplay') ? polaris_hero_autoplay() : true;
+$has_woocommerce = class_exists('WooCommerce') && class_exists('WC_Product_Query');
 
-    echo '  <div class="p-card__float">';
-    echo '    <button class="p-fab js-like" type="button" aria-label="Beğen" data-like-id="' . esc_attr($pid) . '"><i class="fa-regular fa-heart"></i></button>';
-    echo '    <button class="p-fab js-share" type="button" aria-label="Paylaş" data-share-url="' . esc_url($link) . '" data-share-title="' . esc_attr($title) . '"><i class="fa-solid fa-share-nodes"></i></button>';
-    echo '  </div>';
+$new_products_title = esc_html__('New Products', 'polaris');
+$new_products_limit = 12;
 
-    echo '  <div class="p-card__body">';
-    echo '    <a class="p-card__title" href="' . esc_url($link) . '">' . esc_html($title) . '</a>';
-    echo '    <div class="p-card__price">' . wp_kses_post($price_html) . '</div>';
-
-    if ($product->is_purchasable() && $product->is_in_stock()) {
-      echo '    <a href="' . esc_url($product->add_to_cart_url()) . '" data-quantity="1" class="p-card__cta add_to_cart_button ajax_add_to_cart" data-product_id="' . esc_attr($pid) . '" data-product_sku="' . esc_attr($product->get_sku()) . '">';
-      echo '      <span>Sepete Ekle</span><i class="fa-solid fa-bag-shopping"></i>';
-      echo '    </a>';
-    } else {
-      echo '    <button class="p-card__cta p-card__cta--disabled" type="button" disabled>Stokta Yok</button>';
-    }
-
-    echo '  </div>';
-    echo '</article>';
-  }
-endif;
-
-get_header();
-
-
-/**
- * ===========================
- * AYAR: Sen burayı düzenle
- * ===========================
- */
-
-// Yeni ürünler rail
-$show_new_products   = true;
-$new_products_title  = 'Yeni Ürünler';
-$new_products_limit  = 12;
-
-// Kategori sırası (slug) — "genel" yazma
-$category_slugs_in_order = [
-  'asansor-sistem-olta-bedeni',
-  'polaris-firdondulu-fosforlu-aparatli-surf-kursun',
+$ordered_category_slugs = [
+    'asansor-sistem-olta-bedeni',
+    'polaris-firdondulu-fosforlu-aparatli-surf-kursun',
 ];
 
-// Hero banners — Theme Customizer'dan çek (GÜVENLE)
-$hero_banners = function_exists('polaris_get_hero_banners') ? polaris_get_hero_banners() : [];
-$hero_autoplay = function_exists('polaris_hero_autoplay') ? polaris_hero_autoplay() : true;
-
+get_header();
 ?>
 
 <div class="container">
-
-  <!-- HERO SLIDER (2026 Modern Standards) -->
   <section class="polaris-section fade-up">
-    <div class="polaris-hero-slider" 
-         id="polarisHeroSlider"
-         data-autoplay="<?php echo $hero_autoplay ? 'true' : 'false'; ?>"
-         aria-label="<?php echo esc_attr__('Ana banner', 'polaris'); ?>"
-         role="region">
-      
-      <!-- SLIDES -->
-      <div class="polaris-hero-slider__viewport">
-        <?php if (!empty($hero_banners)): ?>
-          <?php foreach ($hero_banners as $idx => $src): ?>
-            <div class="polaris-hero-slide" data-slide="<?php echo (int) $idx; ?>">
-              <img src="<?php echo esc_url($src); ?>" 
-                   alt="<?php echo esc_attr__('Hero Banner', 'polaris'); ?>" 
-                   loading="eager"
-                   decoding="async">
-            </div>
+    <div class="hero" id="polarisHero" data-autoplay="<?php echo $hero_autoplay ? 'true' : 'false'; ?>" data-interval="5000">
+      <div class="hero__track">
+        <?php if (!empty($hero_banners)) : ?>
+          <?php foreach ($hero_banners as $index => $src) : ?>
+            <article class="hero__slide<?php echo $index === 0 ? ' is-active' : ''; ?>" data-index="<?php echo (int) $index; ?>">
+              <img src="<?php echo esc_url($src); ?>" alt="<?php echo esc_attr__('Hero banner', 'polaris'); ?>" loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>" decoding="async">
+            </article>
           <?php endforeach; ?>
-        <?php else: ?>
-          <div class="polaris-hero-slide">
-            <div class="polaris-hero-placeholder">
-              <p><?php echo esc_html__('Admin panelinden banner resimlerini yükleyin', 'polaris'); ?></p>
-            </div>
-          </div>
+        <?php else : ?>
+          <article class="hero__slide is-active" data-index="0">
+            <div class="hero__empty"><?php echo esc_html__('Upload hero banners from Customizer.', 'polaris'); ?></div>
+          </article>
         <?php endif; ?>
       </div>
 
-      <!-- CONTROLS (sadece 2+ resim varsa göster) -->
-      <?php if (count($hero_banners) > 1): ?>
-        <!-- Navigation Buttons -->
-        <button class="polaris-hero-btn polaris-hero-btn--prev" type="button" aria-label="<?php echo esc_attr__('Önceki', 'polaris'); ?>">
+      <?php if (count($hero_banners) > 1) : ?>
+        <button class="hero__nav hero__nav--prev" type="button" data-hero-prev aria-label="<?php echo esc_attr__('Previous slide', 'polaris'); ?>">
           <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
         </button>
-        <button class="polaris-hero-btn polaris-hero-btn--next" type="button" aria-label="<?php echo esc_attr__('Sonraki', 'polaris'); ?>">
+        <button class="hero__nav hero__nav--next" type="button" data-hero-next aria-label="<?php echo esc_attr__('Next slide', 'polaris'); ?>">
           <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
         </button>
 
-        <!-- Indicators (dot pagination) -->
-        <div class="polaris-hero-indicators" role="tablist" aria-label="<?php echo esc_attr__('Slide indicators', 'polaris'); ?>">
-          <?php foreach ($hero_banners as $idx => $src): ?>
-            <button class="polaris-hero-indicator<?php echo $idx === 0 ? ' is-active' : ''; ?}" 
-                    type="button"
-                    data-slide="<?php echo (int) $idx; ?>"
-                    role="tab"
-                    aria-label="<?php echo sprintf(esc_attr__('Slide %d', 'polaris'), $idx + 1); ?>"
-                    <?php echo $idx === 0 ? 'aria-selected="true"' : 'aria-selected="false"'; ?>>
-            </button>
+        <div class="hero__dots" role="tablist" aria-label="<?php echo esc_attr__('Slide controls', 'polaris'); ?>">
+          <?php foreach ($hero_banners as $index => $src) : ?>
+            <button
+              class="hero__dot<?php echo $index === 0 ? ' is-active' : ''; ?>"
+              type="button"
+              data-hero-dot="<?php echo (int) $index; ?>"
+              role="tab"
+              aria-selected="<?php echo $index === 0 ? 'true' : 'false'; ?>"
+              aria-label="<?php echo esc_attr(sprintf(__('Go to slide %d', 'polaris'), $index + 1)); ?>"
+            ></button>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
     </div>
   </section>
 
-  <!-- KATEGORİ SWIPE RAIL -->
-  <section class="polaris-section fade-up">
+  <section class="polaris-section fade-up" data-delay="1">
     <div class="section-title">
-      <h2><?php echo esc_html__('Kategoriler', 'polaris'); ?></h2>
-      <a href="<?php echo esc_url(wc_get_page_permalink('shop')); ?>"><?php echo esc_html__('Tümünü gör', 'polaris'); ?></a>
+      <h2><?php echo esc_html__('Categories', 'polaris'); ?></h2>
+      <a href="<?php echo esc_url(function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/')); ?>"><?php echo esc_html__('View all', 'polaris'); ?></a>
     </div>
 
     <div class="cat-rail" role="list" aria-label="<?php echo esc_attr__('Product categories', 'polaris'); ?>">
       <?php
       $terms = get_terms([
-        'taxonomy'   => 'product_cat',
-        'hide_empty' => true,
-        'orderby'    => 'menu_order',
-        'order'      => 'ASC',
-        'number'     => 60,
+          'taxonomy'   => 'product_cat',
+          'hide_empty' => true,
+          'orderby'    => 'menu_order',
+          'order'      => 'ASC',
       ]);
 
       if (!is_wp_error($terms) && !empty($terms)) {
-        foreach ($terms as $term) {
-          if ($term->slug === 'genel') continue;
+          foreach ($terms as $term) {
+              $link = get_term_link($term);
+              if (is_wp_error($link)) {
+                  continue;
+              }
 
-          $link = get_term_link($term);
-          if (is_wp_error($link)) continue;
-
-          echo '<div class="cat-item" role="listitem">';
-          echo '  <a href="' . esc_url($link) . '">';
-          echo '    <div class="cat-box">';
-          echo '      <div class="cat-name">' . esc_html($term->name) . '</div>';
-          echo '      <div class="cat-meta">' . sprintf(esc_html__('%d ürün', 'polaris'), (int) $term->count) . '</div>';
-          echo '    </div>';
-          echo '  </a>';
-          echo '</div>';
-        }
+              echo '<a class="cat-item" href="' . esc_url($link) . '" role="listitem">';
+              echo '  <span class="cat-item__name">' . esc_html($term->name) . '</span>';
+              echo '  <span class="cat-item__count">' . (int) $term->count . '</span>';
+              echo '</a>';
+          }
       }
       ?>
     </div>
   </section>
 
-  <?php if ($show_new_products): ?>
-    <!-- YENİ ÜRÜNLER (RAIL) -->
-    <section class="polaris-section fade-up">
+  <?php if ($has_woocommerce) : ?>
+    <section class="polaris-section fade-up" data-delay="2">
       <div class="section-title">
         <h2><?php echo esc_html($new_products_title); ?></h2>
-        <a href="<?php echo esc_url(wc_get_page_permalink('shop')); ?>"><?php echo esc_html__('Mağaza', 'polaris'); ?></a>
       </div>
 
       <?php
-      $q = new WC_Product_Query([
-        'status'  => 'publish',
-        'limit'   => $new_products_limit,
-        'orderby' => 'date',
-        'order'   => 'DESC',
-        'return'  => 'objects',
+      $new_query = new WC_Product_Query([
+          'status'  => 'publish',
+          'limit'   => $new_products_limit,
+          'orderby' => 'date',
+          'order'   => 'DESC',
+          'return'  => 'objects',
       ]);
-      $products = $q->get_products();
+      $new_products = $new_query->get_products();
       ?>
 
       <div class="product-rail" data-rail>
         <?php
-        if (!empty($products)) :
-          foreach ($products as $product) :
-            polaris_render_product_card($product);
-          endforeach;
-        else:
-          echo '<div class="search-empty">Ürün bulunamadı.</div>';
-        endif;
+        if (!empty($new_products)) {
+            foreach ($new_products as $product) {
+                polaris_render_product_card($product);
+            }
+        } else {
+            echo '<div class="search-empty">' . esc_html__('No products found.', 'polaris') . '</div>';
+        }
         ?>
       </div>
     </section>
   <?php endif; ?>
 
-  <!-- KATEGORİ BÖLÜMLERİ (senin verdiğin sırayla) -->
-  <?php foreach ($category_slugs_in_order as $slug): ?>
+  <?php if ($has_woocommerce) : ?>
+    <?php foreach ($ordered_category_slugs as $slug) : ?>
     <?php
-    $term = get_term_by('slug', $slug, 'product_cat');
-    if (!$term || is_wp_error($term)) continue;
-    if ($term->slug === 'genel') continue;
+    $category = get_term_by('slug', $slug, 'product_cat');
+    if (!$category || is_wp_error($category)) {
+        continue;
+    }
 
-    $term_link = get_term_link($term);
-    if (is_wp_error($term_link)) $term_link = wc_get_page_permalink('shop');
-
-    $qcat = new WC_Product_Query([
-      'status'   => 'publish',
-      'limit'    => 14,
-      'orderby'  => 'menu_order',
-      'order'    => 'ASC',
-      'category' => [$slug],
-      'return'   => 'objects',
+    $products_query = new WC_Product_Query([
+        'status'   => 'publish',
+        'limit'    => 12,
+        'orderby'  => 'menu_order',
+        'order'    => 'ASC',
+        'category' => [$slug],
+        'return'   => 'objects',
     ]);
-    $cat_products = $qcat->get_products();
+    $category_products = $products_query->get_products();
+    $category_link = get_term_link($category);
+    if (is_wp_error($category_link)) {
+        $category_link = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');
+    }
     ?>
 
-    <section class="polaris-section fade-up">
+    <section class="polaris-section fade-up" data-delay="3">
       <div class="section-title">
-        <h2><?php echo esc_html($term->name); ?></h2>
-        <a href="<?php echo esc_url($term_link); ?>"><?php echo esc_html__('Tümünü gör', 'polaris'); ?></a>
+        <h2><?php echo esc_html($category->name); ?></h2>
+        <a href="<?php echo esc_url($category_link); ?>"><?php echo esc_html__('View all', 'polaris'); ?></a>
       </div>
 
       <div class="product-rail" data-rail>
         <?php
-        if (!empty($cat_products)) :
-          foreach ($cat_products as $product) :
-            polaris_render_product_card($product);
-          endforeach;
-        else:
-          echo '<div class="search-empty">Bu kategoride ürün yok.</div>';
-        endif;
+        if (!empty($category_products)) {
+            foreach ($category_products as $product) {
+                polaris_render_product_card($product);
+            }
+        } else {
+            echo '<div class="search-empty">' . esc_html__('No products in this category.', 'polaris') . '</div>';
+        }
         ?>
       </div>
     </section>
+    <?php endforeach; ?>
+  <?php else : ?>
+    <section class="polaris-section fade-up" data-delay="3">
+      <div class="search-empty"><?php echo esc_html__('WooCommerce is required to display products.', 'polaris'); ?></div>
+    </section>
+  <?php endif; ?>
+</div>
 
-  <?php endforeach; ?>
-
-</div><!-- /.container -->
-
-<?php get_footer();
+<?php
+get_footer();

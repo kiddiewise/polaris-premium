@@ -1,17 +1,17 @@
-</main>
+﻿</main>
 
 <footer class="footer">
-    <div class="container">
-        <div class="footer-columns">
-            <div>
-                <h4>Polaris Kurşun</h4>
-                <p>Premium Surf Kurşun Üreticisi</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            © <?php echo date('Y'); ?> Polaris
-        </div>
+  <div class="container">
+    <div class="footer-columns">
+      <div>
+        <h4><?php echo esc_html(get_bloginfo('name')); ?></h4>
+        <p><?php echo esc_html__('Premium surf lead products.', 'polaris'); ?></p>
+      </div>
     </div>
+    <div class="footer-bottom">
+      &copy; <?php echo esc_html(wp_date('Y')); ?> <?php echo esc_html(get_bloginfo('name')); ?>
+    </div>
+  </div>
 </footer>
 
 <?php get_template_part('template-parts/navigation/bottom-nav'); ?>
