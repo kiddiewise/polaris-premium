@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -8,11 +8,11 @@ add_action('wp_ajax_nopriv_polaris_get_minicart', 'polaris_get_minicart');
 
 function polaris_get_minicart() {
     if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'polaris_nonce')) {
-        wp_send_json_error(['message' => 'Invalid nonce'], 403);
+        wp_send_json_error(['message' => 'Geçersiz nonce'], 403);
     }
 
     if (!function_exists('WC') || !WC()->cart) {
-        wp_send_json_error(['message' => 'WooCommerce cart missing'], 400);
+        wp_send_json_error(['message' => 'WooCommerce sepeti bulunamadı'], 400);
     }
 
     $cart = WC()->cart;
@@ -20,7 +20,7 @@ function polaris_get_minicart() {
     ob_start();
 
     if ($cart->is_empty()) {
-        echo '<div class="search-empty">Your cart is empty.</div>';
+        echo '<div class="search-empty">Sepetiniz şu an boş.</div>';
     } else {
         foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
             $product = isset($cart_item['data']) ? $cart_item['data'] : null;
@@ -41,9 +41,9 @@ function polaris_get_minicart() {
             echo '    <div class="polaris-minicart-meta">';
             echo '      <div>' . wp_kses_post($price) . '</div>';
             echo '      <div class="qty-stepper">';
-            echo '        <button type="button" data-qty-minus aria-label="Decrease">-</button>';
+            echo '        <button type="button" data-qty-minus aria-label="Azalt">-</button>';
             echo '        <span data-qty-val>' . esc_html((string) $qty) . '</span>';
-            echo '        <button type="button" data-qty-plus aria-label="Increase">+</button>';
+            echo '        <button type="button" data-qty-plus aria-label="Arttır">+</button>';
             echo '      </div>';
             echo '    </div>';
             echo '  </div>';
@@ -51,7 +51,7 @@ function polaris_get_minicart() {
         }
 
         echo '<div class="polaris-minicart-total">';
-        echo esc_html__('Total:', 'polaris') . ' <strong>' . wp_kses_post($cart->get_cart_total()) . '</strong>';
+        echo esc_html__('Toplam:', 'polaris') . ' <strong>' . wp_kses_post($cart->get_cart_total()) . '</strong>';
         echo '</div>';
     }
 

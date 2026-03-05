@@ -2,6 +2,10 @@
 if (!defined('ABSPATH')) exit;
 
 function polaris_assets() {
+  $css_path = get_template_directory() . '/assets/css/main.css';
+  $js_path  = get_template_directory() . '/assets/js/main.js';
+  $css_ver  = file_exists($css_path) ? (string) filemtime($css_path) : '1.0.0';
+  $js_ver   = file_exists($js_path) ? (string) filemtime($js_path) : '1.0.0';
 
   // Fonts
   wp_enqueue_style(
@@ -24,7 +28,7 @@ function polaris_assets() {
     'polaris-main',
     get_template_directory_uri() . '/assets/css/main.css',
     ['polaris-fonts', 'polaris-fa'],
-    '1.0.1'
+    $css_ver
   );
 
   // Main JS
@@ -32,7 +36,7 @@ function polaris_assets() {
     'polaris-main',
     get_template_directory_uri() . '/assets/js/main.js',
     [],
-    '1.0.1',
+    $js_ver,
     true
   );
 

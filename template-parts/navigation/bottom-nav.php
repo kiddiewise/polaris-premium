@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -8,25 +8,25 @@ $shop = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop')
 $cart = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/');
 $acct = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_login_url();
 ?>
-<nav class="bottom-nav" aria-label="<?php echo esc_attr__('Mobile navigation', 'polaris'); ?>">
+<nav class="bottom-nav" aria-label="<?php echo esc_attr__('Mobil gezinme', 'polaris'); ?>">
   <a href="<?php echo esc_url($home); ?>" data-nav="home">
     <i class="fa-solid fa-house" aria-hidden="true"></i>
-    <span><?php echo esc_html__('Home', 'polaris'); ?></span>
+    <span><?php echo esc_html__('Ana Sayfa', 'polaris'); ?></span>
   </a>
   <a href="<?php echo esc_url($shop); ?>" data-nav="shop">
     <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
-    <span><?php echo esc_html__('Shop', 'polaris'); ?></span>
+    <span><?php echo esc_html__('Mağaza', 'polaris'); ?></span>
   </a>
   <a href="#" class="js-search-open" data-nav="search">
     <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-    <span><?php echo esc_html__('Search', 'polaris'); ?></span>
+    <span><?php echo esc_html__('Ara', 'polaris'); ?></span>
   </a>
   <a href="<?php echo esc_url($cart); ?>" data-nav="cart">
     <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
-    <span><?php echo esc_html__('Cart', 'polaris'); ?></span>
+    <span><?php echo esc_html__('Sepet', 'polaris'); ?></span>
   </a>
   <a href="<?php echo esc_url($acct); ?>" data-nav="account">
     <i class="fa-regular fa-user" aria-hidden="true"></i>
-    <span><?php echo esc_html__('Account', 'polaris'); ?></span>
+    <span><?php echo esc_html__('Hesabım', 'polaris'); ?></span>
   </a>
 </nav>

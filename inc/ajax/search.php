@@ -7,7 +7,7 @@ add_action('wp_ajax_nopriv_polaris_live_search', 'polaris_live_search');
 function polaris_live_search() {
   // Security
   if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'polaris_nonce')) {
-    wp_send_json_error(['message' => 'Invalid nonce'], 403);
+    wp_send_json_error(['message' => 'Geçersiz nonce'], 403);
   }
 
   $q = isset($_POST['q']) ? sanitize_text_field(wp_unslash($_POST['q'])) : '';

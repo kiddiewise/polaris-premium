@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -9,7 +9,7 @@ get_header();
   <h1>
     <?php
     printf(
-      esc_html__('Search results for: %s', 'polaris'),
+      esc_html__('Arama sonuçları: %s', 'polaris'),
       '<span>' . esc_html(get_search_query()) . '</span>'
     );
     ?>
@@ -25,7 +25,7 @@ get_header();
 
     <?php the_posts_pagination(); ?>
   <?php else : ?>
-    <p><?php echo esc_html__('No results found.', 'polaris'); ?></p>
+    <p><?php echo esc_html__('Sonuç bulunamadı.', 'polaris'); ?></p>
   <?php endif; ?>
 </section>
 <?php

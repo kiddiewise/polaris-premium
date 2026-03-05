@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
@@ -24,6 +24,17 @@
 
   const searchState = { timer: null, controller: null };
 
+  async function parseJsonResponse(response) {
+    const raw = await response.text();
+    const clean = raw.replace(/^\uFEFF/, "").trim();
+
+    if (!clean) {
+      throw new Error("empty_response");
+    }
+
+    return JSON.parse(clean);
+  }
+
   function lockBody() {
     body.classList.add("is-locked");
   }
@@ -44,7 +55,7 @@
 
     setTimeout(() => {
       toastEl.classList.remove("is-show");
-      setTimeout(() => toastEl.classList.add("hidden"), 200);
+      setTimeout(() => toastEl.classList.add("hidden"), 220);
     }, 1400);
   }
 
@@ -76,7 +87,7 @@
     setTimeout(() => {
       searchOverlay.classList.add("hidden");
       unlockBody();
-    }, 200);
+    }, 220);
   }
 
   function renderSearchMessage(message) {
@@ -88,7 +99,7 @@
     if (!searchResults) return;
 
     if (!Array.isArray(items) || items.length === 0) {
-      renderSearchMessage("No products found.");
+      renderSearchMessage("Sonuç bulunamadı.");
       return;
     }
 
@@ -110,7 +121,7 @@
 
   async function fetchSearch(query) {
     if (!hasAjax) {
-      renderSearchMessage("Search is not configured.");
+      renderSearchMessage("Arama yapılandırması bulunamadı.");
       return;
     }
 
@@ -128,11 +139,12 @@
       method: "POST",
       body: payload,
       signal: searchState.controller.signal,
+      credentials: "same-origin",
     });
 
-    const data = await response.json();
+    const data = await parseJsonResponse(response);
     if (!data?.success) {
-      renderSearchMessage("Search request failed.");
+      renderSearchMessage("Arama isteği başarısız.");
       return;
     }
 
@@ -145,17 +157,17 @@
       const q = (query || "").trim();
 
       if (q.length < 2) {
-        renderSearchMessage("Type at least 2 characters.");
+        renderSearchMessage("En az 2 karakter yazın.");
         return;
       }
 
-      renderSearchMessage("Searching...");
+      renderSearchMessage("Aranıyor...");
 
       try {
         await fetchSearch(q);
       } catch (error) {
         if (error.name !== "AbortError") {
-          renderSearchMessage("Connection error.");
+          renderSearchMessage("Arama sırasında bir hata oluştu.");
         }
       }
     }, 250);
@@ -181,7 +193,7 @@
   }
 
   if (searchInput) {
-    renderSearchMessage("Type product name...");
+    renderSearchMessage("Ürün adı yazarak aramaya başlayın...");
     searchInput.addEventListener("input", (event) => debounceSearch(event.target.value));
   }
 
@@ -203,7 +215,7 @@
     setTimeout(() => {
       cartDrawer.classList.add("hidden");
       unlockBody();
-    }, 200);
+    }, 220);
   }
 
   $$("[data-cart-close]").forEach((el) => el.addEventListener("click", closeCartDrawer));
@@ -220,7 +232,7 @@
     if (!freeshipWrap || !freeshipText || !freeshipFill) return;
 
     if (!freeship) {
-      freeshipText.textContent = "Free shipping status unavailable.";
+      freeshipText.textContent = "Kargo bilgisi alınamadı.";
       freeshipFill.style.width = "0%";
       freeshipWrap.classList.remove("is-done");
       return;
@@ -230,10 +242,10 @@
     const percent = Math.max(0, Math.min(100, Number(freeship.percent || 0)));
 
     if (remaining <= 0) {
-      freeshipText.textContent = "Free shipping unlocked.";
+      freeshipText.textContent = "Tebrikler! Ücretsiz kargo kazandınız.";
       freeshipWrap.classList.add("is-done");
     } else {
-      freeshipText.textContent = `${Math.ceil(remaining)} TRY left for free shipping.`;
+      freeshipText.textContent = `Ücretsiz kargo için ${Math.ceil(remaining)} TL daha ekleyin.`;
       freeshipWrap.classList.remove("is-done");
     }
 
@@ -248,8 +260,12 @@
     payload.append("nonce", ajaxConfig.nonce);
 
     try {
-      const response = await fetch(ajaxConfig.ajax_url, { method: "POST", body: payload });
-      const data = await response.json();
+      const response = await fetch(ajaxConfig.ajax_url, {
+        method: "POST",
+        body: payload,
+        credentials: "same-origin",
+      });
+      const data = await parseJsonResponse(response);
 
       if (!data?.success) return;
 
@@ -261,12 +277,14 @@
 
       updateFreeship(data.data?.freeship);
     } catch {
-      miniCartEl.innerHTML = '<div class="search-empty">Cart could not be loaded.</div>';
+      miniCartEl.innerHTML = '<div class="search-empty">Sepet yüklenemedi.</div>';
     }
   }
 
   async function setCartQuantity(cartKey, qty) {
-    if (!hasAjax) throw new Error("missing_ajax");
+    if (!hasAjax) {
+      throw new Error("missing_ajax");
+    }
 
     const payload = new FormData();
     payload.append("action", "polaris_set_cart_qty");
@@ -274,8 +292,13 @@
     payload.append("cart_key", cartKey);
     payload.append("qty", String(qty));
 
-    const response = await fetch(ajaxConfig.ajax_url, { method: "POST", body: payload });
-    const data = await response.json();
+    const response = await fetch(ajaxConfig.ajax_url, {
+      method: "POST",
+      body: payload,
+      credentials: "same-origin",
+    });
+    const data = await parseJsonResponse(response);
+
     if (!data?.success) {
       throw new Error("qty_update_failed");
     }
@@ -288,8 +311,12 @@
     payload.append("product_id", String(productId));
     payload.append("quantity", String(qty));
 
-    const response = await fetch("/?wc-ajax=add_to_cart", { method: "POST", body: payload });
-    const data = await response.json().catch(() => null);
+    const response = await fetch("/?wc-ajax=add_to_cart", {
+      method: "POST",
+      body: payload,
+      credentials: "same-origin",
+    });
+    const data = await parseJsonResponse(response).catch(() => null);
 
     if (data?.error) {
       throw new Error("add_to_cart_failed");
@@ -311,12 +338,16 @@
 
     try {
       await addToCart(productId, 1);
+      if (cartCountEl) {
+        const current = parseInt(cartCountEl.textContent || "0", 10) || 0;
+        cartCountEl.textContent = String(current + 1);
+      }
       await fetchMiniCart();
       openCartDrawer();
       bumpCartIcon();
-      showToast("Added to cart.");
+      showToast("Ürün sepete eklendi.");
     } catch {
-      showToast("Could not add product.");
+      showToast("Ürün sepete eklenemedi.");
     } finally {
       addButton.disabled = false;
     }
@@ -344,10 +375,10 @@
     try {
       await setCartQuantity(cartKey, qty);
       await fetchMiniCart();
-      showToast(qty === 0 ? "Item removed." : "Cart updated.");
+      showToast(qty === 0 ? "Ürün sepetten kaldırıldı." : "Sepet güncellendi.");
       bumpCartIcon();
     } catch {
-      showToast("Cart update failed.");
+      showToast("Sepet güncellenemedi.");
       await fetchMiniCart();
     }
   });
@@ -412,24 +443,28 @@
 
   const bottomNav = $(".bottom-nav");
   if (bottomNav) {
-    const path = window.location.pathname;
+    const path = window.location.pathname.toLowerCase();
     const tabs = $$("a[data-nav]", bottomNav);
 
     tabs.forEach((tab) => tab.classList.remove("is-active"));
 
     const mark = (key) => $("a[data-nav=\"" + key + "\"]", bottomNav)?.classList.add("is-active");
 
-    if (path === "/") {
+    if (path === "/" || path.includes("/anasayfa") || path.includes("/home")) {
       mark("home");
-    } else if (path.includes("shop") || path.includes("product") || path.includes("category")) {
+    } else if (path.includes("/shop") || path.includes("/magaza") || path.includes("/product") || path.includes("/category")) {
       mark("shop");
-    } else if (path.includes("cart")) {
+    } else if (path.includes("/cart") || path.includes("/sepet")) {
       mark("cart");
-    } else if (path.includes("my-account")) {
+    } else if (path.includes("/my-account") || path.includes("/hesabim")) {
       mark("account");
     } else {
       mark("home");
     }
+  }
+
+  if (hasAjax) {
+    fetchMiniCart();
   }
 
   const heroRoot = $("#polarisHero");

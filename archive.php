@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -19,7 +19,7 @@ get_header();
 
     <?php the_posts_pagination(); ?>
   <?php else : ?>
-    <p><?php echo esc_html__('No posts found.', 'polaris'); ?></p>
+    <p><?php echo esc_html__('Kayıt bulunamadı.', 'polaris'); ?></p>
   <?php endif; ?>
 </section>
 <?php
