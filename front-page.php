@@ -1,19 +1,9 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-// Enable error reporting
-error_reporting(E_ALL);
-@ini_set('display_errors', 0);
-
-// Start output buffering to catch render errors
-ob_start();
-
-try {
-
 /**
  * ===========================
  * Product card renderer
- * (Template içinde kalsın diye burada)
  * ===========================
  */
 if (!function_exists('polaris_render_product_card')) :
@@ -31,7 +21,7 @@ if (!function_exists('polaris_render_product_card')) :
     $is_sale    = $product->is_on_sale();
     $price_html = $product->get_price_html();
 
-    // Sale badge % hesap (varsa)
+    // Sale badge %
     $sale_badge = '';
     if ($is_sale) {
       $reg = (float) $product->get_regular_price();
@@ -45,7 +35,6 @@ if (!function_exists('polaris_render_product_card')) :
     }
 
     echo '<article class="p-card" data-product-id="' . esc_attr($pid) . '">';
-
     echo '  <a class="p-card__media" href="' . esc_url($link) . '">';
     echo '    <div class="p-card__badges">';
     if ($is_sale) echo '      <span class="badge badge-sale">' . esc_html($sale_badge) . '</span>';
@@ -63,7 +52,6 @@ if (!function_exists('polaris_render_product_card')) :
     echo '    <div class="p-card__price">' . wp_kses_post($price_html) . '</div>';
 
     if ($product->is_purchasable() && $product->is_in_stock()) {
-      // JS selector: .p-card__cta.ajax_add_to_cart
       echo '    <a href="' . esc_url($product->add_to_cart_url()) . '" data-quantity="1" class="p-card__cta add_to_cart_button ajax_add_to_cart" data-product_id="' . esc_attr($pid) . '" data-product_sku="' . esc_attr($product->get_sku()) . '">';
       echo '      <span>Sepete Ekle</span><i class="fa-solid fa-bag-shopping"></i>';
       echo '    </a>';
@@ -77,6 +65,7 @@ if (!function_exists('polaris_render_product_card')) :
 endif;
 
 get_header();
+
 
 /**
  * ===========================
@@ -273,25 +262,3 @@ $hero_autoplay = function_exists('polaris_hero_autoplay') ? polaris_hero_autopla
 </div><!-- /.container -->
 
 <?php get_footer();
-
-} catch (\Throwable $e) {
-    // Output buffering temizle
-    while (ob_get_level() > 0) {
-        ob_end_clean();
-    }
-    
-    // Hata logla
-    error_log("[FrontPage Fatal Error] " . $e->getMessage() . " | Trace: " . $e->getTraceAsString());
-    
-    // Admin'de göster (production'da sadece localhsot)
-    if (defined('WP_DEBUG') && WP_DEBUG) {
-        wp_die('<pre style="color: red; font-size: 14px; margin: 20px; background: #fdd; padding: 20px; border: 1px solid #f00; border-radius: 4px;">
-<strong>Frontend Error:</strong> ' . esc_html($e->getMessage()) . '
-<strong>File:</strong> ' . esc_html($e->getFile()) . ':' . esc_html($e->getLine()) . '
-<strong>Trace:</strong>
-' . esc_html($e->getTraceAsString()) . '
-        </pre>', 'Polaris Frontend Error', ['back_link' => true]);
-    } else {
-        wp_die('Sitede bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
-    }
-}

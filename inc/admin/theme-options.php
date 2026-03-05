@@ -10,11 +10,8 @@ function polaris_customize_register($wp_customize) {
   
   // Check if we have the Image Control class
   if (!class_exists('WP_Customize_Image_Control')) {
-    error_log('[polaris-customize] WP_Customize_Image_Control not found, skipping customizer setup');
     return;
   }
-  
-  try {
   
   // ========================================
   // SECTION: Hero Banner Settings
@@ -83,10 +80,6 @@ function polaris_customize_register($wp_customize) {
     'settings'    => 'polaris_hero_autoplay',
     'type'        => 'checkbox',
   ]);
-
-  } catch (Exception $e) {
-    error_log('[polaris-customize] Error: ' . $e->getMessage());
-  }
 
 }
 add_action('customize_register', 'polaris_customize_register');
