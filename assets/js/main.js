@@ -41,7 +41,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function unlockBody() {
-    if (cartDrawer?.classList.contains("is-open") || searchOverlay?.classList.contains("is-open")) {
+    if (
+      cartDrawer?.classList.contains("is-open") ||
+      searchOverlay?.classList.contains("is-open") ||
+      $("#polarisProductLightbox")?.classList.contains("is-open")
+    ) {
       return;
     }
     body.classList.remove("is-locked");
@@ -106,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function syncAllProductCards() {
-    $$(".p-card[data-product-id]").forEach((card) => {
+    $$("[data-product-card][data-product-id], .p-card[data-product-id]").forEach((card) => {
       const productId = String(card.getAttribute("data-product-id") || "");
       const item = cartState.get(productId) || null;
       applyCardState(card, item);
@@ -395,7 +399,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     event.preventDefault();
 
-    const card = addButton.closest(".p-card");
+    const card = addButton.closest("[data-product-card], .p-card");
     const productId = addButton.getAttribute("data-product-id") || card?.getAttribute("data-product-id");
     if (!productId) return;
 
@@ -421,8 +425,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     event.preventDefault();
 
-    const card = event.target.closest(".p-card");
-    const productId = String(card?.getAttribute("data-product-id") || "");
+    const sourceButton = plus || minus;
+    const card = sourceButton?.closest("[data-product-card], .p-card");
+    const productId = String(sourceButton?.getAttribute("data-product-id") || card?.getAttribute("data-product-id") || "");
     if (!productId) return;
 
     const current = cartState.get(productId);
@@ -570,6 +575,190 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (hasAjax) {
     fetchMiniCart();
+  }
+
+  const productTabs = $("#polarisProductTabs");
+  if (productTabs) {
+    const tabButtons = $$("[data-pd-tab-btn]", productTabs);
+    const tabPanels = $$("[data-pd-tab-panel]", productTabs);
+
+    const setActiveTab = (key) => {
+      tabButtons.forEach((button) => {
+        const isActive = button.getAttribute("data-pd-tab-btn") === key;
+        button.classList.toggle("is-active", isActive);
+        button.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+
+      tabPanels.forEach((panel) => {
+        const isActive = panel.getAttribute("data-pd-tab-panel") === key;
+        panel.classList.toggle("is-active", isActive);
+      });
+    };
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const key = button.getAttribute("data-pd-tab-btn") || "description";
+        setActiveTab(key);
+      });
+    });
+  }
+
+  const productGallery = $("#polarisProductGallery");
+  if (productGallery) {
+    const viewer = $(".pd-gallery__viewer", productGallery);
+    const slides = $$(".pd-gallery__slide", productGallery);
+    const thumbs = $$(".pd-gallery__thumb", productGallery);
+    const prevButton = $("[data-pd-prev]", productGallery);
+    const nextButton = $("[data-pd-next]", productGallery);
+
+    const lightbox = $("#polarisProductLightbox");
+    const lightboxTrack = $(".pd-lightbox__track", lightbox || document);
+    const lightboxSlides = $$("[data-pd-lightbox-slide]", lightbox || document);
+    const lightboxPrev = $("[data-pd-lightbox-prev]", lightbox || document);
+    const lightboxNext = $("[data-pd-lightbox-next]", lightbox || document);
+    const lightboxClose = $("[data-pd-lightbox-close]", lightbox || document);
+
+    let current = 0;
+    let touchStartX = 0;
+    let touchDiffX = 0;
+    let galleryTouchStartX = 0;
+    let galleryTouchDiffX = 0;
+    let preventLightboxClick = false;
+
+    const slideCount = slides.length;
+
+    const applyGallery = (index) => {
+      if (!slideCount) return;
+      current = (index + slideCount) % slideCount;
+
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle("is-active", idx === current);
+      });
+
+      thumbs.forEach((thumb, idx) => {
+        thumb.classList.toggle("is-active", idx === current);
+      });
+    };
+
+    const applyLightbox = (index) => {
+      if (!lightboxSlides.length) return;
+      lightboxSlides.forEach((slide, idx) => {
+        slide.classList.toggle("is-active", idx === index);
+      });
+    };
+
+    const openLightbox = (index) => {
+      if (!lightbox) return;
+
+      applyGallery(index);
+      applyLightbox(current);
+
+      lightbox.classList.remove("hidden");
+      requestAnimationFrame(() => lightbox.classList.add("is-open"));
+      lightbox.setAttribute("aria-hidden", "false");
+      lockBody();
+    };
+
+    const closeLightbox = () => {
+      if (!lightbox) return;
+
+      lightbox.classList.remove("is-open");
+      lightbox.setAttribute("aria-hidden", "true");
+      setTimeout(() => {
+        lightbox.classList.add("hidden");
+        unlockBody();
+      }, 200);
+    };
+
+    slides.forEach((slide, idx) => {
+      slide.addEventListener("click", () => {
+        if (preventLightboxClick) return;
+        openLightbox(idx);
+      });
+    });
+
+    thumbs.forEach((thumb, idx) => {
+      thumb.addEventListener("click", () => applyGallery(idx));
+    });
+
+    prevButton?.addEventListener("click", () => applyGallery(current - 1));
+    nextButton?.addEventListener("click", () => applyGallery(current + 1));
+
+    const showPrev = () => {
+      applyGallery(current - 1);
+      applyLightbox(current);
+    };
+
+    const showNext = () => {
+      applyGallery(current + 1);
+      applyLightbox(current);
+    };
+
+    lightboxPrev?.addEventListener("click", showPrev);
+    lightboxNext?.addEventListener("click", showNext);
+    lightboxClose?.addEventListener("click", closeLightbox);
+
+    lightbox?.addEventListener("click", (event) => {
+      if (event.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    lightboxTrack?.addEventListener("touchstart", (event) => {
+      touchStartX = event.changedTouches?.[0]?.clientX || 0;
+      touchDiffX = 0;
+    });
+
+    lightboxTrack?.addEventListener("touchmove", (event) => {
+      const currentX = event.changedTouches?.[0]?.clientX || 0;
+      touchDiffX = currentX - touchStartX;
+    });
+
+    lightboxTrack?.addEventListener("touchend", () => {
+      if (Math.abs(touchDiffX) < 45) return;
+      if (touchDiffX < 0) showNext();
+      if (touchDiffX > 0) showPrev();
+    });
+
+    viewer?.addEventListener("touchstart", (event) => {
+      galleryTouchStartX = event.changedTouches?.[0]?.clientX || 0;
+      galleryTouchDiffX = 0;
+    });
+
+    viewer?.addEventListener("touchmove", (event) => {
+      const currentX = event.changedTouches?.[0]?.clientX || 0;
+      galleryTouchDiffX = currentX - galleryTouchStartX;
+    });
+
+    viewer?.addEventListener("touchend", () => {
+      if (Math.abs(galleryTouchDiffX) < 40) return;
+
+      preventLightboxClick = true;
+      if (galleryTouchDiffX < 0) applyGallery(current + 1);
+      if (galleryTouchDiffX > 0) applyGallery(current - 1);
+
+      setTimeout(() => {
+        preventLightboxClick = false;
+      }, 220);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (!lightbox?.classList.contains("is-open")) return;
+
+      if (event.key === "Escape") {
+        closeLightbox();
+      }
+
+      if (event.key === "ArrowLeft") {
+        showPrev();
+      }
+
+      if (event.key === "ArrowRight") {
+        showNext();
+      }
+    });
+
+    applyGallery(0);
   }
 
   const heroRoot = $("#polarisHero");
