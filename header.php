@@ -19,6 +19,7 @@ $cart_url   = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url(
 $account_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_login_url();
 $shop_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');
 $cart_count = (function_exists('WC') && WC()->cart) ? (int) WC()->cart->get_cart_contents_count() : 0;
+$zero_price = function_exists('wc_price') ? wc_price(0) : '0';
 ?>
 
 <header class="header" role="banner">
@@ -118,6 +119,20 @@ $cart_count = (function_exists('WC') && WC()->cart) ? (int) WC()->cart->get_cart
     </div>
 
     <div class="polaris-drawer__bottom">
+      <div class="polaris-minicart-summary" id="polarisMiniCartSummary">
+        <div class="polaris-minicart-summary__row">
+          <span><?php echo esc_html__('Ara toplam', 'polaris'); ?></span>
+          <strong id="polarisMiniCartSubtotal"><?php echo wp_kses_post($zero_price); ?></strong>
+        </div>
+        <div class="polaris-minicart-summary__row">
+          <span><?php echo esc_html__('Kargo bedeli', 'polaris'); ?></span>
+          <strong id="polarisMiniCartShipping"><?php echo esc_html__('Hesaplanıyor...', 'polaris'); ?></strong>
+        </div>
+        <div class="polaris-minicart-summary__row polaris-minicart-summary__row--total">
+          <span><?php echo esc_html__('Toplam', 'polaris'); ?></span>
+          <strong id="polarisMiniCartTotal"><?php echo wp_kses_post($zero_price); ?></strong>
+        </div>
+      </div>
       <a class="btn btn-primary" href="<?php echo esc_url($cart_url); ?>" style="width:100%;"><?php echo esc_html__('Sepete git', 'polaris'); ?></a>
       <a class="btn btn-ghost" href="<?php echo esc_url($shop_url); ?>" style="width:100%;margin-top:8px;"><?php echo esc_html__('Alışverişe devam et', 'polaris'); ?></a>
     </div>

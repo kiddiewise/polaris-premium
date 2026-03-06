@@ -46,23 +46,24 @@ function polaris_get_minicart() {
 
             echo '<div class="polaris-minicart-item" data-cart-key="' . esc_attr($cart_item_key) . '">';
             echo '  <a class="polaris-minicart-thumb" href="' . esc_url(get_permalink($product_id)) . '">' . $image . '</a>';
-            echo '  <div>';
+            echo '  <div class="polaris-minicart-content">';
             echo '    <div class="polaris-minicart-title">' . esc_html($title) . '</div>';
             echo '    <div class="polaris-minicart-meta">';
-            echo '      <div>' . wp_kses_post($price) . '</div>';
-            echo '      <div class="qty-stepper">';
-            echo '        <button type="button" data-qty-minus aria-label="Azalt">-</button>';
-            echo '        <span data-qty-val>' . esc_html((string) $qty) . '</span>';
-            echo '        <button type="button" data-qty-plus aria-label="Arttır">+</button>';
+            echo '      <div class="polaris-minicart-price">' . wp_kses_post($price) . '</div>';
+            echo '      <div class="polaris-minicart-actions">';
+            echo '        <div class="qty-stepper">';
+            echo '          <button type="button" data-qty-minus aria-label="Azalt">-</button>';
+            echo '          <span data-qty-val>' . esc_html((string) $qty) . '</span>';
+            echo '          <button type="button" data-qty-plus aria-label="Arttır">+</button>';
+            echo '        </div>';
+            echo '        <button type="button" class="polaris-minicart-remove" data-qty-remove aria-label="Ürünü kaldır">';
+            echo '          <i class="fa-regular fa-trash-can" aria-hidden="true"></i>';
+            echo '        </button>';
             echo '      </div>';
             echo '    </div>';
             echo '  </div>';
             echo '</div>';
         }
-
-        echo '<div class="polaris-minicart-total">';
-        echo esc_html__('Toplam:', 'polaris') . ' <strong>' . wp_kses_post($cart->get_cart_total()) . '</strong>';
-        echo '</div>';
     }
 
     $html = ob_get_clean();
@@ -70,13 +71,27 @@ function polaris_get_minicart() {
     $count     = (int) $cart->get_cart_contents_count();
     $threshold = 1000.0;
     $subtotal  = (float) $cart->get_cart_contents_total();
+    $shipping  = (float) $cart->get_shipping_total() + (float) $cart->get_shipping_tax();
+    $total     = (float) $cart->get_total('edit');
     $remaining = max(0.0, $threshold - $subtotal);
     $percent   = $threshold > 0 ? min(100, (int) round(($subtotal / $threshold) * 100)) : 0;
+    if ($subtotal >= $threshold) {
+        $shipping_label = esc_html__('Ücretsiz kargo', 'polaris');
+    } elseif ($shipping > 0.0) {
+        $shipping_label = wc_price($shipping);
+    } else {
+        $shipping_label = esc_html__('Hesaplanacak', 'polaris');
+    }
 
     wp_send_json_success([
         'html'     => $html,
         'count'    => $count,
         'items'    => array_values($items),
+        'summary'  => [
+            'subtotal' => wc_price($subtotal),
+            'shipping' => $shipping_label,
+            'total'    => wc_price($total),
+        ],
         'freeship' => [
             'threshold' => $threshold,
             'subtotal'  => $subtotal,

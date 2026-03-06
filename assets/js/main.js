@@ -21,6 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const freeshipWrap = $("#polarisFreeShip");
   const freeshipText = $("#polarisFreeShipText");
   const freeshipFill = $("#polarisFreeShipFill");
+  const miniCartSubtotalEl = $("#polarisMiniCartSubtotal");
+  const miniCartShippingEl = $("#polarisMiniCartShipping");
+  const miniCartTotalEl = $("#polarisMiniCartTotal");
 
   const searchState = { timer: null, controller: null };
   const cartState = new Map();
@@ -323,6 +326,14 @@ document.addEventListener("DOMContentLoaded", () => {
     freeshipFill.style.width = `${percent}%`;
   }
 
+  function updateCartSummary(summary) {
+    if (!miniCartSubtotalEl || !miniCartShippingEl || !miniCartTotalEl) return;
+
+    miniCartSubtotalEl.innerHTML = summary?.subtotal || "-";
+    miniCartShippingEl.innerHTML = summary?.shipping || "-";
+    miniCartTotalEl.innerHTML = summary?.total || "-";
+  }
+
   async function fetchMiniCart() {
     if (!hasAjax || !miniCartEl) return;
 
@@ -343,9 +354,11 @@ document.addEventListener("DOMContentLoaded", () => {
       miniCartEl.innerHTML = data.data?.html || "";
       updateCartCounts(data.data?.count || 0);
       updateFreeship(data.data?.freeship);
+      updateCartSummary(data.data?.summary);
       updateCartState(data.data?.items || []);
     } catch {
       miniCartEl.innerHTML = '<div class="search-empty">Sepet yüklenemedi.</div>';
+      updateCartSummary();
     }
   }
 
@@ -466,7 +479,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", async (event) => {
     const plus = event.target.closest("[data-qty-plus]");
     const minus = event.target.closest("[data-qty-minus]");
-    if (!plus && !minus) return;
+    const remove = event.target.closest("[data-qty-remove]");
+    if (!plus && !minus && !remove) return;
 
     const item = event.target.closest(".polaris-minicart-item");
     if (!item) return;
@@ -477,7 +491,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!cartKey || !valueEl) return;
 
     let qty = parseInt(valueEl.textContent || "1", 10);
-    qty = plus ? qty + 1 : qty - 1;
+    if (remove) {
+      qty = 0;
+    } else {
+      qty = plus ? qty + 1 : qty - 1;
+    }
     qty = Math.max(0, qty);
 
     valueEl.textContent = String(qty);
