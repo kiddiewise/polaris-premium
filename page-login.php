@@ -68,9 +68,13 @@ $logo_image = $logo_id ? wp_get_attachment_image($logo_id, 'full', false, [
 
           <?php if (function_exists('WC') && WC()) : ?>
             <?php
-            $wc_my_account_template = WC()->plugin_path() . '/templates/myaccount/my-account.php';
-            if (file_exists($wc_my_account_template)) {
-                include $wc_my_account_template;
+            // Misafir kullanicida form-login, oturum acik kullanicida panel template'i render edilir.
+            $wc_template = is_user_logged_in()
+                ? WC()->plugin_path() . '/templates/myaccount/my-account.php'
+                : WC()->plugin_path() . '/templates/myaccount/form-login.php';
+
+            if (file_exists($wc_template)) {
+                include $wc_template;
             }
             ?>
           <?php else : ?>

@@ -7,12 +7,22 @@ if (!function_exists('WC') || !WC()) {
     return;
 }
 
-$template = WC()->plugin_path() . '/templates/myaccount/my-account.php';
-$template_exists = file_exists($template);
+$account_template = WC()->plugin_path() . '/templates/myaccount/my-account.php';
+$login_template   = WC()->plugin_path() . '/templates/myaccount/form-login.php';
 
-if (is_user_logged_in() || !$template_exists) {
-    if ($template_exists) {
-        include $template;
+$account_template_exists = file_exists($account_template);
+$login_template_exists   = file_exists($login_template);
+
+if (is_user_logged_in()) {
+    if ($account_template_exists) {
+        include $account_template;
+    }
+    return;
+}
+
+if (!$login_template_exists) {
+    if ($account_template_exists) {
+        include $account_template;
     }
     return;
 }
@@ -62,7 +72,7 @@ $logo_image = $logo_id ? wp_get_attachment_image($logo_id, 'full', false, [
             <p><?php esc_html_e('Google ile giris butonu formlarin icinde otomatik yer alir.', 'polaris'); ?></p>
           </header>
 
-          <?php include $template; ?>
+          <?php include $login_template; ?>
         </article>
       </div>
     </div>
