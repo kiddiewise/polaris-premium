@@ -3218,3 +3218,122 @@ body.woocommerce-checkout .polaris-checkout-form #place_order:hover {
     height: 58px;
   }
 }
+
+/* Checkout Fix Pass */
+body.woocommerce-checkout .container.polaris-checkout-page {
+  width: min(96%, 1520px);
+  max-width: 1520px;
+}
+
+body.woocommerce-checkout .woocommerce-form-coupon-toggle,
+body.woocommerce-checkout form.checkout_coupon {
+  display: none !important;
+}
+
+body.woocommerce-checkout .polaris-checkout-shell {
+  padding: 24px;
+}
+
+body.woocommerce-checkout .polaris-checkout-form .polaris-checkout-layout {
+  grid-template-columns: minmax(0, 1.24fr) minmax(360px, .76fr);
+  gap: 20px;
+}
+
+body.woocommerce-checkout .polaris-checkout-main #customer_details {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+body.woocommerce-checkout .polaris-checkout-main #customer_details > .col-1,
+body.woocommerce-checkout .polaris-checkout-main #customer_details > .col-2 {
+  float: none;
+  width: auto;
+  margin: 0;
+}
+
+body.woocommerce-checkout .polaris-checkout-main #customer_details > .polaris-checkout-card:only-child {
+  grid-column: 1 / -1;
+}
+
+body.woocommerce-checkout .polaris-checkout-form .woocommerce-billing-fields__field-wrapper,
+body.woocommerce-checkout .polaris-checkout-form .woocommerce-shipping-fields__field-wrapper,
+body.woocommerce-checkout .polaris-checkout-form .woocommerce-additional-fields__field-wrapper {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+body.woocommerce-checkout .polaris-checkout-form .form-row {
+  min-width: 0;
+}
+
+body.woocommerce-checkout .polaris-checkout-form input.input-text,
+body.woocommerce-checkout .polaris-checkout-form select,
+body.woocommerce-checkout .polaris-checkout-form textarea {
+  width: 100%;
+  background: rgba(7, 18, 30, .78);
+  color: #eaf2fb;
+  border: 1px solid rgba(255, 255, 255, .18);
+  box-shadow: none;
+}
+
+body.woocommerce-checkout .polaris-checkout-form input.input-text::placeholder,
+body.woocommerce-checkout .polaris-checkout-form textarea::placeholder {
+  color: rgba(193, 210, 227, .72);
+}
+
+body.woocommerce-checkout .polaris-checkout-form input.input-text:focus,
+body.woocommerce-checkout .polaris-checkout-form select:focus,
+body.woocommerce-checkout .polaris-checkout-form textarea:focus {
+  border-color: rgba(243, 135, 47, .72);
+  box-shadow: 0 0 0 3px rgba(243, 135, 47, .2);
+}
+
+body.woocommerce-checkout .polaris-checkout-form .select2-container {
+  width: 100% !important;
+}
+
+body.woocommerce-checkout .polaris-checkout-form .select2-container .select2-selection--single {
+  border: 1px solid rgba(255, 255, 255, .18);
+  background: rgba(7, 18, 30, .78);
+  color: #eaf2fb;
+}
+
+body.woocommerce-checkout .polaris-checkout-form .select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #eaf2fb;
+}
+
+body.woocommerce-checkout .polaris-checkout-form .select2-container--default .select2-selection--single .select2-selection__arrow b {
+  border-color: #dce8f4 transparent transparent transparent;
+}
+
+@media (max-width: 1200px) {
+  body.woocommerce-checkout .polaris-checkout-form .polaris-checkout-layout {
+    grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr);
+  }
+}
+
+@media (max-width: 900px) {
+  body.woocommerce-checkout .container.polaris-checkout-page {
+    width: min(96%, 720px);
+  }
+
+  body.woocommerce-checkout .polaris-checkout-shell {
+    padding: 12px;
+  }
+
+  body.woocommerce-checkout .polaris-checkout-form .polaris-checkout-layout {
+    grid-template-columns: 1fr;
+  }
+
+  body.woocommerce-checkout .polaris-checkout-main #customer_details,
+  body.woocommerce-checkout .polaris-checkout-form .woocommerce-billing-fields__field-wrapper,
+  body.woocommerce-checkout .polaris-checkout-form .woocommerce-shipping-fields__field-wrapper,
+  body.woocommerce-checkout .polaris-checkout-form .woocommerce-additional-fields__field-wrapper {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  body.woocommerce-checkout .polaris-checkout-main #customer_details > .polaris-checkout-card:only-child {
+    grid-column: auto;
+  }
+}
