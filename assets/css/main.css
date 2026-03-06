@@ -1264,6 +1264,10 @@ body.is-locked {
   padding-right: 8px;
 }
 
+.pd-variant__main {
+  min-width: 0;
+}
+
 .pd-variant__price {
   margin-top: 4px;
   color: #fff;
@@ -1284,6 +1288,8 @@ body.is-locked {
 
 .pd-variant__actions {
   justify-self: end;
+  display: inline-flex;
+  align-items: center;
 }
 
 .pd-variant__add {
@@ -1655,7 +1661,9 @@ body.is-locked {
 
   .pd-gallery__viewer,
   .pd-gallery__slide {
-    min-height: 340px;
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+    max-height: min(58vh, 340px);
   }
 
   .pd-info {
@@ -1672,7 +1680,7 @@ body.is-locked {
   }
 
   .pd-variant {
-    grid-template-columns: 56px 1fr auto;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
     padding: 9px 10px;
   }
 
@@ -1683,6 +1691,8 @@ body.is-locked {
 
   .pd-variant__title {
     font-size: .92rem;
+    line-height: 1.24;
+    word-break: break-word;
   }
 
   .pd-variant__price {
@@ -1793,6 +1803,46 @@ body.is-locked {
   .section-title a {
     font-size: .82rem;
     white-space: nowrap;
+  }
+
+  .pd-gallery__viewer,
+  .pd-gallery__slide {
+    max-height: min(50vh, 280px);
+  }
+
+  .pd-gallery__thumb {
+    width: 62px;
+    height: 62px;
+  }
+
+  .pd-variant {
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    padding: 8px;
+  }
+
+  .pd-variant__thumb {
+    width: 52px;
+    height: 52px;
+  }
+
+  .pd-variant__title {
+    font-size: .86rem;
+  }
+
+  .pd-variant__add {
+    width: 36px;
+    height: 36px;
+    font-size: .92rem;
+  }
+
+  .pd-variant__qty {
+    padding: 3px;
+    gap: 4px;
+  }
+
+  .pd-variant__qty .p-card__qty-btn {
+    width: 30px;
+    height: 30px;
   }
 }
 

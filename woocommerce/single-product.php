@@ -87,6 +87,57 @@ if (!function_exists('polaris_single_render_family_item')) {
     }
 }
 
+if (!function_exists('polaris_single_pick_primary_category')) {
+    function polaris_single_pick_primary_category($product_id, $categories) {
+        if (empty($categories) || is_wp_error($categories)) {
+            return null;
+        }
+
+        $term_map = [];
+        foreach ($categories as $term) {
+            if ($term instanceof WP_Term) {
+                $term_map[(int) $term->term_id] = $term;
+            }
+        }
+
+        $primary_id = (int) get_post_meta($product_id, '_yoast_wpseo_primary_product_cat', true);
+        if ($primary_id <= 0) {
+            $primary_id = (int) get_post_meta($product_id, 'rank_math_primary_product_cat', true);
+        }
+
+        if ($primary_id > 0 && isset($term_map[$primary_id])) {
+            return $term_map[$primary_id];
+        }
+
+        $non_generic_terms = array_values(array_filter($categories, function ($term) {
+            if (!($term instanceof WP_Term)) {
+                return false;
+            }
+
+            $term_slug = sanitize_title($term->slug);
+            $term_name = wp_strip_all_tags($term->name);
+            $term_name = function_exists('mb_strtolower') ? mb_strtolower($term_name) : strtolower($term_name);
+
+            return $term_slug !== 'genel' && $term_name !== 'genel';
+        }));
+
+        $pool = !empty($non_generic_terms) ? $non_generic_terms : $categories;
+
+        usort($pool, function ($a, $b) {
+            $a_depth = count(get_ancestors((int) $a->term_id, 'product_cat'));
+            $b_depth = count(get_ancestors((int) $b->term_id, 'product_cat'));
+
+            if ($a_depth !== $b_depth) {
+                return $b_depth <=> $a_depth;
+            }
+
+            return (int) $a->term_id <=> (int) $b->term_id;
+        });
+
+        return $pool[0] ?? null;
+    }
+}
+
 get_header();
 
 echo "\n<!-- Polaris Custom Product Detail Template -->\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -142,18 +193,23 @@ while (have_posts()) :
     $primary_category = null;
     $family_products  = [$product];
 
-    if (!is_wp_error($categories) && !empty($categories)) {
-        $primary_category = $categories[0];
-    }
+    $primary_category = polaris_single_pick_primary_category($product_id, $categories);
 
     if ($primary_category && class_exists('WC_Product_Query')) {
         $family_query = new WC_Product_Query([
-            'status'   => 'publish',
-            'limit'    => -1,
-            'orderby'  => 'menu_order',
-            'order'    => 'ASC',
-            'category' => [$primary_category->slug],
-            'return'   => 'objects',
+            'status'    => 'publish',
+            'limit'     => -1,
+            'orderby'   => 'menu_order',
+            'order'     => 'ASC',
+            'return'    => 'objects',
+            'tax_query' => [
+                [
+                    'taxonomy'         => 'product_cat',
+                    'field'            => 'term_id',
+                    'terms'            => [(int) $primary_category->term_id],
+                    'include_children' => false,
+                ],
+            ],
         ]);
 
         $family_products = $family_query->get_products();
