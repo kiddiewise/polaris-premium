@@ -595,6 +595,71 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchMiniCart();
   }
 
+  const cartPageForm = $(".polaris-cart-form");
+  if (cartPageForm) {
+    const updateButton = $("[name='update_cart']", cartPageForm);
+
+    const commitCartUpdate = () => {
+      if (!updateButton) return;
+      updateButton.disabled = false;
+      updateButton.click();
+    };
+
+    cartPageForm.addEventListener("click", (event) => {
+      const plus = event.target.closest("[data-cart-qty-plus]");
+      const minus = event.target.closest("[data-cart-qty-minus]");
+      if (!plus && !minus) return;
+
+      event.preventDefault();
+
+      const wrap = (plus || minus).closest("[data-cart-qty]");
+      const input = $("input.qty", wrap || document);
+      if (!input) return;
+
+      const current = Number(input.value || 0);
+      const min = Number(input.getAttribute("min") || 0);
+      const maxAttr = Number(input.getAttribute("max"));
+      const max = Number.isNaN(maxAttr) || maxAttr <= 0 ? Infinity : maxAttr;
+      const stepAttr = Number(input.getAttribute("step"));
+      const step = Number.isNaN(stepAttr) || stepAttr <= 0 ? 1 : stepAttr;
+      const precision = String(step).includes(".") ? String(step).split(".")[1].length : 0;
+
+      let next = plus ? current + step : current - step;
+      next = Math.max(min, Math.min(max, next));
+
+      input.value = precision > 0 ? next.toFixed(precision) : String(Math.round(next));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      commitCartUpdate();
+    });
+  }
+
+  const checkoutPage = $(".polaris-checkout-page");
+  if (checkoutPage) {
+    const summary = $("[data-checkout-summary]", checkoutPage);
+    const toggle = $("[data-checkout-summary-toggle]", checkoutPage);
+
+    const setSummaryOpen = (open) => {
+      if (!summary) return;
+      summary.classList.toggle("is-open", open);
+      toggle?.setAttribute("aria-expanded", open ? "true" : "false");
+    };
+
+    const mobileQuery = window.matchMedia("(max-width: 900px)");
+    const syncCheckoutSummary = () => setSummaryOpen(!mobileQuery.matches);
+
+    syncCheckoutSummary();
+    if (typeof mobileQuery.addEventListener === "function") {
+      mobileQuery.addEventListener("change", syncCheckoutSummary);
+    } else if (typeof mobileQuery.addListener === "function") {
+      mobileQuery.addListener(syncCheckoutSummary);
+    }
+
+    toggle?.addEventListener("click", () => {
+      const isOpen = summary?.classList.contains("is-open");
+      setSummaryOpen(!isOpen);
+    });
+  }
+
   const productTabs = $("#polarisProductTabs");
   if (productTabs) {
     const tabButtons = $$("[data-pd-tab-btn]", productTabs);
