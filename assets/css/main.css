@@ -3337,3 +3337,129 @@ body.woocommerce-checkout .polaris-checkout-form .select2-container--default .se
     grid-column: auto;
   }
 }
+
+/* Google Login */
+.polaris-google-login {
+  margin-top: 12px;
+}
+
+.polaris-google-login__button {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  background: linear-gradient(145deg, rgba(19, 39, 61, .94), rgba(12, 29, 48, .92));
+  color: #eef5fc;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: .18s var(--ease);
+}
+
+.polaris-google-login__button:hover {
+  border-color: rgba(255, 255, 255, .28);
+  transform: translateY(-1px);
+}
+
+.polaris-google-login__button:disabled {
+  opacity: .72;
+  cursor: not-allowed;
+}
+
+.polaris-google-login__button.is-loading {
+  filter: saturate(.8);
+}
+
+.polaris-google-login__icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+}
+
+.polaris-google-login__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.polaris-google-login__label {
+  font-weight: 600;
+}
+
+.polaris-google-login__status {
+  margin: 8px 2px 0;
+  min-height: 18px;
+  font-size: .83rem;
+  color: rgba(214, 228, 244, .86);
+}
+
+.polaris-google-login__status.is-success {
+  color: #76d3a0;
+}
+
+.polaris-google-login__status.is-error {
+  color: #ff9797;
+}
+
+.polaris-auth-page {
+  padding: 20px 0 36px;
+}
+
+.polaris-auth-shell {
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  padding: 18px;
+  background:
+    radial-gradient(circle at 8% 0, rgba(243, 135, 47, .18), transparent 34%),
+    linear-gradient(145deg, rgba(10, 25, 42, .95), rgba(11, 29, 49, .9));
+}
+
+.polaris-auth-head h1 {
+  margin: 8px 0 6px;
+  font-size: clamp(1.22rem, 2.2vw, 1.9rem);
+}
+
+.polaris-auth-head p {
+  margin: 0;
+  color: rgba(214, 228, 244, .84);
+}
+
+.polaris-auth-kicker {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(243, 135, 47, .46);
+  color: #ffe4cd;
+  background: rgba(243, 135, 47, .13);
+  font-size: .74rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+}
+
+.polaris-auth-card {
+  margin-top: 14px;
+  padding: 16px;
+}
+
+.polaris-auth-card .woocommerce {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .polaris-auth-page {
+    padding: 10px 0 22px;
+  }
+
+  .polaris-auth-shell {
+    padding: 12px;
+    border-radius: 20px;
+  }
+
+  .polaris-auth-card {
+    margin-top: 10px;
+    padding: 12px;
+  }
+}
