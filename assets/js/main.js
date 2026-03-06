@@ -691,6 +691,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewer = $(".pd-gallery__viewer", productGallery);
     const slides = $$(".pd-gallery__slide", productGallery);
     const thumbs = $$(".pd-gallery__thumb", productGallery);
+    const thumbsRail = $(".pd-gallery__thumbs", productGallery);
     const prevButton = $("[data-pd-prev]", productGallery);
     const nextButton = $("[data-pd-next]", productGallery);
 
@@ -710,9 +711,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const slideCount = slides.length;
 
-    const applyGallery = (index) => {
+    const keepThumbVisible = (index, smooth = true) => {
+      const thumb = thumbs[index];
+      if (!thumbsRail || !thumb) return;
+      thumb.scrollIntoView({
+        behavior: smooth ? "smooth" : "auto",
+        block: "nearest",
+        inline: "center",
+      });
+    };
+
+    const applyGallery = (index, options = {}) => {
       if (!slideCount) return;
       current = (index + slideCount) % slideCount;
+      const smoothThumb = options.smoothThumb !== false;
 
       slides.forEach((slide, idx) => {
         slide.classList.toggle("is-active", idx === current);
@@ -721,6 +733,8 @@ document.addEventListener("DOMContentLoaded", () => {
       thumbs.forEach((thumb, idx) => {
         thumb.classList.toggle("is-active", idx === current);
       });
+
+      keepThumbVisible(current, smoothThumb);
     };
 
     const applyLightbox = (index) => {
@@ -841,7 +855,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    applyGallery(0);
+    applyGallery(0, { smoothThumb: false });
   }
 
   const heroRoot = $("#polarisHero");

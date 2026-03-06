@@ -1016,10 +1016,12 @@ body.is-locked {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, .03);
+  min-width: 0;
 }
 
 .pd-gallery {
   padding: 14px;
+  overflow: hidden;
 }
 
 .pd-gallery__viewer {
@@ -1081,9 +1083,16 @@ body.is-locked {
   margin-top: 12px;
   display: flex;
   gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
+  overflow-y: hidden;
   padding-bottom: 2px;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  scroll-snap-type: x proximity;
 }
 
 .pd-gallery__thumbs::-webkit-scrollbar {
@@ -1094,6 +1103,7 @@ body.is-locked {
   width: 74px;
   height: 74px;
   flex: 0 0 auto;
+  scroll-snap-align: start;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, .16);
   padding: 4px;
