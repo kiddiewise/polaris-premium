@@ -66,21 +66,66 @@ function polaris_get_account_entry_url()
  * Login sayfasi block template kaynakli bos gelse bile
  * dogrudan page-login.php render edilir.
  */
+function polaris_mark_account_pages_uncacheable()
+{
+    if (!defined('DONOTCACHEPAGE')) {
+        define('DONOTCACHEPAGE', true);
+    }
+
+    if (!defined('DONOTCACHEDB')) {
+        define('DONOTCACHEDB', true);
+    }
+
+    if (!defined('DONOTMINIFY')) {
+        define('DONOTMINIFY', true);
+    }
+
+    nocache_headers();
+}
+
 function polaris_force_login_page_template()
 {
     if (is_admin() || wp_doing_ajax() || !is_page()) {
         return;
     }
 
+    $my_account_url = function_exists('wc_get_page_permalink')
+        ? wc_get_page_permalink('myaccount')
+        : home_url('/');
+
     $login_page_url = polaris_get_login_page_url();
     if (empty($login_page_url)) {
+        if (function_exists('is_account_page') && is_account_page()) {
+            polaris_mark_account_pages_uncacheable();
+        }
         return;
     }
 
     $login_page_id   = url_to_postid($login_page_url);
     $current_page_id = get_queried_object_id();
+    $is_login_page   = !empty($login_page_id) && (int) $login_page_id === (int) $current_page_id;
 
-    if (empty($login_page_id) || (int) $login_page_id !== (int) $current_page_id) {
+    if (function_exists('is_account_page') && is_account_page()) {
+        polaris_mark_account_pages_uncacheable();
+    }
+
+    if ($is_login_page) {
+        polaris_mark_account_pages_uncacheable();
+    }
+
+    // Giris yapmis kullanici /giris'e girerse panel sayfasina yonlendir.
+    if ($is_login_page && is_user_logged_in()) {
+        wp_safe_redirect($my_account_url);
+        exit;
+    }
+
+    // Giris yapmamis kullanici /my-account* acarsa /giris'e yonlendir.
+    if (!is_user_logged_in() && function_exists('is_account_page') && is_account_page() && !$is_login_page) {
+        wp_safe_redirect($login_page_url);
+        exit;
+    }
+
+    if (!$is_login_page) {
         return;
     }
 

@@ -8,6 +8,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+if (is_user_logged_in()) {
+    $account_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : home_url('/');
+    wp_safe_redirect($account_url);
+    exit;
+}
+
+if (!defined('DONOTCACHEPAGE')) {
+    define('DONOTCACHEPAGE', true);
+}
+nocache_headers();
+
 get_header();
 
 $logo_id    = get_theme_mod('custom_logo');
