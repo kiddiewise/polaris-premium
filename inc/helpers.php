@@ -50,6 +50,10 @@ function polaris_get_account_entry_url()
         ? wc_get_page_permalink('myaccount')
         : wp_login_url();
 
+    if (is_user_logged_in()) {
+        return $my_account_url;
+    }
+
     $login_page_url = polaris_get_login_page_url();
     if (!empty($login_page_url)) {
         return $login_page_url;
@@ -57,3 +61,36 @@ function polaris_get_account_entry_url()
 
     return $my_account_url;
 }
+
+/**
+ * Login sayfasi block template kaynakli bos gelse bile
+ * dogrudan page-login.php render edilir.
+ */
+function polaris_force_login_page_template()
+{
+    if (is_admin() || wp_doing_ajax() || !is_page()) {
+        return;
+    }
+
+    $login_page_url = polaris_get_login_page_url();
+    if (empty($login_page_url)) {
+        return;
+    }
+
+    $login_page_id   = url_to_postid($login_page_url);
+    $current_page_id = get_queried_object_id();
+
+    if (empty($login_page_id) || (int) $login_page_id !== (int) $current_page_id) {
+        return;
+    }
+
+    $template_file = get_template_directory() . '/page-login.php';
+    if (!file_exists($template_file)) {
+        return;
+    }
+
+    status_header(200);
+    include $template_file;
+    exit;
+}
+add_action('template_redirect', 'polaris_force_login_page_template', 0);
