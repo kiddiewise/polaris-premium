@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 <?php
 $cart_url   = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/');
-$account_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_login_url();
+$account_url = function_exists('polaris_get_account_entry_url') ? polaris_get_account_entry_url() : (function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_login_url());
 $shop_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');
 $cart_count = (function_exists('WC') && WC()->cart) ? (int) WC()->cart->get_cart_contents_count() : 0;
 $zero_price = function_exists('wc_price') ? wc_price(0) : '0';

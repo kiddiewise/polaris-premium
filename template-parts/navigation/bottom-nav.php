@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 $home = home_url('/');
 $shop = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');
 $cart = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/');
-$acct = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_login_url();
+$acct = function_exists('polaris_get_account_entry_url') ? polaris_get_account_entry_url() : (function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_login_url());
 $cart_count = (function_exists('WC') && WC()->cart) ? (int) WC()->cart->get_cart_contents_count() : 0;
 ?>
 <nav class="bottom-nav" aria-label="<?php echo esc_attr__('Mobil gezinme', 'polaris'); ?>">
