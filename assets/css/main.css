@@ -3989,8 +3989,8 @@ body.polaris-auth-screen .polaris-auth-tabs {
   gap: 8px;
   padding: 6px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, .2);
-  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .18);
+  background: rgba(8, 25, 41, .62);
 }
 
 body.polaris-auth-screen .polaris-auth-tab {
@@ -3998,15 +3998,16 @@ body.polaris-auth-screen .polaris-auth-tab {
   border-radius: 999px;
   border: 0;
   background: transparent;
-  color: rgba(231, 241, 251, .88);
+  color: rgba(231, 241, 251, .92);
   font-weight: 600;
   cursor: pointer;
-  transition: .18s var(--ease);
+  transition: .2s var(--ease);
 }
 
 body.polaris-auth-screen .polaris-auth-tab.is-active {
-  background: #f2f5ef;
-  color: #1f3b14;
+  background: linear-gradient(135deg, #f8aa5c, #f3872f);
+  color: #182230;
+  box-shadow: 0 10px 22px rgba(243, 135, 47, .34);
 }
 
 body.polaris-auth-screen .polaris-auth-panel {
@@ -4020,17 +4021,19 @@ body.polaris-auth-screen .polaris-auth-panel.is-active {
 body.polaris-auth-screen .polaris-auth-card .woocommerce form.login,
 body.polaris-auth-screen .polaris-auth-card .woocommerce form.register {
   border-radius: 26px;
-  border: 1px solid #d8e3d0;
-  background: linear-gradient(180deg, #f8faf6, #eef3ea);
-  box-shadow: 0 18px 36px rgba(5, 13, 22, .2);
-  color: #24321f;
+  border: 1px solid rgba(255, 255, 255, .14);
+  background:
+    radial-gradient(circle at 100% 0, rgba(243, 135, 47, .08), rgba(243, 135, 47, 0) 38%),
+    linear-gradient(165deg, rgba(14, 34, 54, .95), rgba(8, 21, 36, .93));
+  box-shadow: 0 18px 36px rgba(4, 10, 18, .28);
+  color: #eaf2fb;
   padding: 18px;
 }
 
 body.polaris-auth-screen .polaris-auth-panel__title {
   margin: 0 0 14px;
   text-align: center;
-  color: #274018;
+  color: #f2f8ff;
   font-size: 1.18rem;
   font-weight: 700;
 }
@@ -4045,7 +4048,7 @@ body.polaris-auth-screen .polaris-auth-field__icon {
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #89967f;
+  color: rgba(215, 229, 244, .82);
   font-size: .86rem;
   pointer-events: none;
   z-index: 2;
@@ -4057,9 +4060,9 @@ body.polaris-auth-screen .polaris-auth-field input[type="text"],
 body.polaris-auth-screen .polaris-auth-field input[type="password"] {
   min-height: 44px;
   border-radius: 999px;
-  border: 1px solid #d2dcc9;
-  background: #fff;
-  color: #22301d;
+  border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(5, 16, 28, .82);
+  color: #ecf4fd;
   padding: 10px 14px 10px 42px;
 }
 
@@ -4067,15 +4070,16 @@ body.polaris-auth-screen .polaris-auth-field input.input-text::placeholder,
 body.polaris-auth-screen .polaris-auth-field input[type="email"]::placeholder,
 body.polaris-auth-screen .polaris-auth-field input[type="text"]::placeholder,
 body.polaris-auth-screen .polaris-auth-field input[type="password"]::placeholder {
-  color: #8e9d82;
+  color: rgba(196, 211, 228, .75);
 }
 
 body.polaris-auth-screen .polaris-auth-field input.input-text:focus,
 body.polaris-auth-screen .polaris-auth-field input[type="email"]:focus,
 body.polaris-auth-screen .polaris-auth-field input[type="text"]:focus,
 body.polaris-auth-screen .polaris-auth-field input[type="password"]:focus {
-  border-color: #5f8f39;
-  box-shadow: 0 0 0 3px rgba(95, 143, 57, .2);
+  border-color: rgba(243, 135, 47, .82);
+  box-shadow: 0 0 0 3px rgba(243, 135, 47, .22);
+  background: rgba(8, 20, 34, .9);
 }
 
 body.polaris-auth-screen .polaris-auth-row {
@@ -4087,7 +4091,7 @@ body.polaris-auth-screen .polaris-auth-row--remember {
 }
 
 body.polaris-auth-screen .polaris-auth-row--remember .woocommerce-form__label-for-checkbox {
-  color: #3b4a34;
+  color: rgba(221, 234, 248, .88);
   font-size: .9rem;
 }
 
@@ -4098,9 +4102,10 @@ body.polaris-auth-screen .polaris-auth-row--submit .woocommerce-button {
   min-height: 44px;
   border-radius: 999px;
   border: 0;
-  background: linear-gradient(180deg, #2d6518, #235110);
-  color: #fff;
-  box-shadow: 0 10px 22px rgba(35, 81, 16, .28);
+  background: linear-gradient(135deg, #f8aa5c, #f3872f);
+  color: #1b1f28;
+  font-weight: 700;
+  box-shadow: 0 12px 24px rgba(243, 135, 47, .3);
 }
 
 body.polaris-auth-screen .polaris-auth-card .woocommerce .lost_password {
@@ -4109,23 +4114,30 @@ body.polaris-auth-screen .polaris-auth-card .woocommerce .lost_password {
 }
 
 body.polaris-auth-screen .polaris-auth-card .woocommerce .lost_password a {
-  color: #4b6540;
+  color: rgba(227, 238, 249, .88);
   font-size: .8rem;
   text-decoration: underline;
 }
 
 body.polaris-auth-screen .polaris-auth-help {
   margin: 8px 0 4px;
-  color: #596953;
+  color: rgba(205, 220, 236, .86);
   font-size: .88rem;
 }
 
+body.polaris-auth-screen .polaris-auth-card .woocommerce .woocommerce-privacy-policy-text,
+body.polaris-auth-screen .polaris-auth-card .woocommerce .woocommerce-privacy-policy-text p,
 body.polaris-auth-screen .polaris-auth-privacy,
 body.polaris-auth-screen .polaris-auth-privacy p {
   margin: 0 0 10px;
-  color: #556650;
+  color: rgba(211, 224, 239, .86);
   font-size: .86rem;
   line-height: 1.5;
+}
+
+body.polaris-auth-screen .polaris-auth-card .woocommerce .woocommerce-privacy-policy-text a {
+  color: #f8aa5c;
+  text-decoration: underline;
 }
 
 body.polaris-auth-screen .polaris-auth-switch-note {
@@ -4136,45 +4148,49 @@ body.polaris-auth-screen .polaris-auth-switch-note {
 body.polaris-auth-screen .polaris-auth-switch-btn {
   border: 0;
   background: none;
-  color: #48623b;
+  color: rgba(221, 234, 248, .9);
   font-size: .85rem;
   text-decoration: underline;
   cursor: pointer;
 }
 
+body.polaris-auth-screen .polaris-auth-switch-btn:hover {
+  color: #f8aa5c;
+}
+
 body.polaris-auth-screen .polaris-auth-card .polaris-google-login {
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid #d6dfcd;
+  border-top: 1px solid rgba(255, 255, 255, .15);
 }
 
 body.polaris-auth-screen .polaris-auth-card .polaris-google-login__button {
   min-height: 44px;
   border-radius: 999px;
-  border: 1px solid #d4decb;
-  background: #f4f7f1;
-  color: #22311d;
+  border: 1px solid rgba(255, 255, 255, .2);
+  background: linear-gradient(145deg, rgba(20, 44, 70, .94), rgba(12, 28, 45, .92));
+  color: #edf4fc;
 }
 
 body.polaris-auth-screen .polaris-auth-card .polaris-google-login__button:hover {
-  border-color: #c4d1b8;
+  border-color: rgba(255, 255, 255, .3);
   transform: translateY(0);
 }
 
 body.polaris-auth-screen .polaris-auth-card .polaris-google-login__button[disabled] {
-  background: #e6ecde;
-  border-color: #d5decb;
-  color: #72816b;
+  background: linear-gradient(145deg, rgba(20, 37, 55, .86), rgba(12, 24, 38, .86));
+  border-color: rgba(255, 255, 255, .12);
+  color: rgba(184, 203, 223, .62);
   cursor: not-allowed;
 }
 
 body.polaris-auth-screen .polaris-auth-card .polaris-google-login__status {
-  color: #5a6b54;
+  color: rgba(205, 220, 236, .82);
   font-size: .8rem;
 }
 
 body.polaris-auth-screen .polaris-auth-card .polaris-google-login__status.is-info {
-  color: #5a6b54;
+  color: rgba(205, 220, 236, .82);
 }
 
 @media (max-width: 560px) {

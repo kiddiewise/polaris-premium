@@ -24,7 +24,7 @@ $disabled_message = isset($args['disabled_message']) ? sanitize_text_field((stri
         <path fill="#FBBC05" d="M3 12c0 1.4.3 2.7.9 3.9l3.3-2.4c-.2-.6-.3-1-.3-1.5s.1-.9.3-1.5L3.9 8.1C3.3 9.3 3 10.6 3 12z"/>
       </svg>
     </span>
-    <span class="polaris-google-login__label"><?php esc_html_e('Google ile giris yap', 'polaris'); ?></span>
+    <span class="polaris-google-login__label"><?php esc_html_e('Google ile giriş yap', 'polaris'); ?></span>
   </button>
   <p class="polaris-google-login__status<?php echo !$is_enabled && !empty($disabled_message) ? ' is-info' : ''; ?>" data-google-login-status aria-live="polite">
     <?php echo !$is_enabled && !empty($disabled_message) ? esc_html($disabled_message) : ''; ?>

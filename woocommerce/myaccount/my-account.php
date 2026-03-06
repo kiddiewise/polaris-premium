@@ -48,27 +48,27 @@ $logo_image = $logo_id ? wp_get_attachment_image($logo_id, 'full', false, [
 
           <span class="polaris-auth-kicker">
             <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-            <?php esc_html_e('Guvenli giris alani', 'polaris'); ?>
+            <?php esc_html_e('Güvenli giriş alanı', 'polaris'); ?>
           </span>
 
-          <h1><?php esc_html_e('Hesabina gir, siparislerini hizla yonet', 'polaris'); ?></h1>
-          <p><?php esc_html_e('Tek alanda giris yap veya kayit ol. Google ile giris secenegiyle saniyeler icinde devam et.', 'polaris'); ?></p>
+          <h1><?php esc_html_e('Hesabına gir, siparişlerini hızla yönet', 'polaris'); ?></h1>
+          <p><?php esc_html_e('Tek alanda giriş yap veya kayıt ol. Google ile giriş seçeneğiyle saniyeler içinde devam et.', 'polaris'); ?></p>
 
           <div class="polaris-auth-trust">
-            <span><i class="fa-solid fa-lock" aria-hidden="true"></i> <?php esc_html_e('SSL korumasi', 'polaris'); ?></span>
-            <span><i class="fa-solid fa-bolt" aria-hidden="true"></i> <?php esc_html_e('Hizli erisim', 'polaris'); ?></span>
-            <span><i class="fa-solid fa-user-check" aria-hidden="true"></i> <?php esc_html_e('Tek tikla giris', 'polaris'); ?></span>
+            <span><i class="fa-solid fa-lock" aria-hidden="true"></i> <?php esc_html_e('SSL koruması', 'polaris'); ?></span>
+            <span><i class="fa-solid fa-bolt" aria-hidden="true"></i> <?php esc_html_e('Hızlı erişim', 'polaris'); ?></span>
+            <span><i class="fa-solid fa-user-check" aria-hidden="true"></i> <?php esc_html_e('Tek tıkla giriş', 'polaris'); ?></span>
           </div>
         </aside>
 
         <article class="polaris-surface polaris-auth-card fade-up active">
           <header class="polaris-auth-head">
-            <h2><?php esc_html_e('Giris / Kayit', 'polaris'); ?></h2>
+            <h2><?php esc_html_e('Giriş / Kayıt', 'polaris'); ?></h2>
             <p>
               <?php if (function_exists('polaris_google_login_is_enabled') && polaris_google_login_is_enabled()) : ?>
-                <?php esc_html_e('Google ile giris secenegi aktif. Formdan tek tikla devam edebilirsiniz.', 'polaris'); ?>
+                <?php esc_html_e('Google ile giriş seçeneği aktif. Formdan tek tıkla devam edebilirsiniz.', 'polaris'); ?>
               <?php else : ?>
-                <?php esc_html_e('Google ile giris alani gorunur, entegrasyon ayari tamamlandiginda aktif olur.', 'polaris'); ?>
+                <?php esc_html_e('Google ile giriş alanı görünür, entegrasyon ayarı tamamlandığında aktif olur.', 'polaris'); ?>
               <?php endif; ?>
             </p>
           </header>

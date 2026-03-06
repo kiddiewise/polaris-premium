@@ -239,7 +239,7 @@ function polaris_google_login_prepare_state_ajax()
     check_ajax_referer('polaris_google_login_nonce', 'nonce');
 
     if (!polaris_google_login_is_enabled()) {
-        polaris_google_login_send_error('not_configured', 'Google ile giris su anda aktif degil.', 500);
+        polaris_google_login_send_error('not_configured', 'Google ile giriş şu anda aktif değil.', 500);
     }
 
     $config = polaris_google_login_get_config();
@@ -248,7 +248,7 @@ function polaris_google_login_prepare_state_ajax()
     $state = preg_replace('/[^A-Za-z0-9_-]/', '', $state);
 
     if (empty($state)) {
-        polaris_google_login_send_error('state_generation_failed', 'State olusturulamadi.', 500);
+        polaris_google_login_send_error('state_generation_failed', 'State oluşturulamadı.', 500);
     }
 
     // State tek kullanimlik saklanir; callback sonrasi silinir.
@@ -269,7 +269,7 @@ function polaris_google_login_exchange_ajax()
     check_ajax_referer('polaris_google_login_nonce', 'nonce');
 
     if (!polaris_google_login_is_enabled()) {
-        polaris_google_login_send_error('not_configured', 'Google ile giris su anda aktif degil.', 500);
+        polaris_google_login_send_error('not_configured', 'Google ile giriş şu anda aktif değil.', 500);
     }
 
     $code        = isset($_POST['code']) ? sanitize_text_field(wp_unslash($_POST['code'])) : '';
@@ -277,11 +277,11 @@ function polaris_google_login_exchange_ajax()
     $redirect_to = isset($_POST['redirect_to']) ? esc_url_raw(wp_unslash($_POST['redirect_to'])) : '';
 
     if (empty($code) || empty($state)) {
-        polaris_google_login_send_error('missing_fields', 'Google giris verileri eksik.', 400);
+        polaris_google_login_send_error('missing_fields', 'Google giriş verileri eksik.', 400);
     }
 
     if (strlen($code) > 2048 || strlen($state) > 128) {
-        polaris_google_login_send_error('invalid_payload', 'Gecersiz giris verisi.', 400);
+        polaris_google_login_send_error('invalid_payload', 'Geçersiz giriş verisi.', 400);
     }
 
     // State dogrulamasi: request, baslatilan ayni browser oturumundan mi geldi?
@@ -289,7 +289,7 @@ function polaris_google_login_exchange_ajax()
     $state_data = get_transient($state_key);
 
     if (empty($state_data) || !is_array($state_data)) {
-        polaris_google_login_send_error('invalid_state', 'Gecersiz ya da suresi dolmus state.', 403);
+        polaris_google_login_send_error('invalid_state', 'Geçersiz ya da süresi dolmuş state.', 403);
     }
 
     delete_transient($state_key);
@@ -298,7 +298,7 @@ function polaris_google_login_exchange_ajax()
     $current_ua  = polaris_google_login_current_user_agent_hash();
 
     if (!empty($expected_ua) && !hash_equals($expected_ua, $current_ua)) {
-        polaris_google_login_send_error('state_ua_mismatch', 'Guvenlik dogrulamasi basarisiz.', 403);
+        polaris_google_login_send_error('state_ua_mismatch', 'Güvenlik doğrulaması başarısız.', 403);
     }
 
     $config      = polaris_google_login_get_config();
@@ -318,22 +318,22 @@ function polaris_google_login_exchange_ajax()
     $id_claims = polaris_google_login_parse_jwt_payload($token_data['id_token']);
 
     if (empty($id_claims) || !is_array($id_claims)) {
-        polaris_google_login_send_error('invalid_id_token', 'ID token cozumlenemedi.', 401);
+        polaris_google_login_send_error('invalid_id_token', 'ID token çözümlenemedi.', 401);
     }
 
     $issuer = isset($id_claims['iss']) ? (string) $id_claims['iss'] : '';
     if (!in_array($issuer, ['accounts.google.com', 'https://accounts.google.com'], true)) {
-        polaris_google_login_send_error('invalid_issuer', 'Gecersiz token issuer.', 401);
+        polaris_google_login_send_error('invalid_issuer', 'Geçersiz token issuer.', 401);
     }
 
     $aud = isset($id_claims['aud']) ? (string) $id_claims['aud'] : '';
     if (!hash_equals((string) $config['client_id'], $aud)) {
-        polaris_google_login_send_error('invalid_audience', 'Token client dogrulamasi basarisiz.', 401);
+        polaris_google_login_send_error('invalid_audience', 'Token client doğrulaması başarısız.', 401);
     }
 
     $exp = isset($id_claims['exp']) ? (int) $id_claims['exp'] : 0;
     if ($exp > 0 && $exp < time() - 60) {
-        polaris_google_login_send_error('expired_token', 'Token suresi dolmus.', 401);
+        polaris_google_login_send_error('expired_token', 'Token süresi dolmuş.', 401);
     }
 
     $userinfo = polaris_google_login_fetch_userinfo($token_data['access_token']);
@@ -346,12 +346,12 @@ function polaris_google_login_exchange_ajax()
     $email = sanitize_email(isset($userinfo['email']) ? $userinfo['email'] : (isset($id_claims['email']) ? $id_claims['email'] : ''));
 
     if (empty($email) || !is_email($email)) {
-        polaris_google_login_send_error('invalid_email', 'Google hesabinda gecerli e-posta bulunamadi.', 401);
+        polaris_google_login_send_error('invalid_email', 'Google hesabında geçerli e-posta bulunamadı.', 401);
     }
 
     $email_verified = polaris_google_login_bool($userinfo['email_verified'] ?? ($id_claims['email_verified'] ?? false));
     if (!$email_verified) {
-        polaris_google_login_send_error('email_not_verified', 'Google e-posta adresi dogrulanmamis.', 403);
+        polaris_google_login_send_error('email_not_verified', 'Google e-posta adresi doğrulanmamış.', 403);
     }
 
     $google_sub = isset($userinfo['sub']) ? sanitize_text_field((string) $userinfo['sub']) : '';
@@ -415,7 +415,7 @@ function polaris_google_login_exchange_ajax()
     }
 
     if (!$user instanceof WP_User) {
-        polaris_google_login_send_error('user_resolve_failed', 'Kullanici olusturulamadi.', 500);
+        polaris_google_login_send_error('user_resolve_failed', 'Kullanıcı oluşturulamadı.', 500);
     }
 
     if (!empty($google_sub)) {
@@ -458,7 +458,7 @@ function polaris_google_login_exchange_ajax()
     $redirect_url = polaris_google_login_validate_redirect($redirect_to);
 
     wp_send_json_success([
-        'message'      => __('Google ile giris basarili.', 'polaris'),
+        'message'      => __('Google ile giriş başarılı.', 'polaris'),
         'redirect_url' => $redirect_url,
     ]);
 }
@@ -477,7 +477,7 @@ function polaris_google_login_render_button($context = 'default')
         'context'          => $context,
         'redirect_to'      => $redirect_to,
         'is_enabled'       => $is_enabled,
-        'disabled_message' => $is_enabled ? '' : __('Google ile giris su anda aktif degil.', 'polaris'),
+        'disabled_message' => $is_enabled ? '' : __('Google ile giriş şu anda aktif değil.', 'polaris'),
     ]);
 }
 
@@ -541,11 +541,11 @@ function polaris_google_login_enqueue_assets()
         'defaultRedirect' => polaris_google_login_validate_redirect($redirect_hint),
         'isEnabled'       => true,
         'messages'        => [
-            'loading'      => __('Google ile giris baslatiliyor...', 'polaris'),
-            'notReady'     => __('Google kutuphanesi henuz yuklenmedi. Lutfen tekrar deneyin.', 'polaris'),
-            'failed'       => __('Google girisi tamamlanamadi. Lutfen tekrar deneyin.', 'polaris'),
-            'cancelled'    => __('Google girisi iptal edildi.', 'polaris'),
-            'success'      => __('Giris basarili, yonlendiriliyorsunuz...', 'polaris'),
+            'loading'      => __('Google ile giriş başlatılıyor...', 'polaris'),
+            'notReady'     => __('Google kütüphanesi henüz yüklenmedi. Lütfen tekrar deneyin.', 'polaris'),
+            'failed'       => __('Google girişi tamamlanamadı. Lütfen tekrar deneyin.', 'polaris'),
+            'cancelled'    => __('Google girişi iptal edildi.', 'polaris'),
+            'success'      => __('Giriş başarılı, yönlendiriliyorsunuz...', 'polaris'),
         ],
     ]);
 }

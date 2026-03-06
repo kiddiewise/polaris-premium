@@ -66,13 +66,13 @@
     try {
       json = await response.json();
     } catch (error) {
-      throw new Error(getMessage("failed", "Sunucu yaniti okunamadi."));
+      throw new Error(getMessage("failed", "Sunucu yanıtı okunamadı."));
     }
 
     if (!response.ok || !json || json.success !== true) {
       const message = json && json.data && json.data.message
         ? String(json.data.message)
-        : getMessage("failed", "Islem basarisiz oldu.");
+        : getMessage("failed", "İşlem başarısız oldu.");
       throw new Error(message);
     }
 
@@ -96,7 +96,7 @@
 
   async function startGoogleFlow(button) {
     if (!window.google || !window.google.accounts || !window.google.accounts.oauth2) {
-      throw new Error(getMessage("notReady", "Google kutuphanesi henuz hazir degil."));
+      throw new Error(getMessage("notReady", "Google kütüphanesi henüz hazır değil."));
     }
 
     // Backend'den tek kullanimlik state aliyoruz (CSRF/state kontrolu icin).
@@ -105,7 +105,7 @@
     });
 
     if (!prep.state) {
-      throw new Error(getMessage("failed", "State olusturulamadi."));
+      throw new Error(getMessage("failed", "State oluşturulamadı."));
     }
 
     const redirectTarget = getRedirectTarget(button);
@@ -132,7 +132,7 @@
 
     if (error) {
       cleanOAuthParamsFromUrl();
-      setStatus(getMessage("cancelled", "Google girisi iptal edildi."), "is-error");
+      setStatus(getMessage("cancelled", "Google girişi iptal edildi."), "is-error");
       return;
     }
 
@@ -143,12 +143,12 @@
     const expectedState = window.sessionStorage.getItem(SESSION_KEYS.state) || "";
     if (!expectedState || expectedState !== stateFromUrl) {
       cleanOAuthParamsFromUrl();
-      setStatus(getMessage("failed", "State dogrulamasi basarisiz."), "is-error");
+      setStatus(getMessage("failed", "State doğrulaması başarısız."), "is-error");
       return;
     }
 
     setLoading(true);
-    setStatus(getMessage("loading", "Google girisi tamamlaniyor..."), "is-info");
+    setStatus(getMessage("loading", "Google girişi tamamlanıyor..."), "is-info");
 
     try {
       // Redirect sonrasi gelen code'u AJAX endpoint'ine gonderiyoruz.
@@ -163,7 +163,7 @@
       });
 
       cleanOAuthParamsFromUrl();
-      setStatus(getMessage("success", "Giris basarili. Yonlendiriliyorsunuz..."), "is-success");
+      setStatus(getMessage("success", "Giriş başarılı. Yönlendiriliyorsunuz..."), "is-success");
 
       window.sessionStorage.removeItem(SESSION_KEYS.state);
       window.sessionStorage.removeItem(SESSION_KEYS.redirect);
@@ -174,7 +174,7 @@
       cleanOAuthParamsFromUrl();
       const message = errorObj && errorObj.message
         ? errorObj.message
-        : getMessage("failed", "Google girisi tamamlanamadi.");
+        : getMessage("failed", "Google girişi tamamlanamadı.");
       setStatus(message, "is-error");
       setLoading(false);
     }
@@ -184,14 +184,14 @@
     button.addEventListener("click", async function (event) {
       event.preventDefault();
       setLoading(true);
-      setStatus(getMessage("loading", "Google ile giris baslatiliyor..."), "is-info");
+      setStatus(getMessage("loading", "Google ile giriş başlatılıyor..."), "is-info");
 
       try {
         await startGoogleFlow(button);
       } catch (errorObj) {
         const message = errorObj && errorObj.message
           ? errorObj.message
-          : getMessage("failed", "Google girisi baslatilamadi.");
+          : getMessage("failed", "Google girişi başlatılamadı.");
 
         setStatus(message, "is-error");
         setLoading(false);
