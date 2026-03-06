@@ -89,6 +89,8 @@ if (!function_exists('polaris_single_render_family_item')) {
 
 get_header();
 
+echo "\n<!-- Polaris Custom Product Detail Template -->\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
 while (have_posts()) :
     the_post();
 
