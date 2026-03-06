@@ -8,10 +8,8 @@ if (!function_exists('WC') || !WC()) {
 }
 
 $account_template = WC()->plugin_path() . '/templates/myaccount/my-account.php';
-$login_template   = WC()->plugin_path() . '/templates/myaccount/form-login.php';
 
 $account_template_exists = file_exists($account_template);
-$login_template_exists   = file_exists($login_template);
 
 if (is_user_logged_in()) {
     if ($account_template_exists) {
@@ -20,10 +18,7 @@ if (is_user_logged_in()) {
     return;
 }
 
-if (!$login_template_exists) {
-    if ($account_template_exists) {
-        include $account_template;
-    }
+if (!function_exists('wc_get_template')) {
     return;
 }
 
@@ -69,10 +64,16 @@ $logo_image = $logo_id ? wp_get_attachment_image($logo_id, 'full', false, [
         <article class="polaris-surface polaris-auth-card fade-up active">
           <header class="polaris-auth-head">
             <h2><?php esc_html_e('Giris / Kayit', 'polaris'); ?></h2>
-            <p><?php esc_html_e('Google ile giris butonu formlarin icinde otomatik yer alir.', 'polaris'); ?></p>
+            <p>
+              <?php if (function_exists('polaris_google_login_is_enabled') && polaris_google_login_is_enabled()) : ?>
+                <?php esc_html_e('Google ile giris secenegi aktif. Formdan tek tikla devam edebilirsiniz.', 'polaris'); ?>
+              <?php else : ?>
+                <?php esc_html_e('Google ile giris alani gorunur, entegrasyon ayari tamamlandiginda aktif olur.', 'polaris'); ?>
+              <?php endif; ?>
+            </p>
           </header>
 
-          <?php include $login_template; ?>
+          <?php wc_get_template('myaccount/form-login.php'); ?>
         </article>
       </div>
     </div>

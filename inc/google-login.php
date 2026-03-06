@@ -465,11 +465,8 @@ function polaris_google_login_exchange_ajax()
 
 function polaris_google_login_render_button($context = 'default')
 {
-    if (!polaris_google_login_is_enabled()) {
-        return;
-    }
-
     $context = sanitize_html_class((string) $context);
+    $is_enabled = polaris_google_login_is_enabled();
 
     $redirect_to = '';
     if (isset($_GET['redirect_to'])) {
@@ -477,8 +474,10 @@ function polaris_google_login_render_button($context = 'default')
     }
 
     get_template_part('template-parts/auth/google-login-button', null, [
-        'context'     => $context,
-        'redirect_to' => $redirect_to,
+        'context'          => $context,
+        'redirect_to'      => $redirect_to,
+        'is_enabled'       => $is_enabled,
+        'disabled_message' => $is_enabled ? '' : __('Google ile giris su anda aktif degil.', 'polaris'),
     ]);
 }
 

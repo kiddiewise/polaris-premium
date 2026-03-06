@@ -63,6 +63,47 @@ function polaris_get_account_entry_url()
 }
 
 /**
+ * Aktif istek login/register landing sayfasi mi?
+ */
+function polaris_is_login_page_request()
+{
+    if (!is_page()) {
+        return false;
+    }
+
+    $login_page_url = polaris_get_login_page_url();
+    if (empty($login_page_url)) {
+        return false;
+    }
+
+    $login_page_id   = url_to_postid($login_page_url);
+    $current_page_id = get_queried_object_id();
+
+    return !empty($login_page_id) && (int) $login_page_id === (int) $current_page_id;
+}
+
+/**
+ * Login/hesap sayfalarinda auth UI siniflarini body'e ekler.
+ */
+function polaris_add_auth_body_classes($classes)
+{
+    $is_login_page = polaris_is_login_page_request();
+    $is_account    = function_exists('is_account_page') && is_account_page();
+
+    if ($is_login_page) {
+        // page-giris.php ile acilan giris sayfasinda premium auth secicileri aktif olur.
+        $classes[] = 'page-template-page-login';
+    }
+
+    if ($is_login_page || $is_account) {
+        $classes[] = 'polaris-auth-screen';
+    }
+
+    return array_values(array_unique($classes));
+}
+add_filter('body_class', 'polaris_add_auth_body_classes');
+
+/**
  * Login sayfasi block template kaynakli bos gelse bile
  * dogrudan page-login.php render edilir.
  */
@@ -101,9 +142,7 @@ function polaris_force_login_page_template()
         return;
     }
 
-    $login_page_id   = url_to_postid($login_page_url);
-    $current_page_id = get_queried_object_id();
-    $is_login_page   = !empty($login_page_id) && (int) $login_page_id === (int) $current_page_id;
+    $is_login_page = polaris_is_login_page_request();
 
     if (function_exists('is_account_page') && is_account_page()) {
         polaris_mark_account_pages_uncacheable();

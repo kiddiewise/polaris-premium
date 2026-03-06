@@ -5,6 +5,8 @@ if (!defined('ABSPATH')) {
 
 $context = isset($args['context']) ? sanitize_html_class((string) $args['context']) : 'default';
 $redirect_to = isset($args['redirect_to']) ? esc_url($args['redirect_to']) : '';
+$is_enabled = isset($args['is_enabled']) ? (bool) $args['is_enabled'] : false;
+$disabled_message = isset($args['disabled_message']) ? sanitize_text_field((string) $args['disabled_message']) : '';
 ?>
 <div class="polaris-google-login" data-google-login-wrap data-context="<?php echo esc_attr($context); ?>">
   <button
@@ -12,6 +14,7 @@ $redirect_to = isset($args['redirect_to']) ? esc_url($args['redirect_to']) : '';
     type="button"
     data-google-login-btn
     data-redirect="<?php echo esc_attr($redirect_to); ?>"
+    <?php echo $is_enabled ? '' : 'disabled aria-disabled="true"'; ?>
   >
     <span class="polaris-google-login__icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
@@ -23,5 +26,7 @@ $redirect_to = isset($args['redirect_to']) ? esc_url($args['redirect_to']) : '';
     </span>
     <span class="polaris-google-login__label"><?php esc_html_e('Google ile giris yap', 'polaris'); ?></span>
   </button>
-  <p class="polaris-google-login__status" data-google-login-status aria-live="polite"></p>
+  <p class="polaris-google-login__status<?php echo !$is_enabled && !empty($disabled_message) ? ' is-info' : ''; ?>" data-google-login-status aria-live="polite">
+    <?php echo !$is_enabled && !empty($disabled_message) ? esc_html($disabled_message) : ''; ?>
+  </p>
 </div>

@@ -3964,3 +3964,232 @@ body:is(.page-template-page-login, .woocommerce-account) .polaris-auth-card .pol
     border-radius: 12px;
   }
 }
+
+/* Auth Form Refresh */
+body.polaris-auth-screen .polaris-auth-card .woocommerce .u-columns {
+  display: block;
+  margin: 0;
+}
+
+body.polaris-auth-screen .polaris-auth-card .woocommerce .u-column1,
+body.polaris-auth-screen .polaris-auth-card .woocommerce .u-column2 {
+  float: none;
+  width: 100%;
+  margin: 0;
+}
+
+body.polaris-auth-screen .polaris-auth-forms {
+  display: grid;
+  gap: 12px;
+}
+
+body.polaris-auth-screen .polaris-auth-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(255, 255, 255, .06);
+}
+
+body.polaris-auth-screen .polaris-auth-tab {
+  min-height: 38px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: rgba(231, 241, 251, .88);
+  font-weight: 600;
+  cursor: pointer;
+  transition: .18s var(--ease);
+}
+
+body.polaris-auth-screen .polaris-auth-tab.is-active {
+  background: #f2f5ef;
+  color: #1f3b14;
+}
+
+body.polaris-auth-screen .polaris-auth-panel {
+  display: none;
+}
+
+body.polaris-auth-screen .polaris-auth-panel.is-active {
+  display: block;
+}
+
+body.polaris-auth-screen .polaris-auth-card .woocommerce form.login,
+body.polaris-auth-screen .polaris-auth-card .woocommerce form.register {
+  border-radius: 26px;
+  border: 1px solid #d8e3d0;
+  background: linear-gradient(180deg, #f8faf6, #eef3ea);
+  box-shadow: 0 18px 36px rgba(5, 13, 22, .2);
+  color: #24321f;
+  padding: 18px;
+}
+
+body.polaris-auth-screen .polaris-auth-panel__title {
+  margin: 0 0 14px;
+  text-align: center;
+  color: #274018;
+  font-size: 1.18rem;
+  font-weight: 700;
+}
+
+body.polaris-auth-screen .polaris-auth-field {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+body.polaris-auth-screen .polaris-auth-field__icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #89967f;
+  font-size: .86rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+body.polaris-auth-screen .polaris-auth-field input.input-text,
+body.polaris-auth-screen .polaris-auth-field input[type="email"],
+body.polaris-auth-screen .polaris-auth-field input[type="text"],
+body.polaris-auth-screen .polaris-auth-field input[type="password"] {
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid #d2dcc9;
+  background: #fff;
+  color: #22301d;
+  padding: 10px 14px 10px 42px;
+}
+
+body.polaris-auth-screen .polaris-auth-field input.input-text::placeholder,
+body.polaris-auth-screen .polaris-auth-field input[type="email"]::placeholder,
+body.polaris-auth-screen .polaris-auth-field input[type="text"]::placeholder,
+body.polaris-auth-screen .polaris-auth-field input[type="password"]::placeholder {
+  color: #8e9d82;
+}
+
+body.polaris-auth-screen .polaris-auth-field input.input-text:focus,
+body.polaris-auth-screen .polaris-auth-field input[type="email"]:focus,
+body.polaris-auth-screen .polaris-auth-field input[type="text"]:focus,
+body.polaris-auth-screen .polaris-auth-field input[type="password"]:focus {
+  border-color: #5f8f39;
+  box-shadow: 0 0 0 3px rgba(95, 143, 57, .2);
+}
+
+body.polaris-auth-screen .polaris-auth-row {
+  margin-bottom: 10px;
+}
+
+body.polaris-auth-screen .polaris-auth-row--remember {
+  margin-bottom: 8px;
+}
+
+body.polaris-auth-screen .polaris-auth-row--remember .woocommerce-form__label-for-checkbox {
+  color: #3b4a34;
+  font-size: .9rem;
+}
+
+body.polaris-auth-screen .polaris-auth-row--submit .button,
+body.polaris-auth-screen .polaris-auth-row--submit button.button,
+body.polaris-auth-screen .polaris-auth-row--submit .woocommerce-button {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 999px;
+  border: 0;
+  background: linear-gradient(180deg, #2d6518, #235110);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(35, 81, 16, .28);
+}
+
+body.polaris-auth-screen .polaris-auth-card .woocommerce .lost_password {
+  margin: 6px 0 0;
+  text-align: center;
+}
+
+body.polaris-auth-screen .polaris-auth-card .woocommerce .lost_password a {
+  color: #4b6540;
+  font-size: .8rem;
+  text-decoration: underline;
+}
+
+body.polaris-auth-screen .polaris-auth-help {
+  margin: 8px 0 4px;
+  color: #596953;
+  font-size: .88rem;
+}
+
+body.polaris-auth-screen .polaris-auth-privacy,
+body.polaris-auth-screen .polaris-auth-privacy p {
+  margin: 0 0 10px;
+  color: #556650;
+  font-size: .86rem;
+  line-height: 1.5;
+}
+
+body.polaris-auth-screen .polaris-auth-switch-note {
+  margin: 10px 0 0;
+  text-align: center;
+}
+
+body.polaris-auth-screen .polaris-auth-switch-btn {
+  border: 0;
+  background: none;
+  color: #48623b;
+  font-size: .85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+body.polaris-auth-screen .polaris-auth-card .polaris-google-login {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #d6dfcd;
+}
+
+body.polaris-auth-screen .polaris-auth-card .polaris-google-login__button {
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid #d4decb;
+  background: #f4f7f1;
+  color: #22311d;
+}
+
+body.polaris-auth-screen .polaris-auth-card .polaris-google-login__button:hover {
+  border-color: #c4d1b8;
+  transform: translateY(0);
+}
+
+body.polaris-auth-screen .polaris-auth-card .polaris-google-login__button[disabled] {
+  background: #e6ecde;
+  border-color: #d5decb;
+  color: #72816b;
+  cursor: not-allowed;
+}
+
+body.polaris-auth-screen .polaris-auth-card .polaris-google-login__status {
+  color: #5a6b54;
+  font-size: .8rem;
+}
+
+body.polaris-auth-screen .polaris-auth-card .polaris-google-login__status.is-info {
+  color: #5a6b54;
+}
+
+@media (max-width: 560px) {
+  body.polaris-auth-screen .polaris-auth-tabs {
+    gap: 6px;
+    padding: 5px;
+  }
+
+  body.polaris-auth-screen .polaris-auth-card .woocommerce form.login,
+  body.polaris-auth-screen .polaris-auth-card .woocommerce form.register {
+    border-radius: 22px;
+    padding: 14px;
+  }
+
+  body.polaris-auth-screen .polaris-auth-panel__title {
+    font-size: 1.1rem;
+  }
+}

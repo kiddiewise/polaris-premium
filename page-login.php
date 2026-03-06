@@ -63,18 +63,25 @@ $logo_image = $logo_id ? wp_get_attachment_image($logo_id, 'full', false, [
         <article class="polaris-surface polaris-auth-card fade-up active">
           <header class="polaris-auth-head">
             <h2><?php esc_html_e('Giris / Kayit', 'polaris'); ?></h2>
-            <p><?php esc_html_e('Google ile giris butonu formlarin icinde otomatik yer alir.', 'polaris'); ?></p>
+            <p>
+              <?php if (function_exists('polaris_google_login_is_enabled') && polaris_google_login_is_enabled()) : ?>
+                <?php esc_html_e('Google ile giris secenegi aktif. Formdan tek tikla devam edebilirsiniz.', 'polaris'); ?>
+              <?php else : ?>
+                <?php esc_html_e('Google ile giris alani gorunur, entegrasyon ayari tamamlandiginda aktif olur.', 'polaris'); ?>
+              <?php endif; ?>
+            </p>
           </header>
 
           <?php if (function_exists('WC') && WC()) : ?>
             <?php
-            // Misafir kullanicida form-login, oturum acik kullanicida panel template'i render edilir.
-            $wc_template = is_user_logged_in()
-                ? WC()->plugin_path() . '/templates/myaccount/my-account.php'
-                : WC()->plugin_path() . '/templates/myaccount/form-login.php';
-
-            if (file_exists($wc_template)) {
-                include $wc_template;
+            if (is_user_logged_in()) {
+                $wc_panel_template = WC()->plugin_path() . '/templates/myaccount/my-account.php';
+                if (file_exists($wc_panel_template)) {
+                    include $wc_panel_template;
+                }
+            } elseif (function_exists('wc_get_template')) {
+                // Tema override'i varsa onu, yoksa Woo varsayilan form-login template'ini kullan.
+                wc_get_template('myaccount/form-login.php');
             }
             ?>
           <?php else : ?>

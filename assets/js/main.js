@@ -591,6 +591,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  const authPanelRoots = $$("[data-auth-panels]");
+  authPanelRoots.forEach((root) => {
+    const panels = $$("[data-auth-panel]", root);
+    const triggers = $$("[data-auth-panel-btn]", root);
+    if (!panels.length || !triggers.length) return;
+
+    const setActivePanel = (key) => {
+      const panelKey = key === "register" ? "register" : "login";
+
+      panels.forEach((panel) => {
+        const isActive = panel.getAttribute("data-auth-panel") === panelKey;
+        panel.classList.toggle("is-active", isActive);
+      });
+
+      triggers.forEach((button) => {
+        const isActive = button.getAttribute("data-auth-panel-btn") === panelKey;
+        button.classList.toggle("is-active", isActive);
+        if (button.getAttribute("role") === "tab") {
+          button.setAttribute("aria-selected", isActive ? "true" : "false");
+        }
+      });
+    };
+
+    const defaultPanel = root.getAttribute("data-default-panel") || "login";
+    setActivePanel(defaultPanel);
+
+    triggers.forEach((button) => {
+      button.addEventListener("click", () => {
+        const key = button.getAttribute("data-auth-panel-btn") || "login";
+        setActivePanel(key);
+      });
+    });
+  });
+
   if (hasAjax) {
     fetchMiniCart();
   }
