@@ -217,13 +217,7 @@ body.is-locked {
   padding: 0 8px;
   min-width: 0;
   max-width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
-  scrollbar-width: none;
-}
-
-.desktop-menu .desktop-menu__list::-webkit-scrollbar {
-  display: none;
+  overflow: visible;
 }
 
 .desktop-menu .desktop-menu__list > li {
