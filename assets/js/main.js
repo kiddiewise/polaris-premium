@@ -18,15 +18,73 @@ document.addEventListener("DOMContentLoaded", () => {
   const cartIcons = $$(".cart-icon");
 
   const toastEl = $("#polarisToast");
-  const freeshipWrap = $("#polarisFreeShip");
-  const freeshipText = $("#polarisFreeShipText");
-  const freeshipFill = $("#polarisFreeShipFill");
+  const drawerFreeshipWrap = $("#polarisFreeShip");
+  const drawerFreeshipText = $("#polarisFreeShipText");
+  const drawerFreeshipFill = $("#polarisFreeShipFill");
+  const bottomFreeshipWrap = $("#polarisBottomFreeShip");
+  const bottomFreeshipPanel = $("#polarisBottomFreeShipPanel");
+  const bottomFreeshipToggle = $("#polarisBottomFreeShipToggle");
+  const bottomFreeshipClose = $("#polarisBottomFreeShipClose");
+  const bottomFreeshipLabel = $("#polarisBottomFreeShipLabel");
+  const bottomFreeshipText = $("#polarisBottomFreeShipText");
+  const bottomFreeshipFill = $("#polarisBottomFreeShipFill");
   const miniCartSubtotalEl = $("#polarisMiniCartSubtotal");
   const miniCartShippingEl = $("#polarisMiniCartShipping");
   const miniCartTotalEl = $("#polarisMiniCartTotal");
 
   const searchState = { timer: null, controller: null };
   const cartState = new Map();
+  const BOTTOM_FREESHIP_STORAGE_KEY = "polaris_bottom_freeship_open";
+  const bottomFreeshipMediaQuery = window.matchMedia("(max-width: 900px)");
+
+  function formatTry(amount) {
+    const value = Number(amount || 0);
+    const normalized = Number.isFinite(value) ? Math.max(0, value) : 0;
+    return new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 }).format(normalized);
+  }
+
+  function getStoredBottomFreeshipOpen() {
+    try {
+      const value = window.localStorage.getItem(BOTTOM_FREESHIP_STORAGE_KEY);
+      if (value === "0") return false;
+      if (value === "1") return true;
+    } catch {
+      return true;
+    }
+
+    return true;
+  }
+
+  function syncBottomFreeshipOffset() {
+    const shouldOffset = Boolean(bottomFreeshipWrap?.classList.contains("is-open") && bottomFreeshipMediaQuery.matches);
+    if (!shouldOffset) {
+      document.documentElement.style.setProperty("--bottom-freeship-offset", "0px");
+      return;
+    }
+
+    const panelHeight = bottomFreeshipPanel ? bottomFreeshipPanel.scrollHeight : 0;
+    const offset = Math.max(0, Math.ceil(panelHeight + 28));
+    document.documentElement.style.setProperty("--bottom-freeship-offset", `${offset}px`);
+  }
+
+  function setBottomFreeshipOpen(open, persist = true) {
+    if (!bottomFreeshipWrap || !bottomFreeshipToggle) {
+      document.documentElement.style.setProperty("--bottom-freeship-offset", "0px");
+      return;
+    }
+
+    bottomFreeshipWrap.classList.toggle("is-open", !!open);
+    bottomFreeshipToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    bottomFreeshipPanel?.setAttribute("aria-hidden", open ? "false" : "true");
+
+    if (persist) {
+      try {
+        window.localStorage.setItem(BOTTOM_FREESHIP_STORAGE_KEY, open ? "1" : "0");
+      } catch {}
+    }
+
+    syncBottomFreeshipOffset();
+  }
 
   async function parseJsonResponse(response) {
     const raw = await response.text();
@@ -271,6 +329,28 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", (event) => debounceSearch(event.target.value));
   }
 
+  if (bottomFreeshipWrap && bottomFreeshipToggle) {
+    setBottomFreeshipOpen(getStoredBottomFreeshipOpen(), false);
+
+    bottomFreeshipToggle.addEventListener("click", () => {
+      const isOpen = bottomFreeshipWrap.classList.contains("is-open");
+      setBottomFreeshipOpen(!isOpen, true);
+    });
+
+    bottomFreeshipClose?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setBottomFreeshipOpen(false, true);
+    });
+
+    if (typeof bottomFreeshipMediaQuery.addEventListener === "function") {
+      bottomFreeshipMediaQuery.addEventListener("change", syncBottomFreeshipOffset);
+    } else if (typeof bottomFreeshipMediaQuery.addListener === "function") {
+      bottomFreeshipMediaQuery.addListener(syncBottomFreeshipOffset);
+    }
+  } else {
+    document.documentElement.style.setProperty("--bottom-freeship-offset", "0px");
+  }
+
   function openCartDrawer() {
     if (!cartDrawer) return;
 
@@ -302,13 +382,17 @@ document.addEventListener("DOMContentLoaded", () => {
     openCartDrawer();
   });
 
-  function updateFreeship(freeship) {
-    if (!freeshipWrap || !freeshipText || !freeshipFill) return;
+  function applyFreeshipState(target, freeship) {
+    const { wrap, text, fill, label } = target || {};
+    if (!wrap || !text || !fill) return;
 
     if (!freeship) {
-      freeshipText.textContent = "Kargo bilgisi alınamadı.";
-      freeshipFill.style.width = "0%";
-      freeshipWrap.classList.remove("is-done");
+      text.textContent = "Kargo bilgisi alınamadı.";
+      if (label) {
+        label.textContent = "Kargo durumu";
+      }
+      fill.style.width = "0%";
+      wrap.classList.remove("is-done");
       return;
     }
 
@@ -316,14 +400,44 @@ document.addEventListener("DOMContentLoaded", () => {
     const percent = Math.max(0, Math.min(100, Number(freeship.percent || 0)));
 
     if (remaining <= 0) {
-      freeshipText.textContent = "Tebrikler! Ücretsiz kargo kazandınız.";
-      freeshipWrap.classList.add("is-done");
+      text.textContent = "Tebrikler! Ücretsiz kargo kazandınız.";
+      if (label) {
+        label.textContent = "Kargo durumu - Ücretsiz";
+      }
+      wrap.classList.add("is-done");
     } else {
-      freeshipText.textContent = `Ücretsiz kargo için ${Math.ceil(remaining)} TL daha ekleyin.`;
-      freeshipWrap.classList.remove("is-done");
+      const remainingText = formatTry(Math.ceil(remaining));
+      text.textContent = `Ücretsiz kargo için ${remainingText} ₺ kaldı.`;
+      if (label) {
+        label.textContent = `Kargo durumu - ${remainingText} ₺`;
+      }
+      wrap.classList.remove("is-done");
     }
 
-    freeshipFill.style.width = `${percent}%`;
+    fill.style.width = `${percent}%`;
+  }
+
+  function updateFreeship(freeship) {
+    applyFreeshipState(
+      {
+        wrap: drawerFreeshipWrap,
+        text: drawerFreeshipText,
+        fill: drawerFreeshipFill,
+      },
+      freeship
+    );
+
+    applyFreeshipState(
+      {
+        wrap: bottomFreeshipWrap,
+        text: bottomFreeshipText,
+        fill: bottomFreeshipFill,
+        label: bottomFreeshipLabel,
+      },
+      freeship
+    );
+
+    syncBottomFreeshipOffset();
   }
 
   function updateCartSummary(summary) {

@@ -11,6 +11,8 @@
   --radius-lg: 22px;
   --container: 1240px;
   --bottom-nav-h: 66px;
+  --bottom-freeship-offset: 0px;
+  --bottom-stack-h: calc(var(--bottom-nav-h) + var(--bottom-freeship-offset));
   --ease: cubic-bezier(.2, .8, .2, 1);
 }
 
@@ -852,7 +854,7 @@ body.is-locked {
 
 @media (max-width: 780px) {
   .polaris-catalog-page {
-    padding-bottom: calc(var(--bottom-nav-h) + 22px);
+    padding-bottom: calc(var(--bottom-stack-h) + 22px);
   }
 
   .polaris-catalog-toolbar {
@@ -1245,7 +1247,7 @@ body.is-locked {
   position: fixed;
   left: 50%;
   transform: translateX(-50%) translateY(8px);
-  bottom: calc(var(--bottom-nav-h) + 12px);
+  bottom: calc(var(--bottom-stack-h) + 12px);
   min-width: min(500px, 90vw);
   background: rgba(7, 14, 22, .95);
   border: 1px solid var(--border);
@@ -1286,6 +1288,132 @@ body.is-locked {
   border-top: 1px solid var(--border);
   color: var(--muted);
   font-size: .84rem;
+}
+
+.bottom-freeship {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--bottom-nav-h) - 1px);
+  z-index: 1210;
+  display: none;
+  pointer-events: none;
+}
+
+.bottom-freeship__tab {
+  position: absolute;
+  left: 50%;
+  top: -31px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(243, 135, 47, 0.42);
+  background: linear-gradient(150deg, rgba(243, 135, 47, 0.96), rgba(233, 118, 42, 0.94));
+  color: #171717;
+  font-size: .74rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 5px 12px;
+  max-width: min(92vw, 420px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 8px 18px rgba(243, 135, 47, 0.32);
+  pointer-events: auto;
+}
+
+.bottom-freeship__tab span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bottom-freeship__panel {
+  width: min(calc(100% - 16px), 640px);
+  margin: 0 auto;
+  border-radius: 14px 14px 0 0;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  background: rgba(9, 19, 31, 0.96);
+  box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.24);
+  max-height: 0;
+  padding: 0 12px;
+  opacity: 0;
+  transform: translateY(10px);
+  overflow: hidden;
+  transition: max-height .26s var(--ease), opacity .2s var(--ease), transform .26s var(--ease), padding .26s var(--ease), border-color .26s var(--ease);
+  pointer-events: auto;
+}
+
+.bottom-freeship.is-open .bottom-freeship__panel {
+  max-height: 110px;
+  padding: 8px 12px 10px;
+  opacity: 1;
+  transform: translateY(0);
+  border-color: rgba(255, 255, 255, .12);
+}
+
+.bottom-freeship__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bottom-freeship__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .86rem;
+  font-weight: 650;
+  color: #eaf3fc;
+}
+
+.bottom-freeship__title i {
+  color: #ffd2ac;
+}
+
+.bottom-freeship__close {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .22);
+  background: rgba(255, 255, 255, .06);
+  color: #d9e8f7;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.bottom-freeship__meta {
+  margin-top: 4px;
+  color: rgba(214, 230, 245, .86);
+  font-size: .79rem;
+  line-height: 1.35;
+}
+
+.bottom-freeship__bar {
+  margin-top: 7px;
+  background: rgba(255, 255, 255, .11);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.bottom-freeship__fill {
+  width: 0;
+  height: 100%;
+  background: var(--accent);
+  transition: width .3s var(--ease);
+}
+
+.bottom-freeship.is-done .bottom-freeship__fill {
+  background: linear-gradient(90deg, #14b86b, #35d58a);
 }
 
 .bottom-nav {
@@ -2353,7 +2481,7 @@ body.is-locked {
 
 @media (max-width: 900px) {
   body {
-    padding-bottom: calc(var(--bottom-nav-h) + 10px);
+    padding-bottom: calc(var(--bottom-stack-h) + 10px);
   }
 
   .desktop-menu {
@@ -2380,6 +2508,10 @@ body.is-locked {
 
   .bottom-nav {
     display: flex;
+  }
+
+  .bottom-freeship {
+    display: block;
   }
 
   .polaris-page-head {
@@ -2469,7 +2601,7 @@ body.is-locked {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: var(--bottom-nav-h);
+    bottom: var(--bottom-stack-h);
     z-index: 1700;
     border-radius: 18px 18px 0 0;
     border-left: 0;
@@ -2485,7 +2617,7 @@ body.is-locked {
   }
 
   body.woocommerce-checkout .polaris-checkout-page {
-    padding-bottom: calc(var(--bottom-nav-h) + 90px);
+    padding-bottom: calc(var(--bottom-stack-h) + 90px);
   }
 
   .pd-shell {
@@ -3423,7 +3555,7 @@ body.woocommerce-checkout .polaris-checkout-form #place_order:hover {
 
 @media (max-width: 900px) {
   body.woocommerce-checkout .polaris-checkout-page {
-    padding: 8px 0 calc(var(--bottom-nav-h) + 132px);
+    padding: 8px 0 calc(var(--bottom-stack-h) + 132px);
   }
 
   body.woocommerce-checkout .polaris-checkout-shell {
@@ -3440,7 +3572,7 @@ body.woocommerce-checkout .polaris-checkout-form #place_order:hover {
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
-    bottom: calc(var(--bottom-nav-h) + 10px);
+    bottom: calc(var(--bottom-stack-h) + 10px);
     z-index: 1710;
     width: min(94vw, 360px);
     justify-content: center;
@@ -3472,7 +3604,7 @@ body.woocommerce-checkout .polaris-checkout-form #place_order:hover {
     position: fixed;
     left: 8px;
     right: 8px;
-    bottom: calc(var(--bottom-nav-h) + 6px);
+    bottom: calc(var(--bottom-stack-h) + 6px);
     z-index: 1700;
     border-radius: 24px;
     border-left: 1px solid rgba(255, 255, 255, .12);
@@ -4940,7 +5072,7 @@ body.woocommerce-cart .polaris-cart-sticky-mobile {
 
 @media (max-width: 900px) {
   body.woocommerce-cart .polaris-cart-page {
-    padding-bottom: calc(var(--bottom-nav-h) + 100px);
+    padding-bottom: calc(var(--bottom-stack-h) + 100px);
   }
 
   body.woocommerce-cart .polaris-cart-top {
@@ -5026,7 +5158,7 @@ body.woocommerce-cart .polaris-cart-sticky-mobile {
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
-    bottom: calc(var(--bottom-nav-h) + 8px);
+    bottom: calc(var(--bottom-stack-h) + 8px);
     width: min(95%, 680px);
     z-index: 1700;
     border-radius: 20px;
