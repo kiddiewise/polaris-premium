@@ -148,7 +148,7 @@ get_header();
     </div>
     <p class="section-kicker"><?php echo esc_html__('2026 koleksiyonunu kategori bazında keşfet.', 'polaris'); ?></p>
 
-    <div class="cat-rail" role="list" aria-label="<?php echo esc_attr__('Ürün kategorileri', 'polaris'); ?>">
+    <div class="cat-rail" role="list" aria-label="<?php echo esc_attr__('Ürün kategorileri', 'polaris'); ?>" data-rail>
       <?php
       $terms = get_terms([
           'taxonomy'   => 'product_cat',
@@ -169,12 +169,33 @@ get_header();
                   continue;
               }
 
-              echo '<a class="cat-item" href="' . esc_url($link) . '" role="listitem">';
-              echo '  <span class="cat-item__name">' . esc_html($term->name) . '</span>';
-              echo '  <span class="cat-item__count">' . sprintf(esc_html__('%d ürün', 'polaris'), (int) $term->count) . '</span>';
-              echo '  <span class="cat-item__arrow" aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>';
-              echo '</a>';
-          }
+                $thumb_id   = (int) get_term_meta($term->term_id, 'thumbnail_id', true);
+                $image_url  = $thumb_id > 0 ? wp_get_attachment_image_url($thumb_id, 'medium_large') : '';
+                $image_alt  = $thumb_id > 0 ? get_post_meta($thumb_id, '_wp_attachment_image_alt', true) : '';
+                $desc       = trim(wp_strip_all_tags((string) $term->description));
+                $short_desc = $desc !== '' ? wp_trim_words($desc, 10, '...') : '';
+                $hue        = 185 + (($term->term_id * 27) % 140);
+
+                echo '<a class="cat-item" href="' . esc_url($link) . '" role="listitem" style="--cat-hue:' . esc_attr((string) $hue) . ';">';
+                echo '  <span class="cat-item__media">';
+                if (!empty($image_url)) {
+                    echo '  <img src="' . esc_url($image_url) . '" alt="' . esc_attr($image_alt !== '' ? $image_alt : $term->name) . '" loading="lazy" decoding="async">';
+                } else {
+                    echo '  <span class="cat-item__media-fallback" aria-hidden="true"><i class="fa-solid fa-tags"></i></span>';
+                }
+                echo '  </span>';
+                echo '  <span class="cat-item__content">';
+                echo '    <span class="cat-item__name">' . esc_html($term->name) . '</span>';
+                if ($short_desc !== '') {
+                    echo '    <span class="cat-item__desc">' . esc_html($short_desc) . '</span>';
+                }
+                echo '    <span class="cat-item__meta">';
+                echo '      <span class="cat-item__count">' . sprintf(esc_html__('%d ürün', 'polaris'), (int) $term->count) . '</span>';
+                echo '      <span class="cat-item__cta">' . esc_html__('Keşfet', 'polaris') . ' <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i></span>';
+                echo '    </span>';
+                echo '  </span>';
+                echo '</a>';
+            }
       } else {
           echo '<div class="search-empty">' . esc_html__('Kategori bulunamadı.', 'polaris') . '</div>';
       }
