@@ -49,3 +49,51 @@ add_filter('woocommerce_registration_privacy_policy_text', function ($text) {
 
     return 'Kişisel verileriniz, bu sitedeki deneyiminizi desteklemek, hesabınıza erişimi yönetmek ve gizlilik ilkesinde açıklanan diğer amaçlar için kullanılacaktır.';
 }, 20);
+
+/**
+ * Cart sayfasını tema içindeki page-cart.php ile render ederek header/footer'ı garanti eder.
+ */
+add_filter('template_include', function ($template) {
+    if (!function_exists('is_cart') || !is_cart()) {
+        return $template;
+    }
+
+    $cart_template = locate_template('page-cart.php');
+    if (!empty($cart_template)) {
+        return $cart_template;
+    }
+
+    return $template;
+}, 30);
+
+/**
+ * 1000 TL ve üzeri sepette tüm kargo ücretlerini ücretsiz yapar.
+ */
+add_filter('woocommerce_package_rates', function ($rates, $package) {
+    if (!function_exists('WC') || !WC()->cart) {
+        return $rates;
+    }
+
+    $threshold = 1000.0;
+    $subtotal  = (float) WC()->cart->get_subtotal();
+
+    if ($subtotal < $threshold) {
+        return $rates;
+    }
+
+    foreach ($rates as $rate_id => $rate) {
+        if (!is_object($rate)) {
+            continue;
+        }
+
+        $rates[$rate_id]->cost = 0;
+
+        if (isset($rates[$rate_id]->taxes) && is_array($rates[$rate_id]->taxes)) {
+            foreach ($rates[$rate_id]->taxes as $tax_id => $amount) {
+                $rates[$rate_id]->taxes[$tax_id] = 0;
+            }
+        }
+    }
+
+    return $rates;
+}, 99, 2);

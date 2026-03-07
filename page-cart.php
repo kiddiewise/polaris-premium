@@ -5,12 +5,10 @@ if (!defined('ABSPATH')) {
 
 get_header();
 ?>
-<section class="container polaris-content">
+<section class="polaris-cart-template-content">
   <?php if (have_posts()) : ?>
     <?php while (have_posts()) : the_post(); ?>
-      <article <?php post_class(); ?>>
-        <?php the_content(); ?>
-      </article>
+      <?php the_content(); ?>
     <?php endwhile; ?>
   <?php endif; ?>
 </section>
