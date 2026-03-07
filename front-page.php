@@ -210,14 +210,23 @@ get_header();
       </div>
 
       <?php
-      $new_query = new WC_Product_Query([
-          'status'  => 'publish',
-          'limit'   => $new_products_limit,
-          'orderby' => 'date',
-          'order'   => 'DESC',
-          'return'  => 'objects',
-      ]);
-      $new_products = $new_query->get_products();
+      if (function_exists('polaris_get_cached_products')) {
+          $new_products = polaris_get_cached_products([
+              'status'  => 'publish',
+              'limit'   => $new_products_limit,
+              'orderby' => 'date',
+              'order'   => 'DESC',
+          ], 'front_page_new_products', 300);
+      } else {
+          $new_query = new WC_Product_Query([
+              'status'  => 'publish',
+              'limit'   => $new_products_limit,
+              'orderby' => 'date',
+              'order'   => 'DESC',
+              'return'  => 'objects',
+          ]);
+          $new_products = $new_query->get_products();
+      }
       ?>
 
       <div class="product-rail" data-rail>
@@ -242,15 +251,25 @@ get_header();
         continue;
     }
 
-    $products_query = new WC_Product_Query([
-        'status'   => 'publish',
-        'limit'    => 12,
-        'orderby'  => 'menu_order',
-        'order'    => 'ASC',
-        'category' => [$slug],
-        'return'   => 'objects',
-    ]);
-    $category_products = $products_query->get_products();
+    if (function_exists('polaris_get_cached_products')) {
+        $category_products = polaris_get_cached_products([
+            'status'   => 'publish',
+            'limit'    => 12,
+            'orderby'  => 'menu_order',
+            'order'    => 'ASC',
+            'category' => [$slug],
+        ], 'front_page_category_' . sanitize_key($slug), 300);
+    } else {
+        $products_query = new WC_Product_Query([
+            'status'   => 'publish',
+            'limit'    => 12,
+            'orderby'  => 'menu_order',
+            'order'    => 'ASC',
+            'category' => [$slug],
+            'return'   => 'objects',
+        ]);
+        $category_products = $products_query->get_products();
+    }
     $category_link = get_term_link($category);
     if (is_wp_error($category_link)) {
         $category_link = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');

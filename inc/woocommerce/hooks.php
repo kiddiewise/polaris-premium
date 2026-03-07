@@ -139,6 +139,10 @@ function polaris_register_change_password_endpoint()
 add_action('init', 'polaris_register_change_password_endpoint');
 
 add_action('admin_init', function () {
+    if (!current_user_can('manage_options') || wp_doing_ajax()) {
+        return;
+    }
+
     $rewrite_version = '1';
     $stored_version  = (string) get_option('polaris_account_rewrite_version', '');
 

@@ -502,9 +502,39 @@ function polaris_google_login_shortcode($atts = [])
     return ob_get_clean();
 }
 
-function polaris_google_login_enqueue_assets()
+function polaris_google_login_should_enqueue_assets()
 {
     if (is_admin() || !polaris_google_login_is_enabled()) {
+        return false;
+    }
+
+    $should_enqueue = false;
+
+    if (function_exists('is_account_page') && is_account_page()) {
+        $should_enqueue = true;
+    }
+
+    if (!$should_enqueue && function_exists('polaris_is_login_page_request') && polaris_is_login_page_request()) {
+        $should_enqueue = true;
+    }
+
+    if (!$should_enqueue && is_page_template('page-login.php')) {
+        $should_enqueue = true;
+    }
+
+    if (!$should_enqueue && is_singular()) {
+        $post = get_post();
+        if ($post instanceof WP_Post && has_shortcode($post->post_content, 'polaris_google_login_button')) {
+            $should_enqueue = true;
+        }
+    }
+
+    return (bool) apply_filters('polaris_google_login_should_enqueue_assets', $should_enqueue);
+}
+
+function polaris_google_login_enqueue_assets()
+{
+    if (!polaris_google_login_should_enqueue_assets()) {
         return;
     }
 
@@ -527,6 +557,8 @@ function polaris_google_login_enqueue_assets()
         $js_ver,
         true
     );
+    wp_script_add_data('polaris-google-gsi', 'defer', true);
+    wp_script_add_data('polaris-google-login', 'defer', true);
 
     $redirect_hint = isset($_GET['redirect_to']) ? esc_url_raw(wp_unslash($_GET['redirect_to'])) : '';
 

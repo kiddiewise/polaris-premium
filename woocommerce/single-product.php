@@ -197,24 +197,42 @@ while (have_posts()) :
 
     $primary_category = polaris_single_pick_primary_category($product_id, $categories);
 
-    if ($primary_category && class_exists('WC_Product_Query')) {
-        $family_query = new WC_Product_Query([
-            'status'    => 'publish',
-            'limit'     => -1,
-            'orderby'   => 'menu_order',
-            'order'     => 'ASC',
-            'return'    => 'objects',
-            'tax_query' => [
-                [
-                    'taxonomy'         => 'product_cat',
-                    'field'            => 'term_id',
-                    'terms'            => [(int) $primary_category->term_id],
-                    'include_children' => false,
+    if ($primary_category) {
+        if (function_exists('polaris_get_cached_products')) {
+            $family_products = polaris_get_cached_products([
+                'status'    => 'publish',
+                'limit'     => -1,
+                'orderby'   => 'menu_order',
+                'order'     => 'ASC',
+                'tax_query' => [
+                    [
+                        'taxonomy'         => 'product_cat',
+                        'field'            => 'term_id',
+                        'terms'            => [(int) $primary_category->term_id],
+                        'include_children' => false,
+                    ],
                 ],
-            ],
-        ]);
+            ], 'single_family_' . (int) $primary_category->term_id, 300);
+        } elseif (class_exists('WC_Product_Query')) {
+            $family_query = new WC_Product_Query([
+                'status'    => 'publish',
+                'limit'     => -1,
+                'orderby'   => 'menu_order',
+                'order'     => 'ASC',
+                'return'    => 'objects',
+                'tax_query' => [
+                    [
+                        'taxonomy'         => 'product_cat',
+                        'field'            => 'term_id',
+                        'terms'            => [(int) $primary_category->term_id],
+                        'include_children' => false,
+                    ],
+                ],
+            ]);
 
-        $family_products = $family_query->get_products();
+            $family_products = $family_query->get_products();
+        }
+
         if (empty($family_products)) {
             $family_products = [$product];
         }

@@ -57,11 +57,59 @@ if (!function_exists('polaris_get_social_links')) {
     }
 }
 
+if (!function_exists('polaris_get_cached_products')) {
+    /**
+     * WC product sorgularini kisa sureli cache'leyerek tekrar eden istekleri azaltir.
+     */
+    function polaris_get_cached_products(array $query_args, $cache_group = '', $ttl = 300)
+    {
+        if (!class_exists('WC_Product_Query')) {
+            return [];
+        }
+
+        $ttl = max(60, (int) $ttl);
+
+        $cache_key_source = wp_json_encode($query_args) . '|' . (string) $cache_group;
+        $transient_key    = 'polaris_products_' . md5($cache_key_source);
+        $product_ids      = get_transient($transient_key);
+
+        if (!is_array($product_ids)) {
+            $ids_query_args           = $query_args;
+            $ids_query_args['return'] = 'ids';
+
+            $product_query = new WC_Product_Query($ids_query_args);
+            $product_ids   = $product_query->get_products();
+            $product_ids   = array_values(array_filter(array_map('absint', (array) $product_ids)));
+
+            set_transient($transient_key, $product_ids, $ttl);
+        }
+
+        if (empty($product_ids)) {
+            return [];
+        }
+
+        $products = [];
+        foreach ($product_ids as $product_id) {
+            $product = wc_get_product($product_id);
+            if ($product) {
+                $products[] = $product;
+            }
+        }
+
+        return $products;
+    }
+}
+
 /**
  * page-login.php template'ini kullanan sayfayi bulur.
  */
 function polaris_get_login_page_url()
 {
+    static $cached_login_url = null;
+    if (null !== $cached_login_url) {
+        return $cached_login_url;
+    }
+
     // 1) PHP page template ile atanmis sayfa.
     $pages = get_posts([
         'post_type'      => 'page',
@@ -76,7 +124,8 @@ function polaris_get_login_page_url()
     if (!empty($pages) && !is_wp_error($pages)) {
         $url = get_permalink((int) $pages[0]);
         if (!empty($url)) {
-            return $url;
+            $cached_login_url = $url;
+            return $cached_login_url;
         }
     }
 
@@ -87,12 +136,14 @@ function polaris_get_login_page_url()
         if ($page instanceof WP_Post && $page->post_status === 'publish') {
             $url = get_permalink((int) $page->ID);
             if (!empty($url)) {
-                return $url;
+                $cached_login_url = $url;
+                return $cached_login_url;
             }
         }
     }
 
-    return '';
+    $cached_login_url = '';
+    return $cached_login_url;
 }
 
 /**

@@ -4,6 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const ajaxConfig = window.polaris_ajax || {};
   const hasAjax = Boolean(ajaxConfig.ajax_url && ajaxConfig.nonce);
+  const wcAddToCartUrl = String(ajaxConfig.wc_ajax_add_to_cart || "/?wc-ajax=add_to_cart");
+  const initialCartData = ajaxConfig.cart_init && typeof ajaxConfig.cart_init === "object"
+    ? ajaxConfig.cart_init
+    : null;
 
   const body = document.body;
   const searchOverlay = $("#polarisSearchOverlay");
@@ -45,6 +49,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const value = Number(amount || 0);
     const normalized = Number.isFinite(value) ? Math.max(0, value) : 0;
     return new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 }).format(normalized);
+  }
+
+  function escapeHtml(value) {
+    return String(value || "").replace(/[&<>"']/g, (char) => (
+      {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;",
+      }[char] || char
+    ));
+  }
+
+  function safeUrl(value, fallback = "#") {
+    const raw = String(value || "").trim();
+    if (!raw) return fallback;
+
+    try {
+      const url = new URL(raw, window.location.origin);
+      if (!["http:", "https:"].includes(url.protocol)) {
+        return fallback;
+      }
+
+      return url.href;
+    } catch {
+      return fallback;
+    }
   }
 
   function getStoredBottomFreeshipOpen() {
@@ -341,18 +373,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     searchResults.innerHTML = items
-      .map(
-        (item) => `
-          <a class="search-item" href="${item.url || "#"}">
-            <div class="search-thumb"><img src="${item.image || ""}" alt=""></div>
+      .map((item) => {
+        const url = safeUrl(item?.url, "#");
+        const image = safeUrl(item?.image, "");
+        const title = escapeHtml(item?.title || "");
+        const category = escapeHtml(item?.category || "");
+        const price = escapeHtml(item?.price || "");
+
+        return `
+          <a class="search-item" href="${url}">
+            <div class="search-thumb"><img src="${image}" alt=""></div>
             <div>
-              <div class="search-title">${item.title || ""}</div>
-              <div class="search-meta">${item.category || ""}</div>
+              <div class="search-title">${title}</div>
+              <div class="search-meta">${category}</div>
             </div>
-            <div class="search-price">${item.price || ""}</div>
+            <div class="search-price">${price}</div>
           </a>
-        `
-      )
+        `;
+      })
       .join("");
   }
 
@@ -502,7 +540,10 @@ document.addEventListener("DOMContentLoaded", () => {
     requestAnimationFrame(() => cartDrawer.classList.add("is-open"));
     cartDrawer.setAttribute("aria-hidden", "false");
     lockBody();
-    fetchMiniCart();
+
+    if (hasAjax) {
+      fetchMiniCart();
+    }
   }
 
   function closeCartDrawer() {
@@ -620,6 +661,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function hydrateInitialCartState() {
+    if (!initialCartData || !hasAjax) return;
+
+    updateCartCounts(initialCartData.count || 0);
+    updateFreeship(initialCartData.freeship || null);
+    updateCartSummary(initialCartData.summary || null);
+    updateCartState(initialCartData.items || []);
+  }
+
   async function setCartQuantity(cartKey, qty) {
     if (!hasAjax) {
       throw new Error("missing_ajax");
@@ -650,7 +700,7 @@ document.addEventListener("DOMContentLoaded", () => {
     payload.append("product_id", String(productId));
     payload.append("quantity", String(qty));
 
-    const response = await fetch("/?wc-ajax=add_to_cart", {
+    const response = await fetch(wcAddToCartUrl, {
       method: "POST",
       body: payload,
       credentials: "same-origin",
@@ -897,7 +947,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (hasAjax) {
-    fetchMiniCart();
+    hydrateInitialCartState();
   }
 
   const cartPageForm = $(".polaris-cart-form");

@@ -13,7 +13,7 @@ $registration_enabled = 'yes' === get_option('woocommerce_enable_myaccount_regis
 $default_panel        = $registration_enabled && isset($_GET['register']) && '1' === sanitize_text_field(wp_unslash($_GET['register']))
     ? 'register'
     : 'login';
-$redirect_to          = isset($_REQUEST['redirect_to']) ? wp_validate_redirect(wp_unslash($_REQUEST['redirect_to']), '') : '';
+$redirect_to          = isset($_REQUEST['redirect_to']) ? wp_validate_redirect(esc_url_raw(wp_unslash($_REQUEST['redirect_to'])), '') : '';
 
 do_action('woocommerce_before_customer_login_form');
 ?>
