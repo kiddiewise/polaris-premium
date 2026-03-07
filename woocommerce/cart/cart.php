@@ -214,9 +214,15 @@ do_action('woocommerce_before_cart');
 
       <?php if (!$cart_is_empty) : ?>
         <div class="polaris-cart-sticky-mobile" aria-label="<?php esc_attr_e('Mobil ödeme çubuğu', 'polaris'); ?>">
-          <div class="polaris-cart-sticky-mobile__meta">
-            <span><?php esc_html_e('Toplam', 'polaris'); ?></span>
-            <strong><?php echo wp_kses_post($cart_total_html); ?></strong>
+          <div class="polaris-cart-sticky-mobile__rows">
+            <div class="polaris-cart-sticky-mobile__meta">
+              <span><?php esc_html_e('Toplam', 'polaris'); ?></span>
+              <strong><?php echo wp_kses_post($cart_total_html); ?></strong>
+            </div>
+            <div class="polaris-cart-sticky-mobile__meta polaris-cart-sticky-mobile__meta--shipping">
+              <span><?php esc_html_e('Kargo ücreti', 'polaris'); ?></span>
+              <strong><?php echo wp_kses_post($cart_shipping_html); ?></strong>
+            </div>
           </div>
           <a class="button btn btn-primary" href="<?php echo esc_url($checkout_url); ?>">
             <?php esc_html_e('Ödemeyi tamamla', 'polaris'); ?>

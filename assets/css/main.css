@@ -4371,17 +4371,32 @@ body.woocommerce-cart .polaris-cart-item__subtotal {
 }
 
 body.woocommerce-cart .polaris-cart-item__remove {
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  border: 1px solid rgba(243, 135, 47, .55);
-  background: rgba(243, 135, 47, .16);
-  color: #ffd7be;
+  border: 1px solid rgba(255, 255, 255, .3);
+  background: rgba(255, 255, 255, .05);
+  color: #ffffff;
+  font-size: .78rem;
 }
 
 body.woocommerce-cart .polaris-cart-item__remove:hover {
-  background: rgba(243, 135, 47, .28);
-  color: #fff;
+  background: rgba(255, 255, 255, .12);
+  color: #ffffff;
+}
+
+body.woocommerce-cart .polaris-cart-item__remove.remove,
+body.woocommerce-cart .polaris-cart-item__remove.remove:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, .05) !important;
+}
+
+body.woocommerce-cart .polaris-cart-item__remove.remove:hover {
+  background: rgba(255, 255, 255, .12) !important;
+}
+
+body.woocommerce-cart .polaris-cart-item__remove.remove i {
+  font-size: .74rem;
 }
 
 body.woocommerce-cart .polaris-cart-actions {
@@ -4589,8 +4604,9 @@ body.woocommerce-cart .polaris-cart-sticky-mobile {
   }
 
   body.woocommerce-cart .polaris-cart-item__remove {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
+    font-size: .72rem;
   }
 
   body.woocommerce-cart .polaris-cart-actions {
@@ -4642,6 +4658,22 @@ body.woocommerce-cart .polaris-cart-sticky-mobile {
   body.woocommerce-cart .polaris-cart-sticky-mobile__meta strong {
     font-size: 1.04rem;
     color: #fff;
+  }
+
+  body.woocommerce-cart .polaris-cart-sticky-mobile__rows {
+    display: grid;
+    gap: 2px;
+  }
+
+  body.woocommerce-cart .polaris-cart-sticky-mobile__meta--shipping {
+    font-size: .86rem;
+    color: rgba(199, 216, 234, .88);
+  }
+
+  body.woocommerce-cart .polaris-cart-sticky-mobile__meta--shipping strong {
+    font-size: .9rem;
+    font-weight: 600;
+    color: rgba(236, 244, 252, .95);
   }
 
   body.woocommerce-cart .polaris-cart-sticky-mobile .btn {
