@@ -886,6 +886,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  const accountNavList = $(".polaris-account-nav__list");
+  if (accountNavList) {
+    const accountActiveItem = $(".polaris-account-nav__item.is-active", accountNavList);
+    accountActiveItem?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }
+
   if (hasAjax) {
     fetchMiniCart();
   }
