@@ -627,6 +627,281 @@ body.is-locked {
   font-weight: 700;
 }
 
+.polaris-catalog-page {
+  padding: 18px 0 36px;
+  display: grid;
+  gap: 14px;
+}
+
+.polaris-catalog-hero {
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  background:
+    radial-gradient(circle at 0 0, rgba(243, 135, 47, .2), rgba(243, 135, 47, 0) 42%),
+    linear-gradient(152deg, rgba(13, 30, 49, .96), rgba(7, 18, 31, .96));
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(240px, .9fr) minmax(0, 1.25fr);
+  min-height: 280px;
+}
+
+.polaris-catalog-hero__visual {
+  position: relative;
+  background: linear-gradient(150deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .01));
+  border-right: 1px solid rgba(255, 255, 255, .12);
+}
+
+.polaris-catalog-hero__visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.polaris-catalog-hero__fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: rgba(230, 239, 248, .9);
+  font-size: clamp(2.1rem, 4vw, 3.2rem);
+}
+
+.polaris-catalog-hero__content {
+  padding: clamp(18px, 2vw, 28px);
+  display: grid;
+  align-content: center;
+  gap: 12px;
+}
+
+.polaris-catalog-breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: rgba(213, 228, 244, .82);
+  font-size: .84rem;
+}
+
+.polaris-catalog-breadcrumbs a {
+  color: rgba(213, 228, 244, .9);
+}
+
+.polaris-catalog-breadcrumbs strong {
+  color: #fff;
+}
+
+.polaris-catalog-breadcrumbs a:hover {
+  color: #fff;
+}
+
+.polaris-catalog-hero h1 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.7vw, 2rem);
+  line-height: 1.2;
+}
+
+.polaris-catalog-hero p {
+  margin: 0;
+  color: rgba(216, 231, 247, .84);
+  line-height: 1.55;
+  max-width: 62ch;
+}
+
+.polaris-catalog-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.polaris-catalog-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  background: rgba(255, 255, 255, .08);
+  color: rgba(239, 246, 253, .95);
+  font-size: .8rem;
+  font-weight: 600;
+  padding: 7px 12px;
+}
+
+.polaris-catalog-chip i {
+  color: #ffd39f;
+}
+
+.polaris-catalog-toolbar {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.polaris-catalog-toolbar__result {
+  color: rgba(214, 229, 245, .88);
+  font-size: .9rem;
+}
+
+.polaris-catalog-toolbar .woocommerce-result-count {
+  margin: 0;
+}
+
+.polaris-catalog-toolbar .woocommerce-ordering {
+  margin: 0;
+}
+
+.polaris-catalog-toolbar .woocommerce-ordering select {
+  min-height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(6, 16, 28, .88);
+  color: #eef5fc;
+  padding: 0 16px;
+}
+
+.polaris-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.polaris-catalog-grid .p-card {
+  width: auto;
+  min-width: 0;
+  height: 100%;
+}
+
+.polaris-catalog-grid .p-card__title {
+  min-height: 44px;
+}
+
+.polaris-catalog-page .woocommerce-pagination {
+  margin-top: 8px;
+}
+
+.polaris-catalog-page .woocommerce-pagination ul.page-numbers {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.polaris-catalog-page .woocommerce-pagination ul.page-numbers li {
+  border: 0;
+  float: none;
+}
+
+.polaris-catalog-page .woocommerce-pagination .page-numbers {
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .05);
+  color: rgba(229, 239, 250, .95);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+.polaris-catalog-page .woocommerce-pagination .page-numbers.current,
+.polaris-catalog-page .woocommerce-pagination .page-numbers:hover {
+  background: var(--accent);
+  color: #17212f;
+  border-color: transparent;
+}
+
+.polaris-catalog-page .woocommerce-info,
+.polaris-catalog-page .woocommerce-message,
+.polaris-catalog-page .woocommerce-error {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(8, 20, 32, .84);
+  color: rgba(231, 241, 251, .95);
+  margin: 0;
+  padding: 12px 14px;
+}
+
+.polaris-catalog-page .woocommerce-info::before,
+.polaris-catalog-page .woocommerce-message::before,
+.polaris-catalog-page .woocommerce-error::before {
+  color: #ffd9b2;
+}
+
+@media (max-width: 1100px) {
+  .polaris-catalog-hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .polaris-catalog-hero__visual {
+    min-height: 220px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+  }
+
+  .polaris-catalog-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 780px) {
+  .polaris-catalog-page {
+    padding-bottom: calc(var(--bottom-nav-h) + 22px);
+  }
+
+  .polaris-catalog-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .polaris-catalog-toolbar .woocommerce-ordering {
+    width: 100%;
+  }
+
+  .polaris-catalog-toolbar .woocommerce-ordering select {
+    width: 100%;
+  }
+
+  .polaris-catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .polaris-catalog-hero {
+    border-radius: 18px;
+  }
+
+  .polaris-catalog-hero__visual {
+    min-height: 180px;
+  }
+
+  .polaris-catalog-hero__content {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .polaris-catalog-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .polaris-catalog-grid .p-card__media {
+    padding: 8px;
+  }
+
+  .polaris-catalog-grid .p-card__body {
+    padding: 10px;
+    gap: 8px;
+  }
+}
+
 .polaris-search-overlay,
 .polaris-drawer {
   position: fixed;
