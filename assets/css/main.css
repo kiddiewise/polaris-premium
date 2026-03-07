@@ -6065,11 +6065,21 @@ body.woocommerce-account.logged-in .polaris-account-content {
   width: 100%;
   min-height: 44px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, .19);
-  background: rgba(5, 14, 23, .82);
-  color: #eaf3fd;
+  border: 1px solid rgba(255, 255, 255, .19) !important;
+  background: rgba(5, 14, 23, .82) !important;
+  background-color: rgba(5, 14, 23, .82) !important;
+  color: #eaf3fd !important;
   padding: 10px 12px;
   transition: border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease);
+}
+
+.polaris-account-panel .input-text::placeholder,
+.polaris-account-panel input[type="text"]::placeholder,
+.polaris-account-panel input[type="email"]::placeholder,
+.polaris-account-panel input[type="password"]::placeholder,
+.polaris-account-panel input[type="tel"]::placeholder,
+.polaris-account-panel textarea::placeholder {
+  color: rgba(194, 212, 229, .78) !important;
 }
 
 .polaris-account-panel textarea {
@@ -6085,9 +6095,33 @@ body.woocommerce-account.logged-in .polaris-account-content {
 .polaris-account-panel textarea:focus,
 .polaris-account-panel select:focus {
   outline: 0;
-  border-color: rgba(243, 135, 47, .72);
+  border-color: rgba(243, 135, 47, .72) !important;
   box-shadow: 0 0 0 3px rgba(243, 135, 47, .2);
-  background: rgba(8, 19, 31, .9);
+  background: rgba(8, 19, 31, .9) !important;
+  background-color: rgba(8, 19, 31, .9) !important;
+}
+
+body.woocommerce-account.logged-in .polaris-account-panel .woocommerce-Input,
+body.woocommerce-account.logged-in .polaris-account-panel .input-text,
+body.woocommerce-account.logged-in .polaris-account-panel .password-input input {
+  background: rgba(5, 14, 23, .82) !important;
+  background-color: rgba(5, 14, 23, .82) !important;
+  color: #eaf3fd !important;
+  border-color: rgba(255, 255, 255, .19) !important;
+}
+
+body.woocommerce-account.logged-in .polaris-account-panel .select2-container .select2-selection--single,
+body.woocommerce-account.logged-in .polaris-account-panel .select2-container .select2-selection--multiple {
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, .19) !important;
+  background: rgba(5, 14, 23, .82) !important;
+  background-color: rgba(5, 14, 23, .82) !important;
+}
+
+body.woocommerce-account.logged-in .polaris-account-panel .select2-container .select2-selection__rendered {
+  color: #eaf3fd !important;
+  line-height: 42px;
 }
 
 .polaris-account-panel .woocommerce-EditAccountForm fieldset {

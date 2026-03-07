@@ -129,7 +129,7 @@ add_filter('woocommerce_package_rates', function ($rates, $package) {
 }, 99, 2);
 
 /**
- * Hesabim paneli: menu strukuru ve sifre degistirme endpoint'i.
+ * Hesabım paneli: menü yapısı ve şifre değiştirme endpoint'i.
  */
 function polaris_register_change_password_endpoint()
 {
@@ -152,12 +152,12 @@ add_action('admin_init', function () {
 
 add_filter('woocommerce_account_menu_items', function ($items) {
     return [
-        'dashboard'       => __('Dashboard', 'polaris'),
-        'orders'          => __('Siparisler', 'polaris'),
+        'dashboard'       => __('Genel', 'polaris'),
+        'orders'          => __('Siparişler', 'polaris'),
         'edit-address'    => __('Adresler', 'polaris'),
-        'edit-account'    => __('Hesap Detaylari', 'polaris'),
-        'change-password' => __('Sifre Degistir', 'polaris'),
-        'customer-logout' => __('Cikis', 'polaris'),
+        'edit-account'    => __('Hesap Detayları', 'polaris'),
+        'change-password' => __('Şifre Değiştir', 'polaris'),
+        'customer-logout' => __('Çıkış', 'polaris'),
     ];
 }, 30);
 
@@ -188,7 +188,7 @@ add_action('template_redirect', function () {
         : '';
 
     if (empty($nonce) || !wp_verify_nonce($nonce, 'polaris_change_password_action')) {
-        wc_add_notice(__('Guvenlik dogrulamasi basarisiz. Lutfen tekrar deneyin.', 'polaris'), 'error');
+        wc_add_notice(__('Güvenlik doğrulaması başarısız. Lütfen tekrar deneyin.', 'polaris'), 'error');
         wp_safe_redirect(wc_get_account_endpoint_url('change-password'));
         exit;
     }
@@ -205,37 +205,37 @@ add_action('template_redirect', function () {
     $user    = $user_id ? get_userdata($user_id) : null;
 
     if (!$user) {
-        wc_add_notice(__('Kullanici bilgisi bulunamadi.', 'polaris'), 'error');
+        wc_add_notice(__('Kullanıcı bilgisi bulunamadı.', 'polaris'), 'error');
         wp_safe_redirect(wc_get_account_endpoint_url('change-password'));
         exit;
     }
 
     if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
-        wc_add_notice(__('Tum sifre alanlarini doldurun.', 'polaris'), 'error');
+        wc_add_notice(__('Tüm şifre alanlarını doldurun.', 'polaris'), 'error');
         wp_safe_redirect(wc_get_account_endpoint_url('change-password'));
         exit;
     }
 
     if (!wp_check_password($current_password, $user->data->user_pass, $user_id)) {
-        wc_add_notice(__('Mevcut sifreniz hatali.', 'polaris'), 'error');
+        wc_add_notice(__('Mevcut şifreniz hatalı.', 'polaris'), 'error');
         wp_safe_redirect(wc_get_account_endpoint_url('change-password'));
         exit;
     }
 
     if (strlen($new_password) < 8) {
-        wc_add_notice(__('Yeni sifre en az 8 karakter olmali.', 'polaris'), 'error');
+        wc_add_notice(__('Yeni şifre en az 8 karakter olmalı.', 'polaris'), 'error');
         wp_safe_redirect(wc_get_account_endpoint_url('change-password'));
         exit;
     }
 
     if ($new_password !== $confirm_password) {
-        wc_add_notice(__('Yeni sifre alanlari birbiriyle uyusmuyor.', 'polaris'), 'error');
+        wc_add_notice(__('Yeni şifre alanları birbiriyle uyuşmuyor.', 'polaris'), 'error');
         wp_safe_redirect(wc_get_account_endpoint_url('change-password'));
         exit;
     }
 
     if ($current_password === $new_password) {
-        wc_add_notice(__('Yeni sifreniz mevcut sifrenizden farkli olmali.', 'polaris'), 'error');
+        wc_add_notice(__('Yeni şifreniz mevcut şifrenizden farklı olmalı.', 'polaris'), 'error');
         wp_safe_redirect(wc_get_account_endpoint_url('change-password'));
         exit;
     }
@@ -245,7 +245,7 @@ add_action('template_redirect', function () {
     wp_set_auth_cookie($user_id, true);
     do_action('wp_login', $user->user_login, $user);
 
-    wc_add_notice(__('Sifreniz basariyla guncellendi.', 'polaris'), 'success');
+    wc_add_notice(__('Şifreniz başarıyla güncellendi.', 'polaris'), 'success');
     wp_safe_redirect(wc_get_account_endpoint_url('change-password'));
     exit;
 }, 25);

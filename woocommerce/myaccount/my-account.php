@@ -14,7 +14,7 @@ if (is_user_logged_in()) {
     $current_endpoint = WC()->query ? (string) WC()->query->get_current_endpoint() : '';
     $active_endpoint  = '' !== $current_endpoint ? $current_endpoint : 'dashboard';
     $menu_items       = wc_get_account_menu_items();
-    $panel_title      = isset($menu_items[$active_endpoint]) ? $menu_items[$active_endpoint] : __('Hesabim', 'polaris');
+    $panel_title      = isset($menu_items[$active_endpoint]) ? $menu_items[$active_endpoint] : __('Hesabım', 'polaris');
 
     $orders_count = function_exists('wc_get_customer_order_count') ? (int) wc_get_customer_order_count($user_id) : 0;
 
@@ -32,7 +32,7 @@ if (is_user_logged_in()) {
         }
     }
 
-    $last_order_meta = __('Henuz siparis bulunmuyor', 'polaris');
+    $last_order_meta = __('Henüz sipariş bulunmuyor', 'polaris');
     if ($last_order instanceof WC_Order) {
         $order_date = $last_order->get_date_created();
         $date_text  = $order_date ? wp_date('d M Y', $order_date->getTimestamp()) : __('Tarih yok', 'polaris');
@@ -89,7 +89,7 @@ if (is_user_logged_in()) {
     <section class="polaris-content polaris-account-content">
       <div class="container polaris-account">
         <div class="polaris-account__shell">
-          <aside class="polaris-account__sidebar" aria-label="<?php echo esc_attr__('Hesap Menusu', 'polaris'); ?>">
+          <aside class="polaris-account__sidebar" aria-label="<?php echo esc_attr__('Hesap Menüsü', 'polaris'); ?>">
             <div class="polaris-account__profile">
               <div class="polaris-account__avatar">
                 <?php echo get_avatar($user_id, 72, '', $display_name, ['class' => 'polaris-account__avatar-image']); ?>
@@ -125,43 +125,43 @@ if (is_user_logged_in()) {
           <div class="polaris-account__main">
             <header class="polaris-account__head">
               <div>
-                <p class="polaris-account__kicker"><?php esc_html_e('My Account', 'polaris'); ?></p>
+                <p class="polaris-account__kicker"><?php esc_html_e('Hesabım', 'polaris'); ?></p>
                 <h1><?php echo esc_html($panel_title); ?></h1>
               </div>
-              <span class="polaris-account__status"><?php esc_html_e('Hesabiniz aktif', 'polaris'); ?></span>
+              <span class="polaris-account__status"><?php esc_html_e('Hesabınız aktif', 'polaris'); ?></span>
             </header>
 
-            <section class="polaris-account-stats" aria-label="<?php echo esc_attr__('Hesap Ozeti', 'polaris'); ?>">
+            <section class="polaris-account-stats" aria-label="<?php echo esc_attr__('Hesap Özeti', 'polaris'); ?>">
               <article class="polaris-account-stat">
-                <p><?php esc_html_e('Siparis Sayisi', 'polaris'); ?></p>
+                <p><?php esc_html_e('Sipariş Sayısı', 'polaris'); ?></p>
                 <strong><?php echo esc_html((string) $orders_count); ?></strong>
               </article>
               <article class="polaris-account-stat">
-                <p><?php esc_html_e('Son Siparis', 'polaris'); ?></p>
+                <p><?php esc_html_e('Son Sipariş', 'polaris'); ?></p>
                 <strong><?php echo esc_html($last_order_meta); ?></strong>
               </article>
               <article class="polaris-account-stat">
-                <p><?php esc_html_e('Kayitli Adres', 'polaris'); ?></p>
+                <p><?php esc_html_e('Kayıtlı Adres', 'polaris'); ?></p>
                 <strong><?php echo esc_html($saved_address_count . '/' . count($address_types)); ?></strong>
               </article>
             </section>
 
-            <section class="polaris-account-actions" aria-label="<?php echo esc_attr__('Hizli Islemler', 'polaris'); ?>">
+            <section class="polaris-account-actions" aria-label="<?php echo esc_attr__('Hızlı İşlemler', 'polaris'); ?>">
               <a class="polaris-account-actions__item" href="<?php echo esc_url($orders_url); ?>">
-                <span><?php esc_html_e('Siparislerim', 'polaris'); ?></span>
-                <small><?php esc_html_e('Gecmis ve durum takibi', 'polaris'); ?></small>
+                <span><?php esc_html_e('Siparişlerim', 'polaris'); ?></span>
+                <small><?php esc_html_e('Geçmiş ve durum takibi', 'polaris'); ?></small>
               </a>
               <a class="polaris-account-actions__item" href="<?php echo esc_url($addresses_url); ?>">
-                <span><?php esc_html_e('Adresleri Duzenle', 'polaris'); ?></span>
+                <span><?php esc_html_e('Adresleri Düzenle', 'polaris'); ?></span>
                 <small><?php esc_html_e('Teslimat ve fatura bilgileri', 'polaris'); ?></small>
               </a>
               <a class="polaris-account-actions__item" href="<?php echo esc_url($account_url); ?>">
                 <span><?php esc_html_e('Profil Bilgileri', 'polaris'); ?></span>
-                <small><?php esc_html_e('Ad, soyad ve iletisim bilgileri', 'polaris'); ?></small>
+                <small><?php esc_html_e('Ad, soyad ve iletişim bilgileri', 'polaris'); ?></small>
               </a>
               <a class="polaris-account-actions__item" href="<?php echo esc_url($password_url); ?>">
-                <span><?php esc_html_e('Sifre Guncelle', 'polaris'); ?></span>
-                <small><?php esc_html_e('Guvenlik ayarlarini guncelle', 'polaris'); ?></small>
+                <span><?php esc_html_e('Şifre Güncelle', 'polaris'); ?></span>
+                <small><?php esc_html_e('Güvenlik ayarlarını güncelle', 'polaris'); ?></small>
               </a>
             </section>
 
