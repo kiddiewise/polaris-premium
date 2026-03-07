@@ -4389,6 +4389,13 @@ body.woocommerce-cart .polaris-cart-item__remove.remove,
 body.woocommerce-cart .polaris-cart-item__remove.remove:hover {
   color: #ffffff !important;
   background: rgba(255, 255, 255, .05) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  font-size: 0 !important;
 }
 
 body.woocommerce-cart .polaris-cart-item__remove.remove:hover {
@@ -4396,7 +4403,10 @@ body.woocommerce-cart .polaris-cart-item__remove.remove:hover {
 }
 
 body.woocommerce-cart .polaris-cart-item__remove.remove i {
+  display: block;
   font-size: .74rem;
+  line-height: 1;
+  margin: 0;
 }
 
 body.woocommerce-cart .polaris-cart-actions {
