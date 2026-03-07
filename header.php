@@ -17,7 +17,6 @@ if (!defined('ABSPATH')) {
 <?php
 $cart_url   = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/');
 $account_url = function_exists('polaris_get_account_entry_url') ? polaris_get_account_entry_url() : (function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_login_url());
-$shop_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');
 $cart_count = (function_exists('WC') && WC()->cart) ? (int) WC()->cart->get_cart_contents_count() : 0;
 $zero_price = function_exists('wc_price') ? wc_price(0) : '0';
 ?>
@@ -134,7 +133,7 @@ $zero_price = function_exists('wc_price') ? wc_price(0) : '0';
         </div>
       </div>
       <a class="btn btn-primary" href="<?php echo esc_url($cart_url); ?>" style="width:100%;"><?php echo esc_html__('Sepete git', 'polaris'); ?></a>
-      <a class="btn btn-ghost" href="<?php echo esc_url($shop_url); ?>" style="width:100%;margin-top:8px;"><?php echo esc_html__('Alışverişe devam et', 'polaris'); ?></a>
+      <button class="btn btn-ghost" type="button" data-cart-close style="width:100%;margin-top:8px;"><?php echo esc_html__('Alışverişe devam et', 'polaris'); ?></button>
     </div>
   </aside>
 </div>

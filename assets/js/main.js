@@ -535,7 +535,6 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       await addToCart(productId, 1);
       await fetchMiniCart();
-      openCartDrawer();
       bumpCartIcon();
       showToast("Ürün sepete eklendi.");
     } catch {
