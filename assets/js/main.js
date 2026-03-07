@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const miniCartEl = $("#polarisMiniCart");
   const cartCountEls = $$(".cart-count");
   const cartIcons = $$(".cart-icon");
+  const mobileMenu = $("#polarisMobileMenu");
+  const mobileMenuOpenButtons = $$("[data-mobile-menu-open]");
+  const mobileMenuCloseButtons = $$("[data-mobile-menu-close]");
+  const mobileMenuDesktopQuery = window.matchMedia("(min-width: 901px)");
 
   const toastEl = $("#polarisToast");
   const drawerFreeshipWrap = $("#polarisFreeShip");
@@ -105,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (
       cartDrawer?.classList.contains("is-open") ||
       searchOverlay?.classList.contains("is-open") ||
+      mobileMenu?.classList.contains("is-open") ||
       $("#polarisProductLightbox")?.classList.contains("is-open")
     ) {
       return;
@@ -198,9 +203,109 @@ document.addEventListener("DOMContentLoaded", () => {
     syncAllProductCards();
   }
 
+  function getDirectChildByClass(node, className) {
+    if (!node) return null;
+
+    return (
+      Array.from(node.children || []).find((child) => child.classList?.contains(className)) || null
+    );
+  }
+
+  function setMobileSubmenuOpen(item, open) {
+    if (!item) return;
+
+    item.classList.toggle("is-open", !!open);
+    const toggle = getDirectChildByClass(item, "polaris-mobile-menu__submenu-toggle");
+    toggle?.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function closeAllMobileSubmenus() {
+    if (!mobileMenu) return;
+
+    $$(".menu-item-has-children.is-open", mobileMenu).forEach((item) => {
+      setMobileSubmenuOpen(item, false);
+    });
+  }
+
+  function setupMobileMenuAccordions() {
+    if (!mobileMenu) return;
+
+    $$(".menu-item-has-children", mobileMenu).forEach((item) => {
+      const submenu = getDirectChildByClass(item, "sub-menu");
+      const link = Array.from(item.children || []).find((child) => child.tagName === "A");
+      const existingToggle = getDirectChildByClass(item, "polaris-mobile-menu__submenu-toggle");
+
+      if (!submenu || !link || existingToggle) return;
+
+      item.classList.add("has-mobile-toggle");
+
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "polaris-mobile-menu__submenu-toggle";
+      toggle.setAttribute("aria-label", "Alt menuyu ac");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.innerHTML = '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i>';
+
+      item.insertBefore(toggle, submenu);
+
+      toggle.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const willOpen = !item.classList.contains("is-open");
+        const siblings = Array.from(item.parentElement?.children || []).filter((child) => child !== item);
+
+        siblings.forEach((sibling) => {
+          if (sibling.classList?.contains("menu-item-has-children")) {
+            setMobileSubmenuOpen(sibling, false);
+          }
+        });
+
+        setMobileSubmenuOpen(item, willOpen);
+      });
+    });
+  }
+
+  function openMobileMenu() {
+    if (!mobileMenu) return;
+
+    closeSearch();
+    closeCartDrawer();
+
+    mobileMenu.classList.remove("hidden");
+    requestAnimationFrame(() => mobileMenu.classList.add("is-open"));
+    mobileMenu.setAttribute("aria-hidden", "false");
+
+    mobileMenuOpenButtons.forEach((button) => button.setAttribute("aria-expanded", "true"));
+    body.classList.add("mobile-menu-open");
+    lockBody();
+  }
+
+  function closeMobileMenu(immediate = false) {
+    if (!mobileMenu) return;
+
+    mobileMenu.classList.remove("is-open");
+    mobileMenu.setAttribute("aria-hidden", "true");
+    mobileMenuOpenButtons.forEach((button) => button.setAttribute("aria-expanded", "false"));
+    body.classList.remove("mobile-menu-open");
+    closeAllMobileSubmenus();
+
+    if (immediate) {
+      mobileMenu.classList.add("hidden");
+      unlockBody();
+      return;
+    }
+
+    setTimeout(() => {
+      mobileMenu.classList.add("hidden");
+      unlockBody();
+    }, 220);
+  }
+
   function openSearch() {
     if (!searchOverlay) return;
 
+    closeMobileMenu(true);
     searchOverlay.classList.remove("hidden");
     requestAnimationFrame(() => searchOverlay.classList.add("is-open"));
     searchOverlay.setAttribute("aria-hidden", "false");
@@ -329,6 +434,44 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", (event) => debounceSearch(event.target.value));
   }
 
+  if (mobileMenu) {
+    setupMobileMenuAccordions();
+
+    mobileMenuOpenButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        openMobileMenu();
+      });
+    });
+
+    mobileMenuCloseButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        closeMobileMenu();
+      });
+    });
+
+    $$(".polaris-mobile-menu__nav a", mobileMenu).forEach((link) => {
+      link.addEventListener("click", () => {
+        closeMobileMenu();
+      });
+    });
+
+    const syncMobileMenuViewport = () => {
+      if (mobileMenuDesktopQuery.matches) {
+        closeMobileMenu(true);
+      }
+    };
+
+    syncMobileMenuViewport();
+
+    if (typeof mobileMenuDesktopQuery.addEventListener === "function") {
+      mobileMenuDesktopQuery.addEventListener("change", syncMobileMenuViewport);
+    } else if (typeof mobileMenuDesktopQuery.addListener === "function") {
+      mobileMenuDesktopQuery.addListener(syncMobileMenuViewport);
+    }
+  }
+
   if (bottomFreeshipWrap && bottomFreeshipToggle) {
     setBottomFreeshipOpen(getStoredBottomFreeshipOpen(), false);
 
@@ -354,6 +497,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function openCartDrawer() {
     if (!cartDrawer) return;
 
+    closeMobileMenu(true);
     cartDrawer.classList.remove("hidden");
     requestAnimationFrame(() => cartDrawer.classList.add("is-open"));
     cartDrawer.setAttribute("aria-hidden", "false");
@@ -626,6 +770,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
+
+    if (mobileMenu?.classList.contains("is-open")) {
+      closeMobileMenu();
+    }
 
     if (searchOverlay?.classList.contains("is-open")) {
       closeSearch();

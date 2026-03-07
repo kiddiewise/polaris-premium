@@ -3,6 +3,60 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+if (!function_exists('polaris_get_whatsapp_number')) {
+    function polaris_get_whatsapp_number()
+    {
+        $default_number = '905462629002';
+        $raw_number     = get_theme_mod('polaris_whatsapp_number', $default_number);
+        $raw_number     = apply_filters('polaris_whatsapp_number', $raw_number);
+        $number         = preg_replace('/\D+/', '', (string) $raw_number);
+
+        return $number !== '' ? $number : $default_number;
+    }
+}
+
+if (!function_exists('polaris_get_whatsapp_url')) {
+    function polaris_get_whatsapp_url($message = '')
+    {
+        $number = polaris_get_whatsapp_number();
+        $url    = 'https://wa.me/' . $number;
+
+        $message = wp_strip_all_tags((string) $message);
+        if ($message !== '') {
+            $url .= '?text=' . rawurlencode($message);
+        }
+
+        return esc_url($url);
+    }
+}
+
+if (!function_exists('polaris_get_social_links')) {
+    function polaris_get_social_links()
+    {
+        $links = [
+            'instagram' => get_theme_mod('polaris_instagram_url', 'https://instagram.com/'),
+            'youtube'   => get_theme_mod('polaris_youtube_url', 'https://youtube.com/'),
+        ];
+
+        $links = apply_filters('polaris_social_links', $links);
+
+        if (!is_array($links)) {
+            return [
+                'instagram' => 'https://instagram.com/',
+                'youtube'   => 'https://youtube.com/',
+            ];
+        }
+
+        $instagram = isset($links['instagram']) ? esc_url((string) $links['instagram']) : 'https://instagram.com/';
+        $youtube   = isset($links['youtube']) ? esc_url((string) $links['youtube']) : 'https://youtube.com/';
+
+        return [
+            'instagram' => $instagram !== '' ? $instagram : 'https://instagram.com/',
+            'youtube'   => $youtube !== '' ? $youtube : 'https://youtube.com/',
+        ];
+    }
+}
+
 /**
  * page-login.php template'ini kullanan sayfayi bulur.
  */

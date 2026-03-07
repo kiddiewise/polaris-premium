@@ -19,6 +19,15 @@ $cart_url   = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url(
 $account_url = function_exists('polaris_get_account_entry_url') ? polaris_get_account_entry_url() : (function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_login_url());
 $cart_count = (function_exists('WC') && WC()->cart) ? (int) WC()->cart->get_cart_contents_count() : 0;
 $zero_price = function_exists('wc_price') ? wc_price(0) : '0';
+$social_links = function_exists('polaris_get_social_links')
+    ? polaris_get_social_links()
+    : [
+        'instagram' => 'https://instagram.com/',
+        'youtube'   => 'https://youtube.com/',
+    ];
+$whatsapp_support_url = function_exists('polaris_get_whatsapp_url')
+    ? polaris_get_whatsapp_url(__('Merhaba, destek hattinizla gorusebilir miyim?', 'polaris'))
+    : esc_url('https://wa.me/905462629002');
 ?>
 
 <header class="header" role="banner">
@@ -53,7 +62,8 @@ $zero_price = function_exists('wc_price') ? wc_price(0) : '0';
           'theme_location' => 'main_menu',
           'container'      => false,
           'fallback_cb'    => '__return_false',
-          'depth'          => 2,
+          'menu_class'     => 'desktop-menu__list',
+          'depth'          => 3,
       ]);
       ?>
     </nav>
@@ -71,9 +81,73 @@ $zero_price = function_exists('wc_price') ? wc_price(0) : '0';
         <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
         <span class="cart-count" aria-label="<?php echo esc_attr__('Sepet ürün sayısı', 'polaris'); ?>"><?php echo (int) $cart_count; ?></span>
       </a>
+
+      <button
+        class="header-icon-btn mobile-menu-toggle"
+        type="button"
+        data-mobile-menu-open
+        aria-label="<?php echo esc_attr__('Menüyü aç', 'polaris'); ?>"
+        aria-controls="polarisMobileMenu"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
   </div>
 </header>
+
+<div class="polaris-mobile-menu hidden" id="polarisMobileMenu" aria-hidden="true">
+  <div class="polaris-mobile-menu__backdrop" data-mobile-menu-close></div>
+
+  <aside class="polaris-mobile-menu__panel" role="dialog" aria-modal="true" aria-label="<?php echo esc_attr__('Mobil menü', 'polaris'); ?>">
+    <div class="polaris-mobile-menu__head">
+      <div class="polaris-mobile-menu__brand">
+        <strong><?php echo esc_html(get_bloginfo('name')); ?></strong>
+        <span><?php echo esc_html__('Kategoriler ve hızlı erişim', 'polaris'); ?></span>
+      </div>
+
+      <button class="header-icon-btn polaris-mobile-menu__close" type="button" data-mobile-menu-close aria-label="<?php echo esc_attr__('Menüyü kapat', 'polaris'); ?>">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <nav class="polaris-mobile-menu__nav" aria-label="<?php echo esc_attr__('Mobil kategori menüsü', 'polaris'); ?>">
+      <?php
+      wp_nav_menu([
+          'theme_location' => 'main_menu',
+          'container'      => false,
+          'fallback_cb'    => '__return_false',
+          'menu_class'     => 'polaris-mobile-menu__list',
+          'depth'          => 3,
+      ]);
+      ?>
+    </nav>
+
+    <div class="polaris-mobile-menu__footer">
+      <a class="btn btn-primary polaris-mobile-menu__support-btn" href="<?php echo esc_url($whatsapp_support_url); ?>" target="_blank" rel="noopener">
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+        <?php echo esc_html__('WhatsApp Destek Hattı', 'polaris'); ?>
+      </a>
+
+      <div class="polaris-mobile-menu__social">
+        <a class="polaris-mobile-menu__social-link" href="<?php echo esc_url($social_links['instagram']); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr__('Instagram', 'polaris'); ?>">
+          <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+          <span>Instagram</span>
+        </a>
+        <a class="polaris-mobile-menu__social-link" href="<?php echo esc_url($whatsapp_support_url); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr__('WhatsApp', 'polaris'); ?>">
+          <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+          <span>WhatsApp</span>
+        </a>
+        <a class="polaris-mobile-menu__social-link" href="<?php echo esc_url($social_links['youtube']); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr__('YouTube', 'polaris'); ?>">
+          <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+          <span>YouTube</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+</div>
 
 <div class="polaris-search-overlay hidden" id="polarisSearchOverlay" aria-hidden="true">
   <div class="polaris-search-panel" role="dialog" aria-modal="true" aria-label="<?php echo esc_attr__('Ürün ara', 'polaris'); ?>">

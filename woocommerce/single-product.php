@@ -167,8 +167,10 @@ while (have_posts()) :
     $image_ids       = [];
     $featured_image  = (int) $product->get_image_id();
     $gallery_ids     = $product->get_gallery_image_ids();
-    $whatsapp_number = '905462629002';
-    $whatsapp_text   = rawurlencode(sprintf(__('Merhaba, "%s" urunu hakkinda bilgi alabilir miyim?', 'polaris'), $product->get_name()));
+    $whatsapp_message = sprintf(__('Merhaba, "%s" urunu hakkinda bilgi alabilir miyim?', 'polaris'), $product->get_name());
+    $whatsapp_url     = function_exists('polaris_get_whatsapp_url')
+        ? polaris_get_whatsapp_url($whatsapp_message)
+        : esc_url('https://wa.me/905462629002?text=' . rawurlencode($whatsapp_message));
     $attributes      = $product->get_attributes();
     $sku             = $product->get_sku();
 
@@ -319,7 +321,7 @@ while (have_posts()) :
               <div class="pd-shortdesc"><?php echo wp_kses_post($short_desc); ?></div>
             <?php endif; ?>
 
-            <a class="btn btn-ghost pd-wa" href="<?php echo esc_url('https://wa.me/' . $whatsapp_number . '?text=' . $whatsapp_text); ?>" target="_blank" rel="noopener">
+            <a class="btn btn-ghost pd-wa" href="<?php echo $whatsapp_url; ?>" target="_blank" rel="noopener">
               <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
               <?php echo esc_html__('WhatsApp ile iletisime gec', 'polaris'); ?>
             </a>
