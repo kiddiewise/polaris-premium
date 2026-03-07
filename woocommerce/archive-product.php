@@ -34,9 +34,23 @@ $hero_desc = trim(wp_strip_all_tags((string) $hero_desc_raw));
 if ($hero_desc !== '') {
     $hero_desc = wp_trim_words($hero_desc, 20, '...');
 }
+
+if (is_shop()) {
+    $hero_title = esc_html__('Turkiye\'nin En Guclu Surf Kursunlari', 'polaris');
+    $hero_desc = esc_html__('Polaris Premium serisi, agir deniz kosullarinda maksimum denge, daha uzak atis ve istikrarli dip tutus icin gelistirildi. Profesyonel balikcilarin guvendigi performansi simdi sen de deneyimle.', 'polaris');
+
+    if (empty($hero_image_url) && function_exists('polaris_get_hero_banners')) {
+        $hero_banners = polaris_get_hero_banners();
+        if (!empty($hero_banners[0])) {
+            $hero_image_url = esc_url($hero_banners[0]);
+            $hero_image_alt = $hero_title;
+        }
+    }
+}
 ?>
 
 <section class="container polaris-catalog-page">
+  <!-- Polaris Custom Catalog Template -->
   <header class="polaris-catalog-hero fade-up">
     <div class="polaris-catalog-hero__visual">
       <?php if (!empty($hero_image_url)) : ?>

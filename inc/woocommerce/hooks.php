@@ -67,6 +67,36 @@ add_filter('template_include', function ($template) {
 }, 30);
 
 /**
+ * Shop ve urun kategori arsivlerinde tema icindeki custom archive template'ini zorunlu kullanir.
+ * Bu sayede header/footer/bottom nav her kosulda render edilir.
+ */
+add_filter('template_include', function ($template) {
+    if (is_admin() || wp_doing_ajax()) {
+        return $template;
+    }
+
+    if (!function_exists('is_shop')) {
+        return $template;
+    }
+
+    $shop_template = locate_template('woocommerce/archive-product.php');
+    if (empty($shop_template)) {
+        return $template;
+    }
+
+    $shop_page_id = function_exists('wc_get_page_id') ? (int) wc_get_page_id('shop') : 0;
+    $is_shop_page = $shop_page_id > 0 && is_page($shop_page_id);
+    $is_product_archive = is_post_type_archive('product');
+    $is_product_tax = function_exists('is_product_taxonomy') && is_product_taxonomy();
+
+    if (is_shop() || $is_shop_page || $is_product_archive || $is_product_tax) {
+        return $shop_template;
+    }
+
+    return $template;
+}, 90);
+
+/**
  * 1000 TL ve üzeri sepette tüm kargo ücretlerini ücretsiz yapar.
  */
 add_filter('woocommerce_package_rates', function ($rates, $package) {
