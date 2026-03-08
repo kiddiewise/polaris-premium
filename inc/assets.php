@@ -132,6 +132,56 @@ function polaris_assets()
 }
 add_action('wp_enqueue_scripts', 'polaris_assets');
 
+function polaris_disable_cookie_banner_assets()
+{
+    if (is_admin()) {
+        return;
+    }
+
+    $cookie_banner_selectors = [
+        '#hs-eu-cookie-confirmation',
+        '#hs-banner-parent',
+        '.hs-cookie-notification',
+        '.cookie-notification',
+        '.cky-consent-container',
+        '.cky-banner-element',
+        '.cmplz-cookiebanner',
+        '.moove-gdpr-info-bar',
+        '#cookie-law-info-bar',
+        '.cli-bar-container',
+        '.cc-window',
+        '#onetrust-banner-sdk',
+        '.ot-sdk-container',
+    ];
+
+    $cookie_css = implode(",\n", $cookie_banner_selectors) . " {\n"
+        . "display: none !important;\n"
+        . "visibility: hidden !important;\n"
+        . "opacity: 0 !important;\n"
+        . "pointer-events: none !important;\n"
+        . "}\n";
+    wp_add_inline_style('polaris-main', $cookie_css);
+
+    $cookie_js = '(function () {'
+        . 'var selectors = ' . wp_json_encode($cookie_banner_selectors) . ';'
+        . 'var hideBanners = function () {'
+        . 'document.querySelectorAll(selectors.join(\',\')).forEach(function (el) {'
+        . 'el.style.setProperty(\'display\', \'none\', \'important\');'
+        . 'el.setAttribute(\'aria-hidden\', \'true\');'
+        . '});'
+        . '};'
+        . 'if (document.readyState === \'loading\') {'
+        . 'document.addEventListener(\'DOMContentLoaded\', hideBanners);'
+        . '}'
+        . 'hideBanners();'
+        . 'var observer = new MutationObserver(hideBanners);'
+        . 'observer.observe(document.documentElement, { childList: true, subtree: true });'
+        . 'setTimeout(function () { observer.disconnect(); }, 15000);'
+        . '})();';
+    wp_add_inline_script('polaris-main', $cookie_js, 'after');
+}
+add_action('wp_enqueue_scripts', 'polaris_disable_cookie_banner_assets', 100);
+
 function polaris_resource_hints($urls, $relation_type)
 {
     if ('preconnect' === $relation_type) {
