@@ -6280,21 +6280,14 @@ body.woocommerce-checkout .polaris-checkout-form .polaris-hidden-field {
   display: none !important;
 }
 
-body.woocommerce-checkout .polaris-checkout-form .polaris-corporate-invoice {
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-body.woocommerce-checkout .polaris-checkout-form .polaris-corporate-invoice .form-row {
-  margin: 0;
-}
-
 body.woocommerce-checkout .polaris-checkout-form .polaris-corporate-toggle-row label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+body.woocommerce-checkout .polaris-checkout-form .polaris-corporate-toggle-row .optional {
+  display: none;
 }
 
 body.woocommerce-checkout .polaris-checkout-form .polaris-corporate-toggle-row input {
@@ -6303,11 +6296,5 @@ body.woocommerce-checkout .polaris-checkout-form .polaris-corporate-toggle-row i
 
 body.woocommerce-checkout .polaris-checkout-form .polaris-corporate-field.is-hidden {
   display: none !important;
-}
-
-@media (max-width: 680px) {
-  body.woocommerce-checkout .polaris-checkout-form .polaris-corporate-invoice {
-    grid-template-columns: 1fr;
-  }
 }
 

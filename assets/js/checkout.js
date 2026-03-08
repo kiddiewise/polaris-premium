@@ -5,9 +5,9 @@
 
   const messages = Object.assign(
     {
-      invalidPhone: "Lutfen gecerli bir Turkiye telefon numarasi girin.",
-      invalidTC: "T.C. Kimlik No 11 haneli sayisal deger olmalidir.",
-      invalidPostcode: "Posta kodu 5 haneli olmalidir.",
+      invalidPhone: "Lütfen geçerli bir Türkiye telefon numarası girin.",
+      invalidTC: "T.C. Kimlik No 11 haneli sayısal değer olmalıdır.",
+      invalidPostcode: "Posta kodu 5 haneli olmalıdır.",
       requiredField: "Bu alan zorunludur.",
     },
     cfg.messages || {}
@@ -236,7 +236,6 @@
   });
 
   const corporateCheckbox = getField("billing_corporate_invoice");
-  const corporateCheckboxRow = getFieldRow("billing_corporate_invoice");
   const corporateRows = [
     getFieldRow("billing_company"),
     getFieldRow("billing_tax_office"),
@@ -263,16 +262,6 @@
       if (!enabled) input.setCustomValidity("");
     });
   };
-
-  const shipTitle = form.querySelector("#ship-to-different-address");
-  if (shipTitle && corporateCheckboxRow) {
-    const corporateContainer = document.createElement("div");
-    corporateContainer.className = "polaris-corporate-invoice";
-    corporateContainer.id = "polarisCorporateInvoice";
-    shipTitle.insertAdjacentElement("afterend", corporateContainer);
-    corporateContainer.appendChild(corporateCheckboxRow);
-    corporateRows.forEach((row) => corporateContainer.appendChild(row));
-  }
 
   if (corporateCheckbox) {
     corporateCheckbox.addEventListener("change", syncCorporateVisibility);

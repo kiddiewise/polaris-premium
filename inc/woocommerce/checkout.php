@@ -36,7 +36,7 @@ function polaris_checkout_get_city_state_map()
 function polaris_checkout_get_city_options()
 {
     $options = [
-        '' => __('Sehir secin', 'polaris'),
+        '' => __('Şehir seçin', 'polaris'),
     ];
 
     foreach (polaris_checkout_get_city_state_map() as $city_name => $state_code) {
@@ -239,7 +239,7 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     }
 
     if (isset($fields['billing']['billing_country'])) {
-        $fields['billing']['billing_country']['label']    = __('Ulke', 'polaris');
+        $fields['billing']['billing_country']['label']    = __('Ülke', 'polaris');
         $fields['billing']['billing_country']['required'] = true;
         $fields['billing']['billing_country']['priority'] = 50;
         $fields['billing']['billing_country']['default']  = 'TR';
@@ -267,10 +267,10 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     $fields['billing']['billing_district'] = [
         'type'        => 'text',
-        'label'       => __('Ilce', 'polaris'),
-        'placeholder' => __('Ilce', 'polaris'),
+        'label'       => __('İlçe', 'polaris'),
+        'placeholder' => __('İlçe', 'polaris'),
         'required'    => true,
-        'class'       => ['form-row-first'],
+        'class'       => ['form-row-wide'],
         'priority'    => 70,
         'custom_attributes' => [
             'list'         => 'billing_district_list',
@@ -280,9 +280,9 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     $fields['billing']['billing_city'] = [
         'type'        => 'select',
-        'label'       => __('Sehir', 'polaris'),
+        'label'       => __('Şehir', 'polaris'),
         'required'    => true,
-        'class'       => ['form-row-last'],
+        'class'       => ['form-row-wide'],
         'priority'    => 80,
         'options'     => $city_options,
         'input_class' => ['polaris-city-select'],
@@ -352,7 +352,7 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     ];
 
     if (isset($fields['shipping']['shipping_country'])) {
-        $fields['shipping']['shipping_country']['label']    = __('Ulke', 'polaris');
+        $fields['shipping']['shipping_country']['label']    = __('Ülke', 'polaris');
         $fields['shipping']['shipping_country']['required'] = true;
         $fields['shipping']['shipping_country']['priority'] = 30;
         $fields['shipping']['shipping_country']['default']  = 'TR';
@@ -380,10 +380,10 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     $fields['shipping']['shipping_district'] = [
         'type'        => 'text',
-        'label'       => __('Ilce', 'polaris'),
-        'placeholder' => __('Ilce', 'polaris'),
+        'label'       => __('İlçe', 'polaris'),
+        'placeholder' => __('İlçe', 'polaris'),
         'required'    => true,
-        'class'       => ['form-row-first'],
+        'class'       => ['form-row-wide'],
         'priority'    => 50,
         'custom_attributes' => [
             'list'         => 'shipping_district_list',
@@ -393,9 +393,9 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     $fields['shipping']['shipping_city'] = [
         'type'        => 'select',
-        'label'       => __('Sehir', 'polaris'),
+        'label'       => __('Şehir', 'polaris'),
         'required'    => true,
-        'class'       => ['form-row-last'],
+        'class'       => ['form-row-wide'],
         'priority'    => 60,
         'options'     => $city_options,
         'input_class' => ['polaris-city-select'],
@@ -423,8 +423,8 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     }
 
     if (isset($fields['order']['order_comments'])) {
-        $fields['order']['order_comments']['label']       = __('Siparis notu', 'polaris');
-        $fields['order']['order_comments']['placeholder'] = __('Siparisiniz ile ilgili not ekleyebilirsiniz.', 'polaris');
+        $fields['order']['order_comments']['label']       = __('Sipariş notu', 'polaris');
+        $fields['order']['order_comments']['placeholder'] = __('Siparişiniz ile ilgili not ekleyebilirsiniz.', 'polaris');
         $fields['order']['order_comments']['required']    = false;
         $fields['order']['order_comments']['priority']    = 150;
     }
@@ -439,8 +439,8 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     $fields['order']['billing_company'] = [
         'type'        => 'text',
-        'label'       => __('Sirket Unvani', 'polaris'),
-        'placeholder' => __('Sirket Unvani', 'polaris'),
+        'label'       => __('Şirket Ünvanı', 'polaris'),
+        'placeholder' => __('Şirket Ünvanı', 'polaris'),
         'required'    => false,
         'class'       => ['form-row-wide', 'polaris-corporate-field'],
         'priority'    => 121,
@@ -457,8 +457,8 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     $fields['order']['billing_tax_number'] = [
         'type'        => 'text',
-        'label'       => __('Vergi Numarasi', 'polaris'),
-        'placeholder' => __('10 veya 11 haneli vergi numarasi', 'polaris'),
+        'label'       => __('Vergi Numarası', 'polaris'),
+        'placeholder' => __('10 veya 11 haneli vergi numarası', 'polaris'),
         'required'    => false,
         'class'       => ['form-row-last', 'polaris-corporate-field'],
         'priority'    => 123,
@@ -470,7 +470,50 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     ];
 
     return $fields;
-}, 20);
+}, 999);
+
+add_filter('woocommerce_default_address_fields', function ($address_fields) {
+    if (!is_array($address_fields)) {
+        return $address_fields;
+    }
+
+    if (isset($address_fields['address_1'])) {
+        $address_fields['address_1']['label']       = __('Adres', 'polaris');
+        $address_fields['address_1']['placeholder'] = __('Mahalle, sokak, bina no, daire no', 'polaris');
+    }
+
+    if (isset($address_fields['city'])) {
+        $address_fields['city']['label'] = __('Şehir', 'polaris');
+    }
+
+    if (isset($address_fields['state'])) {
+        $address_fields['state']['label'] = __('İl', 'polaris');
+    }
+
+    return $address_fields;
+}, 999);
+
+add_filter('woocommerce_form_field_args', function ($args, $key) {
+    $label_map = [
+        'billing_address_1'         => __('Adres', 'polaris'),
+        'shipping_address_1'        => __('Adres', 'polaris'),
+        'billing_city'              => __('Şehir', 'polaris'),
+        'shipping_city'             => __('Şehir', 'polaris'),
+        'billing_district'          => __('İlçe', 'polaris'),
+        'shipping_district'         => __('İlçe', 'polaris'),
+        'billing_company'           => __('Şirket Ünvanı', 'polaris'),
+        'billing_tax_office'        => __('Vergi Dairesi', 'polaris'),
+        'billing_tax_number'        => __('Vergi Numarası', 'polaris'),
+        'billing_corporate_invoice' => __('Kurumsal fatura istiyorum', 'polaris'),
+        'order_comments'            => __('Sipariş notu', 'polaris'),
+    ];
+
+    if (isset($label_map[$key])) {
+        $args['label'] = $label_map[$key];
+    }
+
+    return $args;
+}, 999, 2);
 
 add_filter('default_checkout_billing_country', function () {
     return 'TR';
@@ -577,27 +620,27 @@ add_action('woocommerce_checkout_process', function () {
 
     $billing_tc = isset($_POST['billing_tc_kimlik_no']) ? preg_replace('/\D+/', '', (string) wp_unslash($_POST['billing_tc_kimlik_no'])) : '';
     if ('' !== $billing_tc && !preg_match('/^[0-9]{11}$/', $billing_tc)) {
-        wc_add_notice(__('T.C. Kimlik No 11 haneli sayisal deger olmalidir.', 'polaris'), 'error');
+        wc_add_notice(__('T.C. Kimlik No 11 haneli sayısal değer olmalıdır.', 'polaris'), 'error');
     }
 
     $billing_phone = isset($_POST['billing_phone']) ? wc_clean(wp_unslash((string) $_POST['billing_phone'])) : '';
     if ('' === polaris_checkout_normalize_phone($billing_phone)) {
-        wc_add_notice(__('Lutfen gecerli bir Turkiye telefon numarasi girin.', 'polaris'), 'error');
+        wc_add_notice(__('Lütfen geçerli bir Türkiye telefon numarası girin.', 'polaris'), 'error');
     }
 
     $billing_city = isset($_POST['billing_city']) ? wc_clean(wp_unslash((string) $_POST['billing_city'])) : '';
     if ('' === $billing_city || '' === polaris_checkout_find_state_code_by_city($billing_city)) {
-        wc_add_notice(__('Lutfen bir sehir secin.', 'polaris'), 'error');
+        wc_add_notice(__('Lütfen bir şehir seçin.', 'polaris'), 'error');
     }
 
     $billing_district = isset($_POST['billing_district']) ? trim(wc_clean(wp_unslash((string) $_POST['billing_district']))) : '';
     if ('' === $billing_district) {
-        wc_add_notice(__('Ilce alani zorunludur.', 'polaris'), 'error');
+        wc_add_notice(__('İlçe alanı zorunludur.', 'polaris'), 'error');
     }
 
     $billing_postcode = isset($_POST['billing_postcode']) ? preg_replace('/\D+/', '', (string) wp_unslash($_POST['billing_postcode'])) : '';
     if (!preg_match('/^[0-9]{5}$/', $billing_postcode)) {
-        wc_add_notice(__('Posta kodu 5 haneli olmalidir.', 'polaris'), 'error');
+        wc_add_notice(__('Posta kodu 5 haneli olmalıdır.', 'polaris'), 'error');
     }
 
     $ship_to_different = isset($_POST['ship_to_different_address']) && polaris_checkout_truthy_post_value(wp_unslash($_POST['ship_to_different_address']));
@@ -605,27 +648,27 @@ add_action('woocommerce_checkout_process', function () {
     if ($ship_to_different) {
         $shipping_full_name = isset($_POST['shipping_full_name']) ? trim(wc_clean(wp_unslash((string) $_POST['shipping_full_name']))) : '';
         if ('' === $shipping_full_name) {
-            wc_add_notice(__('Teslimat icin Ad Soyad alani zorunludur.', 'polaris'), 'error');
+            wc_add_notice(__('Teslimat için Ad Soyad alanı zorunludur.', 'polaris'), 'error');
         }
 
         $shipping_phone = isset($_POST['shipping_phone']) ? wc_clean(wp_unslash((string) $_POST['shipping_phone'])) : '';
         if ('' === polaris_checkout_normalize_phone($shipping_phone)) {
-            wc_add_notice(__('Teslimat icin gecerli bir telefon numarasi girin.', 'polaris'), 'error');
+            wc_add_notice(__('Teslimat için geçerli bir telefon numarası girin.', 'polaris'), 'error');
         }
 
         $shipping_city = isset($_POST['shipping_city']) ? wc_clean(wp_unslash((string) $_POST['shipping_city'])) : '';
         if ('' === $shipping_city || '' === polaris_checkout_find_state_code_by_city($shipping_city)) {
-            wc_add_notice(__('Teslimat icin bir sehir secin.', 'polaris'), 'error');
+            wc_add_notice(__('Teslimat için bir şehir seçin.', 'polaris'), 'error');
         }
 
         $shipping_district = isset($_POST['shipping_district']) ? trim(wc_clean(wp_unslash((string) $_POST['shipping_district']))) : '';
         if ('' === $shipping_district) {
-            wc_add_notice(__('Teslimat ilcesi zorunludur.', 'polaris'), 'error');
+            wc_add_notice(__('Teslimat ilçesi zorunludur.', 'polaris'), 'error');
         }
 
         $shipping_postcode = isset($_POST['shipping_postcode']) ? preg_replace('/\D+/', '', (string) wp_unslash($_POST['shipping_postcode'])) : '';
         if (!preg_match('/^[0-9]{5}$/', $shipping_postcode)) {
-            wc_add_notice(__('Teslimat posta kodu 5 haneli olmalidir.', 'polaris'), 'error');
+            wc_add_notice(__('Teslimat posta kodu 5 haneli olmalıdır.', 'polaris'), 'error');
         }
     }
 
@@ -636,15 +679,15 @@ add_action('woocommerce_checkout_process', function () {
         $tax_number    = isset($_POST['billing_tax_number']) ? preg_replace('/\D+/', '', (string) wp_unslash($_POST['billing_tax_number'])) : '';
 
         if ('' === $company_title) {
-            wc_add_notice(__('Kurumsal fatura icin Sirket Unvani zorunludur.', 'polaris'), 'error');
+            wc_add_notice(__('Kurumsal fatura için Şirket Ünvanı zorunludur.', 'polaris'), 'error');
         }
 
         if ('' === $tax_office) {
-            wc_add_notice(__('Kurumsal fatura icin Vergi Dairesi zorunludur.', 'polaris'), 'error');
+            wc_add_notice(__('Kurumsal fatura için Vergi Dairesi zorunludur.', 'polaris'), 'error');
         }
 
         if (!preg_match('/^[0-9]{10,11}$/', $tax_number)) {
-            wc_add_notice(__('Vergi Numarasi 10 veya 11 haneli sayisal deger olmalidir.', 'polaris'), 'error');
+            wc_add_notice(__('Vergi Numarası 10 veya 11 haneli sayısal değer olmalıdır.', 'polaris'), 'error');
         }
     }
 }, 20);
@@ -732,7 +775,7 @@ add_action('woocommerce_admin_order_data_after_billing_address', function ($orde
     }
 
     if ('' !== (string) $billing_district) {
-        echo '<p><strong>' . esc_html__('Ilce:', 'polaris') . '</strong> ' . esc_html((string) $billing_district) . '</p>';
+        echo '<p><strong>' . esc_html__('İlçe:', 'polaris') . '</strong> ' . esc_html((string) $billing_district) . '</p>';
     }
 
     if ('1' === (string) $corporate_invoice) {
@@ -743,7 +786,7 @@ add_action('woocommerce_admin_order_data_after_billing_address', function ($orde
         }
 
         if ('' !== (string) $tax_number) {
-            echo '<p><strong>' . esc_html__('Vergi Numarasi:', 'polaris') . '</strong> ' . esc_html((string) $tax_number) . '</p>';
+            echo '<p><strong>' . esc_html__('Vergi Numarası:', 'polaris') . '</strong> ' . esc_html((string) $tax_number) . '</p>';
         }
     }
 }, 20);
@@ -761,7 +804,7 @@ add_action('woocommerce_admin_order_data_after_shipping_address', function ($ord
     }
 
     if ('' !== (string) $shipping_district) {
-        echo '<p><strong>' . esc_html__('Ilce:', 'polaris') . '</strong> ' . esc_html((string) $shipping_district) . '</p>';
+        echo '<p><strong>' . esc_html__('İlçe:', 'polaris') . '</strong> ' . esc_html((string) $shipping_district) . '</p>';
     }
 }, 20);
 
@@ -787,7 +830,7 @@ add_filter('woocommerce_email_order_meta_fields', function ($fields, $sent_to_ad
 
     if ('' !== (string) $billing_district) {
         $fields['billing_district'] = [
-            'label' => __('Fatura Ilce', 'polaris'),
+            'label' => __('Fatura İlçe', 'polaris'),
             'value' => $billing_district,
         ];
     }
@@ -801,7 +844,7 @@ add_filter('woocommerce_email_order_meta_fields', function ($fields, $sent_to_ad
 
     if ('' !== (string) $shipping_district) {
         $fields['shipping_district'] = [
-            'label' => __('Teslimat Ilce', 'polaris'),
+            'label' => __('Teslimat İlçe', 'polaris'),
             'value' => $shipping_district,
         ];
     }
@@ -821,7 +864,7 @@ add_filter('woocommerce_email_order_meta_fields', function ($fields, $sent_to_ad
 
         if ('' !== (string) $tax_number) {
             $fields['billing_tax_number'] = [
-                'label' => __('Vergi Numarasi', 'polaris'),
+                'label' => __('Vergi Numarası', 'polaris'),
                 'value' => $tax_number,
             ];
         }
@@ -880,9 +923,9 @@ add_action('wp_enqueue_scripts', function () {
         'districtMap'         => polaris_checkout_get_district_map(),
         'googlePlacesEnabled' => '' !== $google_api_key,
         'messages'            => [
-            'invalidPhone'    => __('Lutfen gecerli bir Turkiye telefon numarasi girin.', 'polaris'),
-            'invalidTC'       => __('T.C. Kimlik No 11 haneli sayisal deger olmalidir.', 'polaris'),
-            'invalidPostcode' => __('Posta kodu 5 haneli olmalidir.', 'polaris'),
+            'invalidPhone'    => __('Lütfen geçerli bir Türkiye telefon numarası girin.', 'polaris'),
+            'invalidTC'       => __('T.C. Kimlik No 11 haneli sayısal değer olmalıdır.', 'polaris'),
+            'invalidPostcode' => __('Posta kodu 5 haneli olmalıdır.', 'polaris'),
             'requiredField'   => __('Bu alan zorunludur.', 'polaris'),
         ],
     ]);

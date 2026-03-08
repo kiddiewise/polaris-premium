@@ -17,30 +17,30 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
       <div class="polaris-checkout-head__main">
         <span class="polaris-checkout-kicker">
           <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-          <?php esc_html_e('Guvenli odeme', 'polaris'); ?>
+          <?php esc_html_e('Güvenli ödeme', 'polaris'); ?>
         </span>
-        <h1><?php esc_html_e('Odeme', 'polaris'); ?></h1>
-        <p><?php esc_html_e('Bilgilerini tamamla, siparisini kontrol et ve satin alimi bitir.', 'polaris'); ?></p>
+        <h1><?php esc_html_e('Ödeme', 'polaris'); ?></h1>
+        <p><?php esc_html_e('Bilgilerini tamamla, siparişini kontrol et ve satın alımı bitir.', 'polaris'); ?></p>
 
-        <ol class="polaris-checkout-steps" aria-label="<?php echo esc_attr__('Odeme adimlari', 'polaris'); ?>">
+        <ol class="polaris-checkout-steps" aria-label="<?php echo esc_attr__('Ödeme adımları', 'polaris'); ?>">
           <li class="is-active">
             <span>01</span>
             <?php esc_html_e('Bilgiler', 'polaris'); ?>
           </li>
           <li>
             <span>02</span>
-            <?php esc_html_e('Odeme', 'polaris'); ?>
+            <?php esc_html_e('Ödeme', 'polaris'); ?>
           </li>
           <li>
             <span>03</span>
-            <?php esc_html_e('Tamamlandi', 'polaris'); ?>
+            <?php esc_html_e('Tamamlandı', 'polaris'); ?>
           </li>
         </ol>
       </div>
 
       <button class="btn btn-ghost polaris-checkout-summary-toggle" type="button" data-checkout-summary-toggle aria-expanded="false">
         <i class="fa-solid fa-receipt" aria-hidden="true"></i>
-        <?php esc_html_e('Siparis ozeti', 'polaris'); ?>
+        <?php esc_html_e('Sipariş özeti', 'polaris'); ?>
       </button>
     </header>
 
@@ -56,7 +56,7 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
                   <span class="polaris-checkout-card__index">01</span>
                   <div>
                     <h2><?php esc_html_e('Fatura bilgileri', 'polaris'); ?></h2>
-                    <p><?php esc_html_e('Fatura ve iletisim bilgilerini doldurun.', 'polaris'); ?></p>
+                    <p><?php esc_html_e('Fatura ve iletişim bilgilerini doldurun.', 'polaris'); ?></p>
                   </div>
                 </header>
                 <?php do_action('woocommerce_checkout_billing'); ?>
@@ -67,7 +67,7 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
                   <span class="polaris-checkout-card__index">02</span>
                   <div>
                     <h2><?php esc_html_e('Teslimat bilgileri', 'polaris'); ?></h2>
-                    <p><?php esc_html_e('Adres ve teslimat detaylarini kontrol edin.', 'polaris'); ?></p>
+                    <p><?php esc_html_e('Adres ve teslimat detaylarını kontrol edin.', 'polaris'); ?></p>
                   </div>
                 </header>
                 <?php do_action('woocommerce_checkout_shipping'); ?>
@@ -82,8 +82,8 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
           <div class="polaris-checkout-side__handle" aria-hidden="true"></div>
           <?php do_action('woocommerce_checkout_before_order_review_heading'); ?>
           <header class="polaris-checkout-side__head">
-            <h2 id="order_review_heading"><?php esc_html_e('Siparis ozeti', 'polaris'); ?></h2>
-            <p><?php esc_html_e('Urunler, kargo ve odeme adimini buradan tamamlayin.', 'polaris'); ?></p>
+            <h2 id="order_review_heading"><?php esc_html_e('Sipariş özeti', 'polaris'); ?></h2>
+            <p><?php esc_html_e('Ürünler, kargo ve ödeme adımını buradan tamamlayın.', 'polaris'); ?></p>
           </header>
           <?php do_action('woocommerce_checkout_before_order_review'); ?>
 
@@ -91,16 +91,16 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
             <?php do_action('woocommerce_checkout_order_review'); ?>
           </div>
 
-          <div class="polaris-checkout-assurance" aria-label="<?php echo esc_attr__('Guven bilgileri', 'polaris'); ?>">
+          <div class="polaris-checkout-assurance" aria-label="<?php echo esc_attr__('Güven bilgileri', 'polaris'); ?>">
             <span><i class="fa-solid fa-lock" aria-hidden="true"></i> <?php esc_html_e('256-bit SSL', 'polaris'); ?></span>
-            <span><i class="fa-solid fa-truck-fast" aria-hidden="true"></i> <?php esc_html_e('Hizli teslimat', 'polaris'); ?></span>
-            <span><i class="fa-solid fa-headset" aria-hidden="true"></i> <?php esc_html_e('Destek hatti', 'polaris'); ?></span>
+            <span><i class="fa-solid fa-truck-fast" aria-hidden="true"></i> <?php esc_html_e('Hızlı teslimat', 'polaris'); ?></span>
+            <span><i class="fa-solid fa-headset" aria-hidden="true"></i> <?php esc_html_e('Destek hattı', 'polaris'); ?></span>
           </div>
 
           <?php do_action('woocommerce_checkout_after_order_review'); ?>
         </aside>
 
-        <button class="polaris-checkout-overlay" type="button" data-checkout-overlay aria-label="<?php echo esc_attr__('Siparis ozetini kapat', 'polaris'); ?>"></button>
+        <button class="polaris-checkout-overlay" type="button" data-checkout-overlay aria-label="<?php echo esc_attr__('Sipariş özetini kapat', 'polaris'); ?>"></button>
       </div>
     </form>
   </div>
