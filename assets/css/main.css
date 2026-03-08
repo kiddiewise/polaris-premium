@@ -6236,33 +6236,52 @@ body.woocommerce-account.logged-in .polaris-account-panel .select2-container .se
     position: static;
     border-radius: 20px;
     padding: 10px;
+    overflow: hidden;
   }
 
   .polaris-account__profile {
     padding: 10px;
   }
 
+  .polaris-account-nav {
+    margin-inline: -2px;
+  }
+
   .polaris-account-nav__list {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(156px, 1fr);
+    display: flex;
+    flex-wrap: nowrap;
     gap: 8px;
     overflow-x: auto;
-    padding-bottom: 2px;
+    overflow-y: hidden;
+    padding: 2px 2px 4px;
     scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   .polaris-account-nav__list::-webkit-scrollbar {
     display: none;
   }
 
+  .polaris-account-nav__item {
+    flex: 0 0 clamp(140px, 42vw, 184px);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
   .polaris-account-nav__item a {
     min-height: 54px;
     padding: 8px 10px;
+    width: 100%;
   }
 
   .polaris-account-nav__label {
     font-size: .82rem;
     line-height: 1.22;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .polaris-account__head {
@@ -6298,9 +6317,19 @@ body.woocommerce-account.logged-in .polaris-account-panel .select2-container .se
 }
 
 @media (max-width: 560px) {
+  .polaris-account-nav__item {
+    flex-basis: clamp(130px, 60vw, 170px);
+  }
+
   .polaris-account-nav__item a {
     min-height: 50px;
     border-radius: 12px;
+  }
+
+  .polaris-account__status {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
   }
 
   .polaris-account-nav__icon {

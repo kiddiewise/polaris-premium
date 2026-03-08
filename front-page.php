@@ -93,8 +93,21 @@ $new_products_title = esc_html__('Yeni Ürünler', 'polaris');
 $new_products_limit = 12;
 
 $ordered_category_slugs = [
-    'asansor-sistem-olta-bedeni',
+    'polaris-firdondulu-renkli-surf-kursun',
+    'polaris-firdondulu-renkli-aparatli-surf-kursun',
+    'polaris-firdondulu-fosforlu-surf-kursun',
     'polaris-firdondulu-fosforlu-aparatli-surf-kursun',
+    'pater-noster-2-igneli-surf-casting-takimi',
+    'asansor-sistem-olta-bedeni',
+    'gezer-kursun-aparatli-surf-olta-bedeni',
+    'polaris-firdondulu-kaplamasiz-surf-kursun',
+    'polaris-firdondulu-kaplamasiz-aparatli-surf-kursun',
+    'polaris-klasik-renkli-surf-kursun',
+    'polaris-klasik-renkli-aparatli-surf-kursun',
+    'polaris-klasik-fosforlu-surf-kursun',
+    'polaris-klasik-fosforlu-aparatli-surf-kursun',
+    'polaris-klasik-kaplamasiz-surf-kursun',
+    'polaris-klasik-kaplamasiz-aparatli-surf-kursun',
 ];
 
 get_header();
