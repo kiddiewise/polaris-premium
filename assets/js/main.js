@@ -988,37 +988,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const checkoutPage = $(".polaris-checkout-page");
-  if (checkoutPage) {
-    const summary = $("[data-checkout-summary]", checkoutPage);
-    const toggle = $("[data-checkout-summary-toggle]", checkoutPage);
-    const overlay = $("[data-checkout-overlay]", checkoutPage);
-    const mobileQuery = window.matchMedia("(max-width: 900px)");
-
-    const setSummaryOpen = (open) => {
-      if (!summary) return;
-      summary.classList.toggle("is-open", open);
-      toggle?.setAttribute("aria-expanded", open ? "true" : "false");
-      overlay?.classList.toggle("is-visible", open && mobileQuery.matches);
-    };
-
-    const syncCheckoutSummary = () => setSummaryOpen(!mobileQuery.matches);
-
-    syncCheckoutSummary();
-    if (typeof mobileQuery.addEventListener === "function") {
-      mobileQuery.addEventListener("change", syncCheckoutSummary);
-    } else if (typeof mobileQuery.addListener === "function") {
-      mobileQuery.addListener(syncCheckoutSummary);
-    }
-
-    toggle?.addEventListener("click", () => {
-      const isOpen = summary?.classList.contains("is-open");
-      setSummaryOpen(!isOpen);
-    });
-
-    overlay?.addEventListener("click", () => setSummaryOpen(false));
-  }
-
   const productTabs = $("#polarisProductTabs");
   if (productTabs) {
     const tabButtons = $$("[data-pd-tab-btn]", productTabs);

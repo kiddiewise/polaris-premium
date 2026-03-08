@@ -45,10 +45,6 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
           <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
           <?php esc_html_e('Sepete geri dön', 'polaris'); ?>
         </a>
-        <button class="btn btn-ghost polaris-checkout-summary-toggle" type="button" data-checkout-summary-toggle aria-expanded="false">
-          <i class="fa-solid fa-receipt" aria-hidden="true"></i>
-          <?php esc_html_e('Sipariş özeti', 'polaris'); ?>
-        </button>
       </div>
     </header>
 
@@ -108,7 +104,6 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
           <?php do_action('woocommerce_checkout_after_order_review'); ?>
         </aside>
 
-        <button class="polaris-checkout-overlay" type="button" data-checkout-overlay aria-label="<?php echo esc_attr__('Sipariş özetini kapat', 'polaris'); ?>"></button>
       </div>
     </form>
   </div>

@@ -3309,9 +3309,7 @@ body.mobile-menu-open .mobile-menu-toggle span:nth-child(3) {
   }
 
   .polaris-checkout-head .polaris-checkout-summary-toggle {
-    display: inline-flex;
-    width: 100%;
-    justify-content: center;
+    display: none;
   }
 
   .polaris-checkout-form .polaris-checkout-layout {
@@ -3323,26 +3321,20 @@ body.mobile-menu-open .mobile-menu-toggle span:nth-child(3) {
   }
 
   .polaris-checkout-side {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: var(--bottom-stack-h);
-    z-index: 1700;
-    border-radius: 18px 18px 0 0;
-    border-left: 0;
-    border-right: 0;
-    transform: translateY(calc(100% - 62px));
-    transition: transform .24s var(--ease);
-    max-height: min(80vh, 680px);
-    overflow: auto;
-  }
-
-  .polaris-checkout-side.is-open {
-    transform: translateY(0);
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: auto;
+    border-radius: 18px;
+    transform: none;
+    transition: none;
+    max-height: none;
+    overflow: visible;
   }
 
   body.woocommerce-checkout .polaris-checkout-page {
-    padding-bottom: calc(var(--bottom-stack-h) + 90px);
+    padding-bottom: calc(var(--bottom-stack-h) + 20px);
   }
 
   .pd-shell {
@@ -4292,7 +4284,7 @@ body.woocommerce-checkout .polaris-checkout-form #place_order:hover {
 
 @media (max-width: 900px) {
   body.woocommerce-checkout .polaris-checkout-page {
-    padding: 8px 0 calc(var(--bottom-stack-h) + 132px);
+    padding: 8px 0 calc(var(--bottom-stack-h) + 20px);
   }
 
   body.woocommerce-checkout .polaris-checkout-shell {
@@ -4314,20 +4306,7 @@ body.woocommerce-checkout .polaris-checkout-form #place_order:hover {
   }
 
   body.woocommerce-checkout .polaris-checkout-head .polaris-checkout-summary-toggle {
-    display: inline-flex;
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: calc(var(--bottom-stack-h) + 10px);
-    z-index: 1710;
-    width: min(94vw, 360px);
-    justify-content: center;
-    border-radius: 999px;
-    border-color: rgba(243, 135, 47, .48);
-    background: linear-gradient(145deg, rgba(243, 135, 47, .96), rgba(236, 123, 46, .92));
-    color: #141414;
-    font-weight: 700;
-    box-shadow: 0 10px 24px rgba(243, 135, 47, .34);
+    display: none;
   }
 
   body.woocommerce-checkout .polaris-checkout-form .polaris-checkout-layout {
@@ -4347,43 +4326,26 @@ body.woocommerce-checkout .polaris-checkout-form #place_order:hover {
   }
 
   body.woocommerce-checkout .polaris-checkout-side {
-    position: fixed;
-    left: 8px;
-    right: 8px;
-    bottom: calc(var(--bottom-stack-h) + 6px);
-    z-index: 1700;
-    border-radius: 24px;
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: auto;
+    border-radius: 20px;
     border-left: 1px solid rgba(255, 255, 255, .12);
     border-right: 1px solid rgba(255, 255, 255, .12);
-    transform: translateY(calc(100% - 70px));
-    transition: transform .24s var(--ease);
-    max-height: min(84vh, 760px);
-    overflow: auto;
+    transform: none;
+    transition: none;
+    max-height: none;
+    overflow: visible;
   }
 
   body.woocommerce-checkout .polaris-checkout-side__handle {
-    display: block;
-  }
-
-  body.woocommerce-checkout .polaris-checkout-side.is-open {
-    transform: translateY(0);
+    display: none;
   }
 
   body.woocommerce-checkout .polaris-checkout-overlay {
-    display: block;
-    position: fixed;
-    inset: 0;
-    z-index: 1690;
-    border: 0;
-    background: rgba(4, 9, 15, .55);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .2s var(--ease);
-  }
-
-  body.woocommerce-checkout .polaris-checkout-overlay.is-visible {
-    opacity: 1;
-    pointer-events: auto;
+    display: none;
   }
 
   body.woocommerce-checkout .polaris-checkout-form #payment {
@@ -4446,8 +4408,6 @@ body.woocommerce-checkout .polaris-checkout-form #place_order:hover {
   }
 
   body.woocommerce-checkout .polaris-checkout-side {
-    left: 6px;
-    right: 6px;
     border-radius: 20px;
   }
 
