@@ -36,6 +36,7 @@ if (!function_exists('polaris_get_social_links')) {
         $links = [
             'instagram' => get_theme_mod('polaris_instagram_url', 'https://instagram.com/'),
             'youtube'   => get_theme_mod('polaris_youtube_url', 'https://youtube.com/'),
+            'facebook'  => get_theme_mod('polaris_facebook_url', 'https://www.facebook.com/people/Polaris-Kur%C5%9Fun/61570044187417/?ref=NONE_xav_ig_profile_page_web#'),
         ];
 
         $links = apply_filters('polaris_social_links', $links);
@@ -44,15 +45,18 @@ if (!function_exists('polaris_get_social_links')) {
             return [
                 'instagram' => 'https://instagram.com/',
                 'youtube'   => 'https://youtube.com/',
+                'facebook'  => 'https://www.facebook.com/people/Polaris-Kur%C5%9Fun/61570044187417/?ref=NONE_xav_ig_profile_page_web#',
             ];
         }
 
         $instagram = isset($links['instagram']) ? esc_url((string) $links['instagram']) : 'https://instagram.com/';
         $youtube   = isset($links['youtube']) ? esc_url((string) $links['youtube']) : 'https://youtube.com/';
+        $facebook  = isset($links['facebook']) ? esc_url((string) $links['facebook']) : 'https://www.facebook.com/people/Polaris-Kur%C5%9Fun/61570044187417/?ref=NONE_xav_ig_profile_page_web#';
 
         return [
             'instagram' => $instagram !== '' ? $instagram : 'https://instagram.com/',
             'youtube'   => $youtube !== '' ? $youtube : 'https://youtube.com/',
+            'facebook'  => $facebook !== '' ? $facebook : 'https://www.facebook.com/people/Polaris-Kur%C5%9Fun/61570044187417/?ref=NONE_xav_ig_profile_page_web#',
         ];
     }
 }
