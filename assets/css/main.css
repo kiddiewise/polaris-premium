@@ -6367,3 +6367,278 @@ body.woocommerce-checkout .polaris-checkout-form .polaris-corporate-field.is-hid
   display: none !important;
 }
 
+/* FAQ page */
+.polaris-faq-page {
+  padding: 24px 0 42px;
+}
+
+.polaris-faq-hero {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 14px;
+  padding: clamp(16px, 3vw, 26px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.polaris-faq-hero::after {
+  content: "";
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  right: -92px;
+  top: -120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(243, 135, 47, 0.27) 0%, rgba(243, 135, 47, 0) 72%);
+  pointer-events: none;
+}
+
+.polaris-faq-kicker {
+  margin: 0;
+  font-size: .75rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: rgba(206, 223, 241, .8);
+}
+
+.polaris-faq-hero h1 {
+  margin: 8px 0 0;
+  font-family: "Poppins", "Inter", sans-serif;
+  font-size: clamp(1.34rem, 2.5vw, 2rem);
+  line-height: 1.2;
+}
+
+.polaris-faq-subtitle {
+  margin: 10px 0 0;
+  max-width: 70ch;
+  color: rgba(222, 234, 247, .88);
+  line-height: 1.55;
+}
+
+.polaris-faq-tags {
+  margin-top: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.polaris-faq-tags span {
+  min-height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .05);
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  font-size: .76rem;
+  color: rgba(236, 244, 252, .94);
+}
+
+.polaris-faq-hero__cta {
+  min-height: 48px;
+  gap: 9px;
+  white-space: nowrap;
+  border-radius: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.polaris-faq-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  gap: 14px;
+  align-items: start;
+}
+
+.polaris-faq-main {
+  display: grid;
+  gap: 12px;
+}
+
+.polaris-faq-block {
+  padding: 14px;
+  border-radius: 20px;
+}
+
+.polaris-faq-block__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.polaris-faq-block__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  border: 1px solid rgba(243, 135, 47, .36);
+  background: rgba(243, 135, 47, .15);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffd8b7;
+  flex: 0 0 auto;
+}
+
+.polaris-faq-block__head h2 {
+  margin: 0;
+  font-size: clamp(1.02rem, 1.8vw, 1.25rem);
+}
+
+.polaris-faq-block__head p {
+  margin: 4px 0 0;
+  color: rgba(205, 220, 236, .8);
+  font-size: .82rem;
+}
+
+.polaris-faq-items {
+  display: grid;
+  gap: 8px;
+}
+
+.polaris-faq-item {
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(6, 15, 25, .56);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.polaris-faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 52px;
+  padding: 11px 13px;
+}
+
+.polaris-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.polaris-faq-item__q {
+  font-weight: 600;
+  line-height: 1.4;
+  color: #f0f7ff;
+}
+
+.polaris-faq-item__toggle {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .05);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #dce9f7;
+  flex: 0 0 auto;
+  transition: transform .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+}
+
+.polaris-faq-item[open] .polaris-faq-item__toggle {
+  transform: rotate(45deg);
+  color: #ffd8b7;
+  border-color: rgba(243, 135, 47, .44);
+}
+
+.polaris-faq-item__a {
+  border-top: 1px solid rgba(255, 255, 255, .09);
+  padding: 0 13px 13px;
+}
+
+.polaris-faq-item__a p {
+  margin: 12px 0 0;
+  color: rgba(216, 231, 247, .92);
+  line-height: 1.65;
+}
+
+.polaris-faq-aside {
+  display: grid;
+  gap: 12px;
+  position: sticky;
+  top: 96px;
+}
+
+.polaris-faq-contact,
+.polaris-faq-note {
+  border-radius: 20px;
+  padding: 14px;
+}
+
+.polaris-faq-contact h3,
+.polaris-faq-note h3 {
+  margin: 0;
+  font-family: "Poppins", "Inter", sans-serif;
+  font-size: 1.03rem;
+}
+
+.polaris-faq-contact p {
+  margin: 9px 0 0;
+  color: rgba(217, 231, 246, .86);
+  line-height: 1.6;
+}
+
+.polaris-faq-contact .btn {
+  width: 100%;
+  margin-top: 12px;
+  min-height: 44px;
+  border-radius: 12px;
+  gap: 9px;
+}
+
+.polaris-faq-contact__number {
+  margin-top: 10px;
+  display: block;
+  text-align: center;
+  font-weight: 600;
+  color: rgba(239, 247, 255, .94);
+}
+
+.polaris-faq-note ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.polaris-faq-note li {
+  color: rgba(216, 231, 247, .9);
+  line-height: 1.55;
+}
+
+@media (max-width: 1080px) {
+  .polaris-faq-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .polaris-faq-aside {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .polaris-faq-hero {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .polaris-faq-hero__cta {
+    width: 100%;
+  }
+
+  .polaris-faq-aside {
+    grid-template-columns: 1fr;
+  }
+
+  .polaris-faq-block {
+    padding: 12px;
+    border-radius: 18px;
+  }
+}
+
