@@ -91,6 +91,12 @@ $has_woocommerce = class_exists('WooCommerce') && class_exists('WC_Product_Query
 
 $new_products_title = esc_html__('Yeni Ürünler', 'polaris');
 $new_products_limit = 12;
+$category_strip_limit = (int) apply_filters('polaris_front_page_category_strip_limit', 12);
+// Add category slugs here to force them to the end of the front-page category grid.
+$category_strip_last_slugs = array_values(array_unique(array_filter(array_map('sanitize_title', (array) apply_filters(
+    'polaris_front_page_category_strip_last_slugs',
+    ['aksesuarlar']
+)))));
 
 $ordered_category_slugs = [
     'polaris-firdondulu-renkli-surf-kursun',
@@ -168,15 +174,33 @@ get_header();
           'hide_empty' => true,
           'orderby'    => 'menu_order',
           'order'      => 'ASC',
-          'number'     => 12,
+          'number'     => 0,
       ]);
 
       if (!is_wp_error($terms) && !empty($terms)) {
+          $normal_terms = [];
+          $last_terms   = [];
+
           foreach ($terms as $term) {
               if ($term->slug === 'genel') {
                   continue;
               }
 
+              if (!empty($category_strip_last_slugs) && in_array($term->slug, $category_strip_last_slugs, true)) {
+                  $last_terms[] = $term;
+                  continue;
+              }
+
+              $normal_terms[] = $term;
+          }
+
+          $terms = array_merge($normal_terms, $last_terms);
+
+          if ($category_strip_limit > 0) {
+              $terms = array_slice($terms, 0, $category_strip_limit);
+          }
+
+          foreach ($terms as $term) {
               $link = get_term_link($term);
               if (is_wp_error($link)) {
                   continue;
