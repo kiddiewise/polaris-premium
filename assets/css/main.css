@@ -6642,3 +6642,180 @@ body.woocommerce-checkout .polaris-checkout-form .polaris-corporate-field.is-hid
   }
 }
 
+/* Contact page */
+.polaris-contact-page {
+  padding: 24px 0 42px;
+}
+
+.polaris-contact-hero {
+  padding: clamp(16px, 3vw, 26px);
+  border-radius: 22px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.polaris-contact-hero::after {
+  content: "";
+  position: absolute;
+  right: -88px;
+  top: -92px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(243, 135, 47, .26), rgba(243, 135, 47, 0) 70%);
+  pointer-events: none;
+}
+
+.polaris-contact-kicker {
+  margin: 0;
+  font-size: .75rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(200, 218, 237, .8);
+}
+
+.polaris-contact-hero h1 {
+  margin: 8px 0 0;
+  font-family: "Poppins", "Inter", sans-serif;
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+}
+
+.polaris-contact-subtitle {
+  margin: 10px 0 0;
+  max-width: 66ch;
+  line-height: 1.6;
+  color: rgba(221, 233, 246, .88);
+}
+
+.polaris-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.polaris-contact-card {
+  border-radius: 20px;
+  padding: 14px;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.polaris-contact-card--full {
+  grid-column: 1 / -1;
+}
+
+.polaris-contact-card__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.polaris-contact-card__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  border: 1px solid rgba(243, 135, 47, .38);
+  background: rgba(243, 135, 47, .14);
+  color: #ffd9b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.polaris-contact-card h2 {
+  margin: 0;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+}
+
+.polaris-contact-card p {
+  margin: 0;
+  color: rgba(215, 230, 246, .9);
+  line-height: 1.6;
+}
+
+.polaris-contact-cta {
+  min-height: 44px;
+  border-radius: 12px;
+  gap: 9px;
+  width: fit-content;
+}
+
+.polaris-contact-meta {
+  display: inline-block;
+  color: rgba(238, 246, 255, .95);
+  font-weight: 600;
+}
+
+.polaris-contact-socials {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.polaris-contact-social {
+  min-height: 116px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .04);
+  padding: 12px;
+  display: grid;
+  align-content: space-between;
+  gap: 6px;
+  transition: transform .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+}
+
+.polaris-contact-social:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, .24);
+  background: rgba(255, 255, 255, .08);
+}
+
+.polaris-contact-social i {
+  font-size: 1.2rem;
+}
+
+.polaris-contact-social span {
+  font-weight: 600;
+  color: #f2f8ff;
+}
+
+.polaris-contact-social small {
+  color: rgba(202, 218, 234, .86);
+  font-size: .78rem;
+}
+
+.polaris-contact-social--instagram i {
+  color: #ff7fba;
+}
+
+.polaris-contact-social--youtube i {
+  color: #ff6a6a;
+}
+
+.polaris-contact-social--facebook i {
+  color: #7ba9ff;
+}
+
+@media (max-width: 980px) {
+  .polaris-contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .polaris-contact-socials {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .polaris-contact-card {
+    border-radius: 18px;
+    padding: 12px;
+  }
+
+  .polaris-contact-cta {
+    width: 100%;
+  }
+}
+

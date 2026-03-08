@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$whatsapp_message = __('Merhaba, sikca sorulan sorular sayfanizdan ulastim. Bilgi almak istiyorum.', 'polaris');
+$whatsapp_message = __('Merhaba, sıkça sorulan sorular sayfanızdan ulaştım. Bilgi almak istiyorum.', 'polaris');
 $whatsapp_url     = function_exists('polaris_get_whatsapp_url')
     ? polaris_get_whatsapp_url($whatsapp_message)
     : esc_url('https://wa.me/905462629002?text=' . rawurlencode($whatsapp_message));
@@ -14,77 +14,77 @@ $whatsapp_display = '+' . ltrim((string) $whatsapp_number, '+');
 
 $faq_sections = [
     [
-        'title'  => __('Siparis ve odeme', 'polaris'),
-        'kicker' => __('Siparis adimlari ve odeme secenekleri', 'polaris'),
+        'title'  => __('Sipariş ve ödeme', 'polaris'),
+        'kicker' => __('Sipariş adımları ve ödeme seçenekleri', 'polaris'),
         'icon'   => 'fa-solid fa-credit-card',
         'items'  => [
             [
-                'question' => __('Siparisimi nasil verebilirim?', 'polaris'),
-                'answer'   => __('Ana sayfada gormek istediginiz urune tiklayarak urun sayfasina gidin. Satin almak istediginiz adedi belirleyip Sepete Ekle secenegiyle urunleri sepetinize ekleyebilirsiniz. Urunleri sepete attiktan sonra Sepete Git sayfasindan toplam tutari ve kargo seceneklerini gorebilir, ardindan ekrandaki adimlari takip ederek siparisinizi tamamlayabilirsiniz.', 'polaris'),
+                'question' => __('Siparişimi nasıl verebilirim?', 'polaris'),
+                'answer'   => __('Ana sayfada görmek istediğiniz ürüne tıklayarak ürün sayfasına gidin. Satın almak istediğiniz adedi belirleyip Sepete Ekle seçeneğiyle ürünleri sepetinize ekleyebilirsiniz. Ürünleri sepete attıktan sonra Sepete Git sayfasından toplam tutarı ve kargo seçeneklerini görebilir, ardından ekrandaki adımları takip ederek siparişinizi tamamlayabilirsiniz.', 'polaris'),
             ],
             [
-                'question' => __('Hangi odeme yontemlerini kabul ediyorsunuz?', 'polaris'),
-                'answer'   => __('Sitemiz uzerinden yaptiginiz alisverislerde kredi karti ile odeme yapabilir veya hesabimiza EFT gonderebilirsiniz. Detaylar icin sitedeki Hesap Bilgileri bolumunu inceleyebilirsiniz.', 'polaris'),
+                'question' => __('Hangi ödeme yöntemlerini kabul ediyorsunuz?', 'polaris'),
+                'answer'   => __('Sitemiz üzerinden yaptığınız alışverişlerde kredi kartı ile ödeme yapabilir veya hesabımıza EFT gönderebilirsiniz. Detaylar için sitedeki Hesap Bilgileri bölümünü inceleyebilirsiniz.', 'polaris'),
             ],
         ],
     ],
     [
         'title'  => __('Kargo ve teslimat', 'polaris'),
-        'kicker' => __('Kargo bedeli, surec ve teslimat bilgileri', 'polaris'),
+        'kicker' => __('Kargo bedeli, süreç ve teslimat bilgileri', 'polaris'),
         'icon'   => 'fa-solid fa-truck-fast',
         'items'  => [
             [
-                'question' => __('Kargo ucreti ne kadar?', 'polaris'),
-                'answer'   => __('1.000 TL ve uzeri alisverislerde kargo ucretsizdir. Bu tutarin altindaki siparislerde 150 TL kargo ucreti uygulanir.', 'polaris'),
+                'question' => __('Kargo ücreti ne kadar?', 'polaris'),
+                'answer'   => __('1.000 TL ve üzeri alışverişlerde kargo ücretsizdir. Bu tutarın altındaki siparişlerde 150 TL kargo ücreti uygulanır.', 'polaris'),
             ],
             [
-                'question' => __('Hangi kargo sirketiyle calisiyorsunuz?', 'polaris'),
-                'answer'   => __('Siparislerin en guvenli ve hizli sekilde ulastirilmasi icin anlasmali kargo sirketimiz DHL Kargo dur.', 'polaris'),
+                'question' => __('Hangi kargo şirketiyle çalışıyorsunuz?', 'polaris'),
+                'answer'   => __('Siparişlerin en güvenli ve hızlı şekilde ulaştırılması için anlaşmalı kargo şirketimiz DHL Kargo’dur.', 'polaris'),
             ],
             [
-                'question' => __('Siparisim kac gunde kargoya verilir?', 'polaris'),
-                'answer'   => __('Stoklar guncel tutuldugu icin siparisler mumkun olan en kisa surede kargoya verilir. Ancak uretim gerekebilecek durumlar veya siparis yogunlugu nedeniyle tedarik ve kargolama suresi 3-4 is gunune kadar uzayabilir. Siparisinizin guncel durumunu Siparislerim bolumunden takip edebilir veya bizimle iletisime gecebilirsiniz.', 'polaris'),
+                'question' => __('Siparişim kaç günde kargoya verilir?', 'polaris'),
+                'answer'   => __('Stoklar güncel tutulduğu için siparişler mümkün olan en kısa sürede kargoya verilir. Ancak üretim gerekebilecek durumlar veya sipariş yoğunluğu nedeniyle tedarik ve kargolama süresi 3-4 iş gününe kadar uzayabilir. Siparişinizin güncel durumunu Siparişlerim bölümünden takip edebilir veya bizimle iletişime geçebilirsiniz.', 'polaris'),
             ],
         ],
     ],
     [
-        'title'  => __('Iade ve satis politikasi', 'polaris'),
-        'kicker' => __('Iade kosullari ve satis politikasi', 'polaris'),
+        'title'  => __('İade ve satış politikası', 'polaris'),
+        'kicker' => __('İade koşulları ve satış politikası', 'polaris'),
         'icon'   => 'fa-solid fa-rotate-left',
         'items'  => [
             [
-                'question' => __('Urun iadesi nasil yapilir?', 'polaris'),
-                'answer'   => __('Sitemizden aldiginiz Polaris markali tum urunleri kosulsuz olarak iade edebilirsiniz. Diger marka urunlerde ise Tuketicinin Korunmasi Hakkinda Kanun kapsaminda belirtilen sartlari tasiyan iade talepleri icin basvuruda bulunabilirsiniz. Ayrintilar icin Iptal ve Iade Kosullari bolumunu inceleyebilirsiniz.', 'polaris'),
+                'question' => __('Ürün iadesi nasıl yapılır?', 'polaris'),
+                'answer'   => __('Sitemizden aldığınız Polaris markalı tüm ürünleri koşulsuz olarak iade edebilirsiniz. Diğer marka ürünlerde ise Tüketicinin Korunması Hakkında Kanun kapsamında belirtilen şartları taşıyan iade talepleri için başvuruda bulunabilirsiniz. Ayrıntılar için İptal ve İade Koşulları bölümünü inceleyebilirsiniz.', 'polaris'),
             ],
             [
-                'question' => __('Toptan satisiniz var mi?', 'polaris'),
-                'answer'   => __('Hayir, Polaris kursun urunlerinde toptan satis bulunmamaktadir.', 'polaris'),
+                'question' => __('Toptan satışınız var mı?', 'polaris'),
+                'answer'   => __('Hayır, Polaris kurşun ürünlerinde toptan satış bulunmamaktadır.', 'polaris'),
             ],
         ],
     ],
     [
-        'title'  => __('Urunler hakkinda', 'polaris'),
-        'kicker' => __('Polaris urun aileleri ve renk secenekleri', 'polaris'),
+        'title'  => __('Ürünler hakkında', 'polaris'),
+        'kicker' => __('Polaris ürün aileleri ve renk seçenekleri', 'polaris'),
         'icon'   => 'fa-solid fa-fish',
         'items'  => [
             [
-                'question' => __('Polaris marka kursunlari neden tercih etmeliyim?', 'polaris'),
-                'answer'   => __('Polaris kursunlari av verimliligi, gorunurluk ve cevresel etki acisindan avantaj sunar. Kaplama ve aerodinamik yapi atis performansini destekler. Renkli ve glowlu seriler su altinda gorunurlugu artirarak hem baliklarin dikkatini ceker hem de su altinda kalan urunlerin daha kolay fark edilmesini saglar. Glowlu urunlerde kullanimdan once beyaz veya tercihen UV isik tutulmasi daha parlak ve daha uzun sureli gorunurluk saglar. Ayrica kaplama, ciplak kursunun suyla dogrudan temasini azaltarak cevresel etkiyi ve kullanici temas riskini dusurmeye yardimci olur.', 'polaris'),
+                'question' => __('Polaris marka kurşunları neden tercih etmeliyim?', 'polaris'),
+                'answer'   => __('Polaris kurşunları av verimliliği, görünürlük ve çevresel etki açısından avantaj sunar. Kaplama ve aerodinamik yapı atış performansını destekler. Renkli ve glowlu seriler su altında görünürlüğü artırarak hem balıkların dikkatini çeker hem de su altında kalan ürünlerin daha kolay fark edilmesini sağlar. Glowlu ürünlerde kullanımdan önce beyaz veya tercihen UV ışık tutulması daha parlak ve daha uzun süreli görünürlük sağlar. Ayrıca kaplama, çıplak kurşunun suyla doğrudan temasını azaltarak çevresel etkiyi ve kullanıcı temas riskini düşürmeye yardımcı olur.', 'polaris'),
             ],
             [
-                'question' => __('Urunlerinizde renk tercihi yapabiliyor muyuz?', 'polaris'),
-                'answer'   => __('Glowlu fosforlu serilerde renk alternatifi yoktur; urunler griye yakin beyaz renktedir. Renkli serilerde ise stok durumuna gore UV sari, turuncu, yesil, pembe ve diger renkler karisik gonderilir. Mesaj yoluyla renk talebinizi iletebilirsiniz; stok uygunsa yardimci olunur.', 'polaris'),
+                'question' => __('Ürünlerinizde renk tercihi yapabiliyor muyuz?', 'polaris'),
+                'answer'   => __('Glowlu fosforlu serilerde renk alternatifi yoktur; ürünler griye yakın beyaz renktedir. Renkli serilerde ise stok durumuna göre UV sarı, turuncu, yeşil, pembe ve diğer renkler karışık gönderilir. Mesaj yoluyla renk talebinizi iletebilirsiniz; stok uygunsa yardımcı olunur.', 'polaris'),
             ],
         ],
     ],
     [
-        'title'  => __('Yardim ve iletisim', 'polaris'),
-        'kicker' => __('Sorunuzun cevabi burada yoksa hizli destek alin', 'polaris'),
+        'title'  => __('Yardım ve iletişim', 'polaris'),
+        'kicker' => __('Sorunuzun cevabı burada yoksa hızlı destek alın', 'polaris'),
         'icon'   => 'fa-solid fa-headset',
         'items'  => [
             [
-                'question' => __('Aradigim sorunun cevabini bulamazsam ne yapabilirim?', 'polaris'),
-                'answer'   => __('Aradiginiz bilgi bu sayfada yer almiyorsa bizimle iletisime gecebilirsiniz. Size yardimci olmaktan memnuniyet duyariz.', 'polaris'),
+                'question' => __('Aradığım sorunun cevabını bulamazsam ne yapabilirim?', 'polaris'),
+                'answer'   => __('Aradığınız bilgi bu sayfada yer almıyorsa bizimle iletişime geçebilirsiniz. Size yardımcı olmaktan memnuniyet duyarız.', 'polaris'),
             ],
         ],
     ],
@@ -97,14 +97,14 @@ get_header();
   <div class="container">
     <header class="polaris-faq-hero polaris-surface fade-up active">
       <div class="polaris-faq-hero__copy">
-        <p class="polaris-faq-kicker"><?php echo esc_html__('Yardim merkezi', 'polaris'); ?></p>
-        <h1><?php echo esc_html__('Sikca Sorulan Sorular', 'polaris'); ?></h1>
-        <p class="polaris-faq-subtitle"><?php echo esc_html__('Siparis, odeme, kargo, iade ve urun detaylariyla ilgili en cok sorulan konulari tek ekranda toparladik.', 'polaris'); ?></p>
+        <p class="polaris-faq-kicker"><?php echo esc_html__('Yardım merkezi', 'polaris'); ?></p>
+        <h1><?php echo esc_html__('Sıkça Sorulan Sorular', 'polaris'); ?></h1>
+        <p class="polaris-faq-subtitle"><?php echo esc_html__('Sipariş, ödeme, kargo, iade ve ürün detaylarıyla ilgili en çok sorulan konuları tek ekranda toparladık.', 'polaris'); ?></p>
         <div class="polaris-faq-tags" aria-hidden="true">
-          <span><?php echo esc_html__('Siparis', 'polaris'); ?></span>
+          <span><?php echo esc_html__('Sipariş', 'polaris'); ?></span>
           <span><?php echo esc_html__('Kargo', 'polaris'); ?></span>
-          <span><?php echo esc_html__('Iade', 'polaris'); ?></span>
-          <span><?php echo esc_html__('Urun Bilgisi', 'polaris'); ?></span>
+          <span><?php echo esc_html__('İade', 'polaris'); ?></span>
+          <span><?php echo esc_html__('Ürün Bilgisi', 'polaris'); ?></span>
         </div>
       </div>
       <a class="btn btn-primary polaris-faq-hero__cta" href="<?php echo esc_url($whatsapp_url); ?>" target="_blank" rel="noopener">
@@ -144,21 +144,21 @@ get_header();
 
       <aside class="polaris-faq-aside">
         <article class="polaris-faq-contact polaris-surface fade-up active">
-          <h3><?php echo esc_html__('Hizli destek', 'polaris'); ?></h3>
-          <p><?php echo esc_html__('Destek ekibimize WhatsApp uzerinden hizli sekilde ulasabilirsiniz.', 'polaris'); ?></p>
+          <h3><?php echo esc_html__('Hızlı destek', 'polaris'); ?></h3>
+          <p><?php echo esc_html__('Destek ekibimize WhatsApp üzerinden hızlı şekilde ulaşabilirsiniz.', 'polaris'); ?></p>
           <a class="btn btn-primary" href="<?php echo esc_url($whatsapp_url); ?>" target="_blank" rel="noopener">
             <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-            <?php echo esc_html__('WhatsApp Destek Hatti', 'polaris'); ?>
+            <?php echo esc_html__('WhatsApp Destek Hattı', 'polaris'); ?>
           </a>
           <span class="polaris-faq-contact__number"><?php echo esc_html($whatsapp_display); ?></span>
         </article>
 
         <article class="polaris-faq-note polaris-surface fade-up active">
-          <h3><?php echo esc_html__('Kisa notlar', 'polaris'); ?></h3>
+          <h3><?php echo esc_html__('Kısa notlar', 'polaris'); ?></h3>
           <ul>
-            <li><?php echo esc_html__('1.000 TL ve uzeri siparislerde kargo ucretsizdir.', 'polaris'); ?></li>
-            <li><?php echo esc_html__('Siparis yogunluguna gore kargoya verilis suresi 3-4 is gunune uzayabilir.', 'polaris'); ?></li>
-            <li><?php echo esc_html__('Renk talepleri mesaj ile iletilebilir; stok uygunsa destek saglanir.', 'polaris'); ?></li>
+            <li><?php echo esc_html__('1.000 TL ve üzeri siparişlerde kargo ücretsizdir.', 'polaris'); ?></li>
+            <li><?php echo esc_html__('Sipariş yoğunluğuna göre kargoya veriliş süresi 3-4 iş gününe uzayabilir.', 'polaris'); ?></li>
+            <li><?php echo esc_html__('Renk talepleri mesaj ile iletilebilir; stok uygunsa destek sağlanır.', 'polaris'); ?></li>
           </ul>
         </article>
       </aside>
