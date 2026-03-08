@@ -9,6 +9,8 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
     echo esc_html(apply_filters('woocommerce_checkout_must_be_logged_in_message', __('Checkout is not available whilst you are logged out.', 'woocommerce')));
     return;
 }
+
+$cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/');
 ?>
 
 <section class="container polaris-checkout-page">
@@ -38,10 +40,16 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
         </ol>
       </div>
 
-      <button class="btn btn-ghost polaris-checkout-summary-toggle" type="button" data-checkout-summary-toggle aria-expanded="false">
-        <i class="fa-solid fa-receipt" aria-hidden="true"></i>
-        <?php esc_html_e('Sipariş özeti', 'polaris'); ?>
-      </button>
+      <div class="polaris-checkout-head__actions">
+        <a class="btn btn-ghost polaris-checkout-head__back" href="<?php echo esc_url($cart_url); ?>">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+          <?php esc_html_e('Sepete geri dön', 'polaris'); ?>
+        </a>
+        <button class="btn btn-ghost polaris-checkout-summary-toggle" type="button" data-checkout-summary-toggle aria-expanded="false">
+          <i class="fa-solid fa-receipt" aria-hidden="true"></i>
+          <?php esc_html_e('Sipariş özeti', 'polaris'); ?>
+        </button>
+      </div>
     </header>
 
     <form name="checkout" method="post" class="checkout woocommerce-checkout polaris-checkout-form" action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data" aria-label="<?php echo esc_attr__('Checkout', 'woocommerce'); ?>">

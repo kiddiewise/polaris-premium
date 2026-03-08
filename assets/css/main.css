@@ -201,6 +201,25 @@ body.is-locked {
   width: auto;
 }
 
+.polaris-checkout-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  min-height: 42px;
+  padding: 0 14px;
+  font-size: .92rem;
+  font-weight: 600;
+}
+
+.polaris-checkout-back-link i {
+  color: var(--accent);
+}
+
+.polaris-checkout-back-link:hover {
+  transform: translateY(-1px);
+}
+
 .desktop-menu {
   flex: 1 1 auto;
   min-width: 0;
@@ -3353,6 +3372,18 @@ body.woocommerce-checkout .polaris-checkout-head__main {
   max-width: 760px;
 }
 
+body.woocommerce-checkout .polaris-checkout-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body.woocommerce-checkout .polaris-checkout-head .polaris-checkout-head__back {
+  display: inline-flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
 body.woocommerce-checkout .polaris-checkout-kicker {
   display: inline-flex;
   align-items: center;
@@ -3984,6 +4015,15 @@ body.woocommerce-checkout .polaris-checkout-form #place_order:hover {
 
   body.woocommerce-checkout .polaris-checkout-head {
     margin-bottom: 12px;
+  }
+
+  body.woocommerce-checkout .polaris-checkout-head__actions {
+    width: 100%;
+  }
+
+  body.woocommerce-checkout .polaris-checkout-head .polaris-checkout-head__back {
+    width: 100%;
+    justify-content: center;
   }
 
   body.woocommerce-checkout .polaris-checkout-head .polaris-checkout-summary-toggle {

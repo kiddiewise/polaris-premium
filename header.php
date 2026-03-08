@@ -28,6 +28,8 @@ $social_links = function_exists('polaris_get_social_links')
 $whatsapp_support_url = function_exists('polaris_get_whatsapp_url')
     ? polaris_get_whatsapp_url(__('Merhaba, destek hattinizla gorusebilir miyim?', 'polaris'))
     : esc_url('https://wa.me/905462629002');
+
+$is_checkout_header = function_exists('is_checkout') && is_checkout() && !(function_exists('is_order_received_page') && is_order_received_page());
 ?>
 
 <header class="header" role="banner">
@@ -44,7 +46,13 @@ $whatsapp_support_url = function_exists('polaris_get_whatsapp_url')
   <div class="container header-inner">
     <div class="logo">
       <?php
-      if (function_exists('the_custom_logo') && has_custom_logo()) {
+      if ($is_checkout_header) {
+          printf(
+              '<a href="%1$s" class="btn btn-ghost polaris-checkout-back-link"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span>%2$s</span></a>',
+              esc_url($cart_url),
+              esc_html__('Sepete geri dön', 'polaris')
+          );
+      } elseif (function_exists('the_custom_logo') && has_custom_logo()) {
           the_custom_logo();
       } else {
           printf(
