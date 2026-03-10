@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+  if (window.__polarisMainInitialized) {
+    return;
+  }
+  window.__polarisMainInitialized = true;
+
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
@@ -42,6 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const searchState = { timer: null, controller: null };
   const cartState = new Map();
+  let cartSyncPromise = null;
+  let cartStateSyncedFromServer = false;
   const BOTTOM_FREESHIP_STORAGE_KEY = "polaris_bottom_freeship_open";
   const bottomFreeshipMediaQuery = window.matchMedia("(max-width: 900px)");
 
@@ -633,32 +640,64 @@ document.addEventListener("DOMContentLoaded", () => {
     miniCartTotalEl.innerHTML = summary?.total || "-";
   }
 
-  async function fetchMiniCart() {
-    if (!hasAjax || !miniCartEl) return;
+  async function fetchMiniCart(force = false) {
+    if (!hasAjax) return null;
+    if (cartSyncPromise && !force) return cartSyncPromise;
 
     const payload = new FormData();
     payload.append("action", "polaris_get_minicart");
     payload.append("nonce", ajaxConfig.nonce);
 
+    const request = (async () => {
+      try {
+        const response = await fetch(ajaxConfig.ajax_url, {
+          method: "POST",
+          body: payload,
+          credentials: "same-origin",
+        });
+        const data = await parseJsonResponse(response);
+
+        if (!data?.success) {
+          cartStateSyncedFromServer = false;
+          return null;
+        }
+
+        if (miniCartEl) {
+          miniCartEl.innerHTML = data.data?.html || "";
+        }
+        updateCartCounts(data.data?.count || 0);
+        updateFreeship(data.data?.freeship);
+        updateCartSummary(data.data?.summary);
+        updateCartState(data.data?.items || []);
+        cartStateSyncedFromServer = true;
+
+        return data;
+      } catch (error) {
+        cartStateSyncedFromServer = false;
+        if (miniCartEl) {
+          miniCartEl.innerHTML = '<div class="search-empty">Sepet yüklenemedi.</div>';
+        }
+        updateCartSummary();
+        throw error;
+      }
+    })();
+
+    const runningPromise = request.finally(() => {
+      if (cartSyncPromise === runningPromise) {
+        cartSyncPromise = null;
+      }
+    });
+    cartSyncPromise = runningPromise;
+
+    return cartSyncPromise;
+  }
+
+  async function ensureCartStateSynced() {
+    if (!hasAjax || cartStateSyncedFromServer) return;
+
     try {
-      const response = await fetch(ajaxConfig.ajax_url, {
-        method: "POST",
-        body: payload,
-        credentials: "same-origin",
-      });
-      const data = await parseJsonResponse(response);
-
-      if (!data?.success) return;
-
-      miniCartEl.innerHTML = data.data?.html || "";
-      updateCartCounts(data.data?.count || 0);
-      updateFreeship(data.data?.freeship);
-      updateCartSummary(data.data?.summary);
-      updateCartState(data.data?.items || []);
-    } catch {
-      miniCartEl.innerHTML = '<div class="search-empty">Sepet yüklenemedi.</div>';
-      updateCartSummary();
-    }
+      await fetchMiniCart();
+    } catch {}
   }
 
   function hydrateInitialCartState() {
@@ -668,6 +707,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateFreeship(initialCartData.freeship || null);
     updateCartSummary(initialCartData.summary || null);
     updateCartState(initialCartData.items || []);
+    cartStateSyncedFromServer = false;
   }
 
   async function setCartQuantity(cartKey, qty) {
@@ -750,8 +790,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const productId = String(sourceButton?.getAttribute("data-product-id") || card?.getAttribute("data-product-id") || "");
     if (!productId) return;
 
-    const current = cartState.get(productId);
     setCardBusy(card, true);
+    await ensureCartStateSynced();
+    const current = cartState.get(productId);
 
     try {
       if (plus) {
@@ -948,7 +989,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (hasAjax) {
     hydrateInitialCartState();
+    // Cache kaynaklı stale cart_init verisini gerçek sepet oturumuyla hizala.
+    void fetchMiniCart().catch(() => {});
   }
+
+  window.addEventListener("pageshow", (event) => {
+    if (!hasAjax || !event.persisted) return;
+
+    cartStateSyncedFromServer = false;
+    void fetchMiniCart(true).catch(() => {});
+  });
 
   const cartPageForm = $(".polaris-cart-form");
   if (cartPageForm) {
