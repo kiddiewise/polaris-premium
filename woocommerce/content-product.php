@@ -1,4 +1,11 @@
 <?php
+/**
+ * Content product card.
+ *
+ * @package WooCommerce\Templates
+ * @version 9.4.0
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -41,21 +48,13 @@ if (!function_exists('polaris_archive_get_cart_qty_map')) {
 
 $product_id   = $product->get_id();
 $title        = $product->get_name();
-$link         = get_permalink($product_id);
+$link         = $product->get_permalink();
 $image        = $product->get_image('woocommerce_thumbnail', ['loading' => 'lazy']);
 $price_html   = $product->get_price_html();
 $cart_qty_map = polaris_archive_get_cart_qty_map();
 $initial_qty  = isset($cart_qty_map[$product_id]) ? (int) $cart_qty_map[$product_id] : 0;
-$badge        = '';
-
-if ($product->is_on_sale()) {
-    $regular = (float) $product->get_regular_price();
-    $sale    = (float) $product->get_sale_price();
-
-    if ($regular > 0 && $sale > 0 && $sale < $regular) {
-        $badge = sprintf('-%d%%', (int) round((($regular - $sale) / $regular) * 100));
-    }
-}
+$badge        = polaris_get_product_sale_badge($product);
+$quick_add    = polaris_product_supports_quick_add($product);
 ?>
 
 <article <?php wc_product_class('p-card', $product); ?> data-product-card data-product-id="<?php echo esc_attr($product_id); ?>">
@@ -63,14 +62,14 @@ if ($product->is_on_sale()) {
     <?php if ($badge !== '') : ?>
       <span class="badge badge-sale"><?php echo esc_html($badge); ?></span>
     <?php endif; ?>
-    <?php echo $image; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+    <?php echo wp_kses_post($image); ?>
   </a>
 
   <div class="p-card__body">
     <a class="p-card__title" href="<?php echo esc_url($link); ?>"><?php echo esc_html($title); ?></a>
     <div class="p-card__price"><?php echo wp_kses_post($price_html); ?></div>
 
-    <?php if ($product->is_purchasable() && $product->is_in_stock()) : ?>
+    <?php if ($quick_add) : ?>
       <div class="p-card__cart-actions" data-card-actions>
         <button class="p-card__cta js-add-to-cart<?php echo $initial_qty > 0 ? ' hidden' : ''; ?>" type="button" data-product-id="<?php echo esc_attr($product_id); ?>">
           <?php echo esc_html__('Sepete ekle', 'polaris'); ?>
@@ -84,6 +83,8 @@ if ($product->is_on_sale()) {
           <button class="p-card__qty-btn" type="button" data-card-plus aria-label="<?php echo esc_attr__('Arttir', 'polaris'); ?>">+</button>
         </div>
       </div>
+    <?php elseif ($product->is_purchasable() && $product->is_in_stock()) : ?>
+      <a class="p-card__cta" href="<?php echo esc_url($link); ?>"><?php echo esc_html($product->add_to_cart_text()); ?></a>
     <?php else : ?>
       <button class="p-card__cta p-card__cta--disabled" type="button" disabled><?php echo esc_html__('Stokta yok', 'polaris'); ?></button>
     <?php endif; ?>

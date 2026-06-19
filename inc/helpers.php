@@ -3,6 +3,75 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+if (!function_exists('polaris_get_request_string')) {
+    /**
+     * Safely read and unslash a scalar request value.
+     *
+     * Sanitization remains the caller's responsibility because passwords, URLs,
+     * identifiers and free text require different handling.
+     *
+     * @param mixed  $source Request source array.
+     * @param string $key    Request key.
+     * @return string
+     */
+    function polaris_get_request_string($source, $key)
+    {
+        if (!is_array($source) || !isset($source[$key]) || !is_string($source[$key])) {
+            return '';
+        }
+
+        return wp_unslash($source[$key]);
+    }
+}
+
+if (!function_exists('polaris_product_supports_quick_add')) {
+    /**
+     * Whether a product can use the theme's quantity-aware AJAX add-to-cart UI.
+     *
+     * Products that require configuration must use WooCommerce's native form.
+     *
+     * @param mixed $product Product object.
+     * @return bool
+     */
+    function polaris_product_supports_quick_add($product)
+    {
+        return $product instanceof WC_Product
+            && $product->is_type('simple')
+            && !$product->is_sold_individually()
+            && $product->supports('ajax_add_to_cart')
+            && $product->is_purchasable()
+            && $product->is_in_stock();
+    }
+}
+
+if (!function_exists('polaris_get_product_sale_badge')) {
+    /**
+     * Return a truthful sale badge for simple and configurable products.
+     *
+     * @param mixed $product Product object.
+     * @return string
+     */
+    function polaris_get_product_sale_badge($product)
+    {
+        if (!$product instanceof WC_Product || !$product->is_on_sale()) {
+            return '';
+        }
+
+        if (!$product->is_type(['simple', 'variation'])) {
+            return esc_html__('İndirim', 'polaris');
+        }
+
+        $regular_price = (float) $product->get_regular_price();
+        $sale_price    = (float) $product->get_sale_price();
+
+        if ($regular_price <= 0 || $sale_price <= 0 || $sale_price >= $regular_price) {
+            return esc_html__('İndirim', 'polaris');
+        }
+
+        return sprintf('-%d%%', (int) round((($regular_price - $sale_price) / $regular_price) * 100));
+    }
+}
+
 if (!function_exists('polaris_get_whatsapp_number')) {
     function polaris_get_whatsapp_number()
     {
@@ -277,7 +346,7 @@ function polaris_force_login_page_template()
         return;
     }
 
-    $template_file = get_template_directory() . '/page-login.php';
+    $template_file = get_theme_file_path('/page-login.php');
     if (!file_exists($template_file)) {
         return;
     }

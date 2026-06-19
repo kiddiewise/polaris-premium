@@ -116,11 +116,14 @@ add_filter('woocommerce_package_rates', function ($rates, $package) {
             continue;
         }
 
-        $rates[$rate_id]->cost = 0;
+        if (method_exists($rate, 'set_cost')) {
+            $rate->set_cost(0);
+        }
 
-        if (isset($rates[$rate_id]->taxes) && is_array($rates[$rate_id]->taxes)) {
-            foreach ($rates[$rate_id]->taxes as $tax_id => $amount) {
-                $rates[$rate_id]->taxes[$tax_id] = 0;
+        if (method_exists($rate, 'get_taxes') && method_exists($rate, 'set_taxes')) {
+            $taxes = $rate->get_taxes();
+            if (is_array($taxes)) {
+                $rate->set_taxes(array_fill_keys(array_keys($taxes), 0));
             }
         }
     }
@@ -187,9 +190,7 @@ add_action('template_redirect', function () {
         return;
     }
 
-    $nonce = isset($_POST['polaris_change_password_nonce'])
-        ? sanitize_text_field(wp_unslash($_POST['polaris_change_password_nonce']))
-        : '';
+    $nonce = sanitize_text_field(polaris_get_request_string($_POST, 'polaris_change_password_nonce'));
 
     if (empty($nonce) || !wp_verify_nonce($nonce, 'polaris_change_password_action')) {
         wc_add_notice(__('Güvenlik doğrulaması başarısız. Lütfen tekrar deneyin.', 'polaris'), 'error');
@@ -197,9 +198,9 @@ add_action('template_redirect', function () {
         exit;
     }
 
-    $current_password = isset($_POST['current_password']) ? (string) wp_unslash($_POST['current_password']) : '';
-    $new_password     = isset($_POST['new_password']) ? (string) wp_unslash($_POST['new_password']) : '';
-    $confirm_password = isset($_POST['confirm_password']) ? (string) wp_unslash($_POST['confirm_password']) : '';
+    $current_password = polaris_get_request_string($_POST, 'current_password');
+    $new_password     = polaris_get_request_string($_POST, 'new_password');
+    $confirm_password = polaris_get_request_string($_POST, 'confirm_password');
 
     $current_password = trim($current_password);
     $new_password     = trim($new_password);

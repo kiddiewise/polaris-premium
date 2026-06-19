@@ -1,4 +1,11 @@
 <?php
+/**
+ * Cart page.
+ *
+ * @package WooCommerce\Templates
+ * @version 10.8.0
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -78,15 +85,17 @@ do_action('woocommerce_before_cart');
                 $item_meta         = wc_get_formatted_cart_item_data($cart_item);
                 ?>
 
-                <article class="polaris-cart-item woocommerce-cart-form__cart-item cart_item">
+                <article class="polaris-cart-item woocommerce-cart-form__cart-item <?php echo esc_attr(apply_filters('woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key)); ?>">
                   <a class="polaris-cart-item__thumb" href="<?php echo esc_url($product_permalink ?: '#'); ?>">
-                    <?php echo $thumbnail; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                    <?php echo wp_kses_post($thumbnail); ?>
                   </a>
 
                   <div class="polaris-cart-item__content">
                     <a class="polaris-cart-item__title" href="<?php echo esc_url($product_permalink ?: '#'); ?>">
                       <?php echo wp_kses_post($product_name); ?>
                     </a>
+
+                    <?php do_action('woocommerce_after_cart_item_name', $cart_item, $cart_item_key); ?>
 
                     <div class="polaris-cart-item__unit-price">
                       <?php esc_html_e('Birim fiyat:', 'polaris'); ?>
@@ -95,8 +104,20 @@ do_action('woocommerce_before_cart');
 
                     <?php if (!empty($item_meta)) : ?>
                       <div class="polaris-cart-item__meta">
-                        <?php echo $item_meta; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                        <?php echo wp_kses_post($item_meta); ?>
                       </div>
+                    <?php endif; ?>
+
+                    <?php if ($_product->backorders_require_notification() && $_product->is_on_backorder($cart_item['quantity'])) : ?>
+                      <?php
+                      echo wp_kses_post(
+                          apply_filters(
+                              'woocommerce_cart_item_backorder_notification',
+                              '<p class="backorder_notification">' . esc_html__('Available on backorder', 'woocommerce') . '</p>',
+                              $product_id
+                          )
+                      );
+                      ?>
                     <?php endif; ?>
                   </div>
 
@@ -126,24 +147,25 @@ do_action('woocommerce_before_cart');
                             $_product,
                             false
                         );
-                        echo $product_quantity; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                        echo apply_filters('woocommerce_cart_item_quantity', $product_quantity, $cart_item_key, $cart_item); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                         ?>
                         <button type="button" data-cart-qty-plus aria-label="<?php esc_attr_e('Adedi artır', 'polaris'); ?>">+</button>
                       </div>
                     <?php endif; ?>
 
                     <?php
-                    echo apply_filters(
+                    $remove_link = apply_filters(
                         'woocommerce_cart_item_remove_link',
                         sprintf(
                             '<a href="%s" class="polaris-cart-item__remove remove" aria-label="%s" data-product_id="%s" data-product_sku="%s"><i class="fa-regular fa-trash-can" aria-hidden="true"></i></a>',
                             esc_url(wc_get_cart_remove_url($cart_item_key)),
-                            esc_attr__('Ürünü sil', 'polaris'),
+                            esc_attr(sprintf(__('Remove %s from cart', 'woocommerce'), wp_strip_all_tags($product_name))),
                             esc_attr($product_id),
                             esc_attr($_product->get_sku())
                         ),
                         $cart_item_key
                     );
+                    echo wp_kses_post($remove_link);
                     ?>
                   </div>
                 </article>

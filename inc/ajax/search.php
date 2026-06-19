@@ -8,11 +8,12 @@ add_action('wp_ajax_nopriv_polaris_live_search', 'polaris_live_search');
 
 function polaris_live_search()
 {
-    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'polaris_nonce')) {
+    $nonce = sanitize_text_field(polaris_get_request_string($_POST, 'nonce'));
+    if (!$nonce || !wp_verify_nonce($nonce, 'polaris_nonce')) {
         wp_send_json_error(['message' => 'Geçersiz nonce'], 403);
     }
 
-    $query_raw = isset($_POST['q']) ? sanitize_text_field(wp_unslash($_POST['q'])) : '';
+    $query_raw = sanitize_text_field(polaris_get_request_string($_POST, 'q'));
     $query_raw = trim($query_raw);
 
     if ($query_raw === '' || mb_strlen($query_raw) < 2) {

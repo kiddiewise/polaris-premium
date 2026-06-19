@@ -1,3 +1,11 @@
+Legacy block-theme compatibility placeholder.
+
+This theme is intentionally a classic PHP theme. The former templates/index.html
+contained PHP markup, which block templates do not execute, and caused WordPress
+to classify the theme as a block theme. The active fallback remains /index.php.
+
+--- Former templates/index.html content (kept for reference) ---
+
 <!-- fallback html template for block-theme compatibility -->
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>

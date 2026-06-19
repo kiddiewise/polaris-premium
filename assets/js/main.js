@@ -640,6 +640,20 @@ document.addEventListener("DOMContentLoaded", () => {
     miniCartTotalEl.innerHTML = summary?.total || "-";
   }
 
+  function applyCartPayload(payload) {
+    if (!payload || typeof payload !== "object") return;
+
+    if (miniCartEl && typeof payload.html === "string") {
+      miniCartEl.innerHTML = payload.html;
+    }
+
+    updateCartCounts(payload.count || 0);
+    updateFreeship(payload.freeship);
+    updateCartSummary(payload.summary);
+    updateCartState(payload.items || []);
+    cartStateSyncedFromServer = true;
+  }
+
   async function fetchMiniCart(force = false) {
     if (!hasAjax) return null;
     if (cartSyncPromise && !force) return cartSyncPromise;
@@ -662,14 +676,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return null;
         }
 
-        if (miniCartEl) {
-          miniCartEl.innerHTML = data.data?.html || "";
-        }
-        updateCartCounts(data.data?.count || 0);
-        updateFreeship(data.data?.freeship);
-        updateCartSummary(data.data?.summary);
-        updateCartState(data.data?.items || []);
-        cartStateSyncedFromServer = true;
+        applyCartPayload(data.data);
 
         return data;
       } catch (error) {
@@ -747,11 +754,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const data = await parseJsonResponse(response).catch(() => null);
 
-    if (data?.error) {
+    if (!response.ok || data?.error) {
       throw new Error("add_to_cart_failed");
     }
 
     return data;
+  }
+
+  function emitAddedToCart(data, button) {
+    if (!data || !window.jQuery) return;
+
+    window.jQuery(document.body).trigger("added_to_cart", [
+      data.fragments || {},
+      data.cart_hash || "",
+      window.jQuery(button),
+    ]);
   }
 
   document.addEventListener("click", async (event) => {
@@ -767,7 +784,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setCardBusy(card, true);
 
     try {
-      await addToCart(productId, 1);
+      const result = await addToCart(productId, 1);
+      emitAddedToCart(result, addButton);
       await fetchMiniCart();
       bumpCartIcon();
       showToast("Ürün sepete eklendi.");
@@ -797,11 +815,13 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       if (plus) {
         if (current?.cart_key) {
-          await setCartQuantity(current.cart_key, Number(current.qty) + 1);
+          const response = await setCartQuantity(current.cart_key, Number(current.qty) + 1);
+          applyCartPayload(response.data);
         } else {
-          await addToCart(productId, 1);
+          const result = await addToCart(productId, 1);
+          emitAddedToCart(result, sourceButton);
+          await fetchMiniCart();
         }
-        await fetchMiniCart();
         bumpCartIcon();
         showToast("Sepet adedi artırıldı.");
       }
@@ -812,8 +832,8 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
         const nextQty = Math.max(0, Number(current.qty) - 1);
-        await setCartQuantity(current.cart_key, nextQty);
-        await fetchMiniCart();
+        const response = await setCartQuantity(current.cart_key, nextQty);
+        applyCartPayload(response.data);
         showToast(nextQty === 0 ? "Ürün sepetten kaldırıldı." : "Sepet adedi azaltıldı.");
       }
     } catch {
@@ -849,8 +869,8 @@ document.addEventListener("DOMContentLoaded", () => {
     valueEl.textContent = String(qty);
 
     try {
-      await setCartQuantity(cartKey, qty);
-      await fetchMiniCart();
+      const response = await setCartQuantity(cartKey, qty);
+      applyCartPayload(response.data);
       showToast(qty === 0 ? "Ürün sepetten kaldırıldı." : "Sepet güncellendi.");
       bumpCartIcon();
     } catch {

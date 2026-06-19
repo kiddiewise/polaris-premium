@@ -4,16 +4,20 @@
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 9.7.0
+ * @version 9.9.0
  */
 
 defined('ABSPATH') || exit;
 
 $registration_enabled = 'yes' === get_option('woocommerce_enable_myaccount_registration');
-$default_panel        = $registration_enabled && isset($_GET['register']) && '1' === sanitize_text_field(wp_unslash($_GET['register']))
+$default_panel        = $registration_enabled && '1' === sanitize_text_field(polaris_get_request_string($_GET, 'register'))
     ? 'register'
     : 'login';
-$redirect_to          = isset($_REQUEST['redirect_to']) ? wp_validate_redirect(esc_url_raw(wp_unslash($_REQUEST['redirect_to'])), '') : '';
+$redirect_raw         = polaris_get_request_string($_POST, 'redirect_to');
+if ('' === $redirect_raw) {
+    $redirect_raw = polaris_get_request_string($_GET, 'redirect_to');
+}
+$redirect_to = wp_validate_redirect(esc_url_raw($redirect_raw), '');
 
 do_action('woocommerce_before_customer_login_form');
 ?>
@@ -58,8 +62,10 @@ do_action('woocommerce_before_customer_login_form');
             name="username"
             id="username"
             autocomplete="username"
-            value="<?php echo !empty($_POST['username']) ? esc_attr(wp_unslash($_POST['username'])) : ''; ?>"
+            value="<?php echo esc_attr(sanitize_text_field(polaris_get_request_string($_POST, 'username'))); ?>"
             placeholder="<?php echo esc_attr__('E-posta', 'polaris'); ?>"
+            required
+            aria-required="true"
           />
         </p>
 
@@ -73,6 +79,8 @@ do_action('woocommerce_before_customer_login_form');
             id="password"
             autocomplete="current-password"
             placeholder="<?php echo esc_attr__('Şifre', 'polaris'); ?>"
+            required
+            aria-required="true"
           />
         </p>
 
@@ -128,8 +136,10 @@ do_action('woocommerce_before_customer_login_form');
                 name="username"
                 id="reg_username"
                 autocomplete="username"
-                value="<?php echo !empty($_POST['username']) ? esc_attr(wp_unslash($_POST['username'])) : ''; ?>"
+                value="<?php echo esc_attr(sanitize_user(polaris_get_request_string($_POST, 'username'))); ?>"
                 placeholder="<?php echo esc_attr__('Kullanıcı adı', 'polaris'); ?>"
+                required
+                aria-required="true"
               />
             </p>
           <?php endif; ?>
@@ -143,8 +153,10 @@ do_action('woocommerce_before_customer_login_form');
               name="email"
               id="reg_email"
               autocomplete="email"
-              value="<?php echo !empty($_POST['email']) ? esc_attr(wp_unslash($_POST['email'])) : ''; ?>"
+              value="<?php echo esc_attr(sanitize_email(polaris_get_request_string($_POST, 'email'))); ?>"
               placeholder="<?php echo esc_attr__('E-posta', 'polaris'); ?>"
+              required
+              aria-required="true"
             />
           </p>
 
@@ -159,11 +171,13 @@ do_action('woocommerce_before_customer_login_form');
                 id="reg_password"
                 autocomplete="new-password"
                 placeholder="<?php echo esc_attr__('Şifre', 'polaris'); ?>"
+                required
+                aria-required="true"
               />
             </p>
           <?php else : ?>
             <p class="polaris-auth-help">
-              <?php esc_html_e('Şifreniz e-posta adresinize gönderilecektir.', 'polaris'); ?>
+              <?php esc_html_e('Yeni parola belirleme bağlantısı e-posta adresinize gönderilecektir.', 'polaris'); ?>
             </p>
           <?php endif; ?>
 

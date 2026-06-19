@@ -35,34 +35,28 @@ if (!function_exists('polaris_render_product_card')) {
 
         $product_id = $product->get_id();
         $title      = $product->get_name();
-        $link       = get_permalink($product_id);
+        $link       = $product->get_permalink();
         $image      = $product->get_image('woocommerce_thumbnail', ['loading' => 'lazy']);
         $price_html = $product->get_price_html();
         $cart_qty_map = polaris_get_cart_qty_map();
         $initial_qty = isset($cart_qty_map[$product_id]) ? (int) $cart_qty_map[$product_id] : 0;
 
-        $badge = '';
-        if ($product->is_on_sale()) {
-            $regular = (float) $product->get_regular_price();
-            $sale    = (float) $product->get_sale_price();
-            if ($regular > 0 && $sale > 0 && $sale < $regular) {
-                $badge = sprintf('-%d%%', (int) round((($regular - $sale) / $regular) * 100));
-            }
-        }
+        $badge     = polaris_get_product_sale_badge($product);
+        $quick_add = polaris_product_supports_quick_add($product);
 
         echo '<article class="p-card" data-product-id="' . esc_attr($product_id) . '">';
         echo '  <a class="p-card__media" href="' . esc_url($link) . '">';
         if ($badge !== '') {
             echo '    <span class="badge badge-sale">' . esc_html($badge) . '</span>';
         }
-        echo      $image;
+        echo wp_kses_post($image);
         echo '  </a>';
 
         echo '  <div class="p-card__body">';
         echo '    <a class="p-card__title" href="' . esc_url($link) . '">' . esc_html($title) . '</a>';
         echo '    <div class="p-card__price">' . wp_kses_post($price_html) . '</div>';
 
-        if ($product->is_purchasable() && $product->is_in_stock()) {
+        if ($quick_add) {
             echo '    <div class="p-card__cart-actions" data-card-actions>';
             echo '      <button class="p-card__cta js-add-to-cart' . ($initial_qty > 0 ? ' hidden' : '') . '" type="button" data-product-id="' . esc_attr($product_id) . '">';
             echo            esc_html__('Sepete ekle', 'polaris');
@@ -76,6 +70,8 @@ if (!function_exists('polaris_render_product_card')) {
             echo '        <button class="p-card__qty-btn" type="button" data-card-plus aria-label="' . esc_attr__('Arttır', 'polaris') . '">+</button>';
             echo '      </div>';
             echo '    </div>';
+        } elseif ($product->is_purchasable() && $product->is_in_stock()) {
+            echo '    <a class="p-card__cta" href="' . esc_url($link) . '">' . esc_html($product->add_to_cart_text()) . '</a>';
         } else {
             echo '    <button class="p-card__cta p-card__cta--disabled" type="button" disabled>' . esc_html__('Stokta yok', 'polaris') . '</button>';
         }

@@ -1,4 +1,11 @@
 <?php
+/**
+ * Product image proxy.
+ *
+ * @package WooCommerce\Templates
+ * @version 10.5.0
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }

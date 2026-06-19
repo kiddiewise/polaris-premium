@@ -1,4 +1,11 @@
 <?php
+/**
+ * Custom single product layout.
+ *
+ * @package WooCommerce\Templates
+ * @version 1.6.4
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -35,21 +42,13 @@ if (!function_exists('polaris_single_render_family_item')) {
 
         $product_id   = (int) $product->get_id();
         $title        = $product->get_name();
-        $link         = get_permalink($product_id);
+        $link         = $product->get_permalink();
         $image        = $product->get_image('woocommerce_thumbnail', ['loading' => 'lazy']);
         $price_html   = $product->get_price_html();
         $initial_qty  = isset($qty_map[$product_id]) ? (int) $qty_map[$product_id] : 0;
         $is_available = $product->is_purchasable() && $product->is_in_stock();
-        $badge        = '';
-
-        if ($product->is_on_sale()) {
-            $regular = (float) $product->get_regular_price();
-            $sale    = (float) $product->get_sale_price();
-
-            if ($regular > 0 && $sale > 0 && $sale < $regular) {
-                $badge = sprintf('-%d%%', (int) round((($regular - $sale) / $regular) * 100));
-            }
-        }
+        $quick_add    = polaris_product_supports_quick_add($product);
+        $badge        = polaris_get_product_sale_badge($product);
 
         echo '<article class="pd-variant' . ($is_current ? ' is-current' : '') . '" data-product-card data-product-id="' . esc_attr($product_id) . '">';
         if ($badge !== '') {
@@ -60,14 +59,14 @@ if (!function_exists('polaris_single_render_family_item')) {
             echo '<span class="pd-variant__current">' . esc_html__('Su an inceleniyor', 'polaris') . '</span>';
         }
 
-        echo '  <a class="pd-variant__thumb" href="' . esc_url($link) . '">' . $image . '</a>';
+        echo '  <a class="pd-variant__thumb" href="' . esc_url($link) . '">' . wp_kses_post($image) . '</a>';
         echo '  <div class="pd-variant__main">';
         echo '    <a class="pd-variant__title" href="' . esc_url($link) . '">' . esc_html($title) . '</a>';
         echo '    <div class="pd-variant__price">' . wp_kses_post($price_html) . '</div>';
         echo '  </div>';
         echo '  <div class="pd-variant__actions" data-card-actions>';
 
-        if ($is_available) {
+        if ($quick_add) {
             echo '    <button class="pd-variant__add js-add-to-cart' . ($initial_qty > 0 ? ' hidden' : '') . '" type="button" data-product-id="' . esc_attr($product_id) . '" aria-label="' . esc_attr__('Sepete ekle', 'polaris') . '">';
             echo '      <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>';
             echo '    </button>';
@@ -76,6 +75,10 @@ if (!function_exists('polaris_single_render_family_item')) {
             echo '      <span class="pd-variant__qty-value" data-card-qty>' . (int) max(1, $initial_qty) . '</span>';
             echo '      <button class="p-card__qty-btn" type="button" data-card-plus aria-label="' . esc_attr__('Arttir', 'polaris') . '">+</button>';
             echo '    </div>';
+        } elseif ($is_available) {
+            echo '    <a class="pd-variant__add" href="' . esc_url($link) . '" aria-label="' . esc_attr($product->add_to_cart_text()) . '">';
+            echo '      <i class="fa-solid fa-sliders" aria-hidden="true"></i>';
+            echo '    </a>';
         } else {
             echo '    <button class="pd-variant__add pd-variant__add--disabled" type="button" disabled aria-label="' . esc_attr__('Stokta yok', 'polaris') . '">';
             echo '      <i class="fa-solid fa-ban" aria-hidden="true"></i>';
@@ -161,7 +164,7 @@ while (have_posts()) :
     $price_html      = $product->get_price_html();
     $average_rating  = (float) $product->get_average_rating();
     $review_count    = (int) $product->get_review_count();
-    $short_desc      = apply_filters('woocommerce_short_description', $post->post_excerpt ?? '');
+    $short_desc      = apply_filters('woocommerce_short_description', $product->get_short_description());
     $full_desc       = apply_filters('the_content', get_the_content(null, false, $post));
     $cart_qty_map    = polaris_single_get_cart_qty_map();
     $image_ids       = [];
@@ -170,7 +173,7 @@ while (have_posts()) :
     $whatsapp_message = sprintf(__('Merhaba, "%s" urunu hakkinda bilgi alabilir miyim?', 'polaris'), $product->get_name());
     $whatsapp_url     = function_exists('polaris_get_whatsapp_url')
         ? polaris_get_whatsapp_url($whatsapp_message)
-        : esc_url('https://wa.me/905462629002?text=' . rawurlencode($whatsapp_message));
+        : 'https://wa.me/905462629002?text=' . rawurlencode($whatsapp_message);
     $attributes      = $product->get_attributes();
     $sku             = $product->get_sku();
 
@@ -339,10 +342,16 @@ while (have_posts()) :
               <div class="pd-shortdesc"><?php echo wp_kses_post($short_desc); ?></div>
             <?php endif; ?>
 
-            <a class="btn btn-ghost pd-wa" href="<?php echo $whatsapp_url; ?>" target="_blank" rel="noopener">
+            <a class="btn btn-ghost pd-wa" href="<?php echo esc_url($whatsapp_url); ?>" target="_blank" rel="noopener">
               <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
               <?php echo esc_html__('WhatsApp ile iletisime gec', 'polaris'); ?>
             </a>
+
+            <?php if (!polaris_product_supports_quick_add($product) && $product->is_purchasable()) : ?>
+              <div class="pd-native-cart">
+                <?php woocommerce_template_single_add_to_cart(); ?>
+              </div>
+            <?php endif; ?>
 
             <div class="pd-family">
               <div class="pd-family__lead">

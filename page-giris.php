@@ -3,4 +3,4 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require get_template_directory() . '/page-login.php';
+require get_theme_file_path('/page-login.php');

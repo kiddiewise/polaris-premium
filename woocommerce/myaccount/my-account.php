@@ -1,4 +1,11 @@
 <?php
+/**
+ * My Account page.
+ *
+ * @package WooCommerce\Templates
+ * @version 3.5.0
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -92,7 +99,7 @@ if (is_user_logged_in()) {
           <aside class="polaris-account__sidebar" aria-label="<?php echo esc_attr__('Hesap Menüsü', 'polaris'); ?>">
             <div class="polaris-account__profile">
               <div class="polaris-account__avatar">
-                <?php echo get_avatar($user_id, 72, '', $display_name, ['class' => 'polaris-account__avatar-image']); ?>
+                <?php echo wp_kses_post(get_avatar($user_id, 72, '', $display_name, ['class' => 'polaris-account__avatar-image'])); ?>
               </div>
               <div class="polaris-account__identity">
                 <strong><?php echo esc_html($display_name); ?></strong>

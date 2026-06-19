@@ -28,7 +28,7 @@ if (!function_exists('polaris_get_cart_bootstrap_data')) {
 
         $cart      = WC()->cart;
         $threshold = 1000.0;
-        $subtotal  = (float) $cart->get_cart_contents_total();
+        $subtotal  = (float) $cart->get_subtotal();
         $shipping  = (float) $cart->get_shipping_total() + (float) $cart->get_shipping_tax();
         $total     = (float) $cart->get_total('edit');
         $remaining = max(0.0, $threshold - $subtotal);
@@ -86,8 +86,8 @@ if (!function_exists('polaris_get_cart_bootstrap_data')) {
 
 function polaris_assets()
 {
-    $css_path = get_template_directory() . '/assets/css/main.css';
-    $js_path  = get_template_directory() . '/assets/js/main.js';
+    $css_path = get_theme_file_path('/assets/css/main.css');
+    $js_path  = get_theme_file_path('/assets/js/main.js');
     $css_ver  = file_exists($css_path) ? (string) filemtime($css_path) : '1.0.0';
     $js_ver   = file_exists($js_path) ? (string) filemtime($js_path) : '1.0.0';
 
@@ -107,14 +107,14 @@ function polaris_assets()
 
     wp_enqueue_style(
         'polaris-main',
-        get_template_directory_uri() . '/assets/css/main.css',
+        get_theme_file_uri('/assets/css/main.css'),
         ['polaris-fonts', 'polaris-fa'],
         $css_ver
     );
 
     wp_enqueue_script(
         'polaris-main',
-        get_template_directory_uri() . '/assets/js/main.js',
+        get_theme_file_uri('/assets/js/main.js'),
         [],
         $js_ver,
         true
@@ -131,56 +131,6 @@ function polaris_assets()
     ]);
 }
 add_action('wp_enqueue_scripts', 'polaris_assets');
-
-function polaris_disable_cookie_banner_assets()
-{
-    if (is_admin()) {
-        return;
-    }
-
-    $cookie_banner_selectors = [
-        '#hs-eu-cookie-confirmation',
-        '#hs-banner-parent',
-        '.hs-cookie-notification',
-        '.cookie-notification',
-        '.cky-consent-container',
-        '.cky-banner-element',
-        '.cmplz-cookiebanner',
-        '.moove-gdpr-info-bar',
-        '#cookie-law-info-bar',
-        '.cli-bar-container',
-        '.cc-window',
-        '#onetrust-banner-sdk',
-        '.ot-sdk-container',
-    ];
-
-    $cookie_css = implode(",\n", $cookie_banner_selectors) . " {\n"
-        . "display: none !important;\n"
-        . "visibility: hidden !important;\n"
-        . "opacity: 0 !important;\n"
-        . "pointer-events: none !important;\n"
-        . "}\n";
-    wp_add_inline_style('polaris-main', $cookie_css);
-
-    $cookie_js = '(function () {'
-        . 'var selectors = ' . wp_json_encode($cookie_banner_selectors) . ';'
-        . 'var hideBanners = function () {'
-        . 'document.querySelectorAll(selectors.join(\',\')).forEach(function (el) {'
-        . 'el.style.setProperty(\'display\', \'none\', \'important\');'
-        . 'el.setAttribute(\'aria-hidden\', \'true\');'
-        . '});'
-        . '};'
-        . 'if (document.readyState === \'loading\') {'
-        . 'document.addEventListener(\'DOMContentLoaded\', hideBanners);'
-        . '}'
-        . 'hideBanners();'
-        . 'var observer = new MutationObserver(hideBanners);'
-        . 'observer.observe(document.documentElement, { childList: true, subtree: true });'
-        . 'setTimeout(function () { observer.disconnect(); }, 15000);'
-        . '})();';
-    wp_add_inline_script('polaris-main', $cookie_js, 'after');
-}
-add_action('wp_enqueue_scripts', 'polaris_disable_cookie_banner_assets', 100);
 
 function polaris_resource_hints($urls, $relation_type)
 {

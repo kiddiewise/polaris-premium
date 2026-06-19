@@ -14,7 +14,7 @@ function polaris_force_single_product_template($template) {
         return $template;
     }
 
-    $custom = get_template_directory() . '/woocommerce/single-product.php';
+    $custom = get_theme_file_path('/woocommerce/single-product.php');
     if (file_exists($custom)) {
         return $custom;
     }
@@ -31,7 +31,7 @@ function polaris_force_wc_single_template($template, $template_name, $template_p
         return $template;
     }
 
-    $custom = get_template_directory() . '/woocommerce/single-product.php';
+    $custom = get_theme_file_path('/woocommerce/single-product.php');
     if (file_exists($custom)) {
         return $custom;
     }

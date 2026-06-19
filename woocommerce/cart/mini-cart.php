@@ -1,4 +1,11 @@
 <?php
+/**
+ * Mini-cart proxy.
+ *
+ * @package WooCommerce\Templates
+ * @version 10.0.0
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }

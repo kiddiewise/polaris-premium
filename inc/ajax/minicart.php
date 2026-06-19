@@ -7,12 +7,22 @@ add_action('wp_ajax_polaris_get_minicart', 'polaris_get_minicart');
 add_action('wp_ajax_nopriv_polaris_get_minicart', 'polaris_get_minicart');
 
 function polaris_get_minicart() {
-    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'polaris_nonce')) {
+    $nonce = sanitize_text_field(polaris_get_request_string($_POST, 'nonce'));
+    if (!$nonce || !wp_verify_nonce($nonce, 'polaris_nonce')) {
         wp_send_json_error(['message' => 'Geçersiz nonce'], 403);
     }
 
     if (!function_exists('WC') || !WC()->cart) {
         wp_send_json_error(['message' => 'WooCommerce sepeti bulunamadı'], 400);
+    }
+
+    wp_send_json_success(polaris_get_minicart_payload());
+}
+
+function polaris_get_minicart_payload()
+{
+    if (!function_exists('WC') || !WC()->cart) {
+        return [];
     }
 
     $cart = WC()->cart;
@@ -21,7 +31,7 @@ function polaris_get_minicart() {
     ob_start();
 
     if ($cart->is_empty()) {
-        echo '<div class="search-empty">Sepetiniz şu an boş.</div>';
+        echo '<div class="search-empty">' . esc_html__('Sepetiniz şu an boş.', 'polaris') . '</div>';
     } else {
         foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
             $product = isset($cart_item['data']) ? $cart_item['data'] : null;
@@ -45,18 +55,18 @@ function polaris_get_minicart() {
             $items[$product_id]['qty'] += $qty;
 
             echo '<div class="polaris-minicart-item" data-cart-key="' . esc_attr($cart_item_key) . '">';
-            echo '  <a class="polaris-minicart-thumb" href="' . esc_url(get_permalink($product_id)) . '">' . $image . '</a>';
+            echo '  <a class="polaris-minicart-thumb" href="' . esc_url($product->get_permalink()) . '">' . wp_kses_post($image) . '</a>';
             echo '  <div class="polaris-minicart-content">';
             echo '    <div class="polaris-minicart-title">' . esc_html($title) . '</div>';
             echo '    <div class="polaris-minicart-meta">';
             echo '      <div class="polaris-minicart-price">' . wp_kses_post($price) . '</div>';
             echo '      <div class="polaris-minicart-actions">';
             echo '        <div class="qty-stepper">';
-            echo '          <button type="button" data-qty-minus aria-label="Azalt">-</button>';
+            echo '          <button type="button" data-qty-minus aria-label="' . esc_attr__('Azalt', 'polaris') . '">-</button>';
             echo '          <span data-qty-val>' . esc_html((string) $qty) . '</span>';
-            echo '          <button type="button" data-qty-plus aria-label="Arttır">+</button>';
+            echo '          <button type="button" data-qty-plus aria-label="' . esc_attr__('Arttır', 'polaris') . '">+</button>';
             echo '        </div>';
-            echo '        <button type="button" class="polaris-minicart-remove" data-qty-remove aria-label="Ürünü kaldır">';
+            echo '        <button type="button" class="polaris-minicart-remove" data-qty-remove aria-label="' . esc_attr__('Ürünü kaldır', 'polaris') . '">';
             echo '          <i class="fa-regular fa-trash-can" aria-hidden="true"></i>';
             echo '        </button>';
             echo '      </div>';
@@ -68,35 +78,9 @@ function polaris_get_minicart() {
 
     $html = ob_get_clean();
 
-    $count     = (int) $cart->get_cart_contents_count();
-    $threshold = 1000.0;
-    $subtotal  = (float) $cart->get_cart_contents_total();
-    $shipping  = (float) $cart->get_shipping_total() + (float) $cart->get_shipping_tax();
-    $total     = (float) $cart->get_total('edit');
-    $remaining = max(0.0, $threshold - $subtotal);
-    $percent   = $threshold > 0 ? min(100, (int) round(($subtotal / $threshold) * 100)) : 0;
-    if ($subtotal >= $threshold) {
-        $shipping_label = esc_html__('Ücretsiz kargo', 'polaris');
-    } elseif ($shipping > 0.0) {
-        $shipping_label = wc_price($shipping);
-    } else {
-        $shipping_label = esc_html__('Hesaplanacak', 'polaris');
-    }
+    $payload          = function_exists('polaris_get_cart_bootstrap_data') ? polaris_get_cart_bootstrap_data() : [];
+    $payload['html']  = $html;
+    $payload['items'] = array_values($items);
 
-    wp_send_json_success([
-        'html'     => $html,
-        'count'    => $count,
-        'items'    => array_values($items),
-        'summary'  => [
-            'subtotal' => wc_price($subtotal),
-            'shipping' => $shipping_label,
-            'total'    => wc_price($total),
-        ],
-        'freeship' => [
-            'threshold' => $threshold,
-            'subtotal'  => $subtotal,
-            'remaining' => $remaining,
-            'percent'   => $percent,
-        ],
-    ]);
+    return $payload;
 }

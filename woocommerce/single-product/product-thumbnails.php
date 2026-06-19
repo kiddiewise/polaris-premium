@@ -1,4 +1,11 @@
 <?php
+/**
+ * Product thumbnails proxy.
+ *
+ * @package WooCommerce\Templates
+ * @version 9.8.0
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }

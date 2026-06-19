@@ -1,4 +1,11 @@
 <?php
+/**
+ * Order received page.
+ *
+ * @package WooCommerce\Templates
+ * @version 8.1.0
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -35,7 +42,7 @@ $order_id = isset($order) && $order instanceof WC_Order ? (int) $order->get_id()
           </span>
           <div>
             <h1><?php esc_html_e('Siparisiniz alindi', 'polaris'); ?></h1>
-            <p><?php esc_html_e('Siparisiniz hazirlaniyor. Guncellemeleri kisa surede sizinle paylasacagiz.', 'polaris'); ?></p>
+            <p><?php echo wp_kses_post(apply_filters('woocommerce_thankyou_order_received_text', __('Siparisiniz hazirlaniyor. Guncellemeleri kisa surede sizinle paylasacagiz.', 'polaris'), $order)); ?></p>
             <div class="polaris-thankyou-hero__chips">
               <span><i class="fa-solid fa-lock" aria-hidden="true"></i> <?php esc_html_e('Guvenli odeme', 'polaris'); ?></span>
               <span><i class="fa-solid fa-truck-fast" aria-hidden="true"></i> <?php esc_html_e('Hizli kargo', 'polaris'); ?></span>
@@ -135,7 +142,7 @@ $order_id = isset($order) && $order instanceof WC_Order ? (int) $order->get_id()
         </span>
         <div>
           <h1><?php esc_html_e('Tesekkurler', 'polaris'); ?></h1>
-          <p><?php esc_html_e('Siparis bilgisi bulunamadi. Guncel siparislerinizi hesabinizdan takip edebilirsiniz.', 'polaris'); ?></p>
+          <p><?php echo wp_kses_post(apply_filters('woocommerce_thankyou_order_received_text', __('Siparis bilgisi bulunamadi. Guncel siparislerinizi hesabinizdan takip edebilirsiniz.', 'polaris'), false)); ?></p>
         </div>
       </article>
 

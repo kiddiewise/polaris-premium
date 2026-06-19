@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$custom_woo_single = get_template_directory() . '/woocommerce/single-product.php';
+$custom_woo_single = get_theme_file_path('/woocommerce/single-product.php');
 
 if (file_exists($custom_woo_single)) {
     include $custom_woo_single;

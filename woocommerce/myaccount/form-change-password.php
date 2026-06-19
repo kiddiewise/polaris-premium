@@ -2,6 +2,8 @@
 /**
  * Hesabım şifre değiştirme formu.
  *
+ * This is a Polaris custom endpoint template, not a WooCommerce core override.
+ *
  * @package PolarisPremium
  */
 

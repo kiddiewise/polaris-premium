@@ -80,7 +80,7 @@ function polaris_google_login_state_key($state)
 
 function polaris_google_login_current_user_agent_hash()
 {
-    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
+    $ua = sanitize_text_field(polaris_get_request_string($_SERVER, 'HTTP_USER_AGENT'));
     return hash('sha256', $ua);
 }
 
@@ -107,8 +107,12 @@ function polaris_google_login_validate_redirect($redirect_raw = '')
         $redirect = wp_validate_redirect(esc_url_raw((string) $redirect_raw), '');
     }
 
-    if (empty($redirect) && isset($_REQUEST['redirect_to'])) {
-        $request_redirect = sanitize_text_field(wp_unslash($_REQUEST['redirect_to']));
+    if (empty($redirect)) {
+        $request_redirect = polaris_get_request_string($_POST, 'redirect_to');
+        if ('' === $request_redirect) {
+            $request_redirect = polaris_get_request_string($_GET, 'redirect_to');
+        }
+        $request_redirect = sanitize_text_field($request_redirect);
         $redirect         = wp_validate_redirect(esc_url_raw($request_redirect), '');
     }
 
@@ -123,29 +127,6 @@ function polaris_google_login_send_error($code, $message, $http_status = 400, ar
         'code'    => sanitize_key($code),
         'message' => sanitize_text_field($message),
     ], (int) $http_status);
-}
-
-function polaris_google_login_parse_jwt_payload($jwt)
-{
-    $parts = explode('.', (string) $jwt);
-    if (count($parts) !== 3) {
-        return null;
-    }
-
-    $payload = strtr($parts[1], '-_', '+/');
-    $padding = strlen($payload) % 4;
-    if ($padding > 0) {
-        $payload .= str_repeat('=', 4 - $padding);
-    }
-
-    $decoded = base64_decode($payload, true);
-    if ($decoded === false) {
-        return null;
-    }
-
-    $claims = json_decode($decoded, true);
-
-    return is_array($claims) ? $claims : null;
 }
 
 function polaris_google_login_generate_username($email)
@@ -272,9 +253,9 @@ function polaris_google_login_exchange_ajax()
         polaris_google_login_send_error('not_configured', 'Google ile giriş şu anda aktif değil.', 500);
     }
 
-    $code        = isset($_POST['code']) ? sanitize_text_field(wp_unslash($_POST['code'])) : '';
-    $state       = isset($_POST['state']) ? sanitize_text_field(wp_unslash($_POST['state'])) : '';
-    $redirect_to = isset($_POST['redirect_to']) ? esc_url_raw(wp_unslash($_POST['redirect_to'])) : '';
+    $code        = sanitize_text_field(polaris_get_request_string($_POST, 'code'));
+    $state       = sanitize_text_field(polaris_get_request_string($_POST, 'state'));
+    $redirect_to = esc_url_raw(polaris_get_request_string($_POST, 'redirect_to'));
 
     if (empty($code) || empty($state)) {
         polaris_google_login_send_error('missing_fields', 'Google giriş verileri eksik.', 400);
@@ -311,29 +292,8 @@ function polaris_google_login_exchange_ajax()
         ]);
     }
 
-    if (empty($token_data['id_token']) || empty($token_data['access_token'])) {
+    if (empty($token_data['access_token'])) {
         polaris_google_login_send_error('missing_tokens', 'Google token bilgileri eksik.', 401);
-    }
-
-    $id_claims = polaris_google_login_parse_jwt_payload($token_data['id_token']);
-
-    if (empty($id_claims) || !is_array($id_claims)) {
-        polaris_google_login_send_error('invalid_id_token', 'ID token çözümlenemedi.', 401);
-    }
-
-    $issuer = isset($id_claims['iss']) ? (string) $id_claims['iss'] : '';
-    if (!in_array($issuer, ['accounts.google.com', 'https://accounts.google.com'], true)) {
-        polaris_google_login_send_error('invalid_issuer', 'Geçersiz token issuer.', 401);
-    }
-
-    $aud = isset($id_claims['aud']) ? (string) $id_claims['aud'] : '';
-    if (!hash_equals((string) $config['client_id'], $aud)) {
-        polaris_google_login_send_error('invalid_audience', 'Token client doğrulaması başarısız.', 401);
-    }
-
-    $exp = isset($id_claims['exp']) ? (int) $id_claims['exp'] : 0;
-    if ($exp > 0 && $exp < time() - 60) {
-        polaris_google_login_send_error('expired_token', 'Token süresi dolmuş.', 401);
     }
 
     $userinfo = polaris_google_login_fetch_userinfo($token_data['access_token']);
@@ -343,18 +303,22 @@ function polaris_google_login_exchange_ajax()
         ]);
     }
 
-    $email = sanitize_email(isset($userinfo['email']) ? $userinfo['email'] : (isset($id_claims['email']) ? $id_claims['email'] : ''));
+    $email = sanitize_email(isset($userinfo['email']) ? $userinfo['email'] : '');
 
     if (empty($email) || !is_email($email)) {
         polaris_google_login_send_error('invalid_email', 'Google hesabında geçerli e-posta bulunamadı.', 401);
     }
 
-    $email_verified = polaris_google_login_bool($userinfo['email_verified'] ?? ($id_claims['email_verified'] ?? false));
+    $email_verified = polaris_google_login_bool($userinfo['email_verified'] ?? false);
     if (!$email_verified) {
         polaris_google_login_send_error('email_not_verified', 'Google e-posta adresi doğrulanmamış.', 403);
     }
 
     $google_sub = isset($userinfo['sub']) ? sanitize_text_field((string) $userinfo['sub']) : '';
+    if ('' === $google_sub) {
+        polaris_google_login_send_error('invalid_subject', 'Google kullanıcı kimliği doğrulanamadı.', 401);
+    }
+
     $first_name = isset($userinfo['given_name']) ? sanitize_text_field((string) $userinfo['given_name']) : '';
     $last_name  = isset($userinfo['family_name']) ? sanitize_text_field((string) $userinfo['family_name']) : '';
     $full_name  = trim($first_name . ' ' . $last_name);
@@ -468,10 +432,7 @@ function polaris_google_login_render_button($context = 'default')
     $context = sanitize_html_class((string) $context);
     $is_enabled = polaris_google_login_is_enabled();
 
-    $redirect_to = '';
-    if (isset($_GET['redirect_to'])) {
-        $redirect_to = esc_url_raw(wp_unslash($_GET['redirect_to']));
-    }
+    $redirect_to = esc_url_raw(polaris_get_request_string($_GET, 'redirect_to'));
 
     get_template_part('template-parts/auth/google-login-button', null, [
         'context'          => $context,
@@ -539,7 +500,7 @@ function polaris_google_login_enqueue_assets()
     }
 
     $config = polaris_google_login_get_config();
-    $js_path = get_template_directory() . '/assets/js/google-login.js';
+    $js_path = get_theme_file_path('/assets/js/google-login.js');
     $js_ver  = file_exists($js_path) ? (string) filemtime($js_path) : '1.0.0';
 
     wp_enqueue_script(
@@ -552,7 +513,7 @@ function polaris_google_login_enqueue_assets()
 
     wp_enqueue_script(
         'polaris-google-login',
-        get_template_directory_uri() . '/assets/js/google-login.js',
+        get_theme_file_uri('/assets/js/google-login.js'),
         ['polaris-google-gsi'],
         $js_ver,
         true
@@ -560,7 +521,7 @@ function polaris_google_login_enqueue_assets()
     wp_script_add_data('polaris-google-gsi', 'defer', true);
     wp_script_add_data('polaris-google-login', 'defer', true);
 
-    $redirect_hint = isset($_GET['redirect_to']) ? esc_url_raw(wp_unslash($_GET['redirect_to'])) : '';
+    $redirect_hint = esc_url_raw(polaris_get_request_string($_GET, 'redirect_to'));
 
     wp_localize_script('polaris-google-login', 'polarisGoogleLogin', [
         'ajaxUrl'         => admin_url('admin-ajax.php'),
