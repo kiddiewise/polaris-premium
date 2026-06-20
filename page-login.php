@@ -61,6 +61,13 @@ $logo_image = $logo_id ? wp_get_attachment_image($logo_id, 'full', false, [
         </aside>
 
         <article class="polaris-surface polaris-auth-card fade-up active">
+          <?php if ('success' === sanitize_key(polaris_get_request_string($_GET, 'password-reset'))) : ?>
+            <div class="polaris-auth-notice polaris-auth-notice--success" role="status">
+              <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+              <span><?php esc_html_e('Şifreniz başarıyla oluşturuldu. Giriş yapabilirsiniz.', 'polaris'); ?></span>
+            </div>
+          <?php endif; ?>
+
           <header class="polaris-auth-head">
             <h2><?php esc_html_e('Giriş / Kayıt', 'polaris'); ?></h2>
             <p>

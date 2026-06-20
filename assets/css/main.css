@@ -5412,6 +5412,191 @@ body.polaris-auth-screen .polaris-auth-card .polaris-google-login__status.is-inf
   color: rgba(205, 220, 236, .82);
 }
 
+/* Password Reset */
+body.polaris-password-reset-screen .polaris-password-reset-card {
+  align-self: center;
+}
+
+.polaris-auth-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 14px;
+  color: #edf5fd;
+  line-height: 1.45;
+}
+
+.polaris-auth-notice i {
+  margin-top: 3px;
+  flex: 0 0 auto;
+}
+
+.polaris-auth-notice p {
+  margin: 0;
+}
+
+.polaris-auth-notice p + p {
+  margin-top: 5px;
+}
+
+.polaris-auth-notice--success {
+  border-color: rgba(69, 201, 124, .34);
+  background: rgba(32, 125, 75, .2);
+}
+
+.polaris-auth-notice--success i {
+  color: #76d3a0;
+}
+
+.polaris-auth-notice--error {
+  border-color: rgba(255, 112, 112, .34);
+  background: rgba(139, 42, 48, .22);
+}
+
+.polaris-auth-notice--error i {
+  color: #ff9b9b;
+}
+
+.polaris-password-reset-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.polaris-password-field {
+  display: grid;
+  gap: 6px;
+}
+
+.polaris-password-field > label {
+  color: #f2f8ff;
+  font-size: .84rem;
+  font-weight: 600;
+}
+
+.polaris-password-field__control {
+  position: relative;
+}
+
+.polaris-password-field__control input {
+  width: 100%;
+  min-height: 46px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(5, 16, 28, .82);
+  color: #ecf4fd;
+  padding: 10px 46px 10px 42px;
+  outline: 0;
+}
+
+.polaris-password-field__control input:focus {
+  border-color: rgba(243, 135, 47, .82);
+  box-shadow: 0 0 0 3px rgba(243, 135, 47, .22);
+  background: rgba(8, 20, 34, .9);
+}
+
+.polaris-password-field__icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(215, 229, 244, .8);
+  pointer-events: none;
+}
+
+.polaris-password-toggle {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: rgba(222, 235, 248, .88);
+  cursor: pointer;
+}
+
+.polaris-password-toggle:hover,
+.polaris-password-toggle:focus-visible {
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+}
+
+.polaris-password-strength {
+  display: grid;
+  gap: 6px;
+  color: rgba(205, 220, 236, .86);
+  font-size: .8rem;
+}
+
+.polaris-password-strength__bar {
+  height: 5px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .1);
+}
+
+.polaris-password-strength__bar > span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  transition: width .2s var(--ease), background .2s var(--ease);
+}
+
+.polaris-password-strength[data-state="weak"] .polaris-password-strength__bar > span {
+  width: 32%;
+  background: #ff7d7d;
+}
+
+.polaris-password-strength[data-state="medium"] .polaris-password-strength__bar > span {
+  width: 66%;
+  background: #f8aa5c;
+}
+
+.polaris-password-strength[data-state="strong"] .polaris-password-strength__bar > span {
+  width: 100%;
+  background: #67cf91;
+}
+
+.polaris-password-hint {
+  margin: 0;
+  color: rgba(197, 214, 231, .78);
+  font-size: .78rem;
+  line-height: 1.5;
+}
+
+.polaris-password-reset-submit {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 2px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #f8aa5c, #f3872f);
+  color: #1b1f28;
+  font-weight: 700;
+  box-shadow: 0 12px 24px rgba(243, 135, 47, .3);
+  cursor: pointer;
+}
+
+.polaris-password-reset-submit:hover {
+  color: #111923;
+  transform: translateY(-1px);
+}
+
 @media (max-width: 560px) {
   body.polaris-auth-screen .polaris-auth-tabs {
     gap: 6px;

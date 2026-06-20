@@ -10,6 +10,7 @@ require_once get_template_directory() . '/inc/helpers.php';
 require_once get_template_directory() . '/inc/security.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/google-login.php';
+require_once get_template_directory() . '/inc/password-reset.php';
 
 /**
  * WooCommerce
