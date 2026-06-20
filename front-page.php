@@ -100,6 +100,7 @@ $ordered_category_slugs = [
     'polaris-firdondulu-fosforlu-surf-kursun',
     'polaris-firdondulu-fosforlu-aparatli-surf-kursun',
     'pater-noster-2-igneli-surf-casting-takimi',
+    'samandirali-celik-telli-yemli-cinekop-takimi',
     'asansor-sistem-olta-bedeni',
     'gezer-kursun-aparatli-surf-olta-bedeni',
     'polaris-firdondulu-kaplamasiz-surf-kursun',
