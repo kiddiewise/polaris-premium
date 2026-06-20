@@ -56,7 +56,7 @@ if (!function_exists('polaris_single_render_family_item')) {
         }
 
         if ($is_current) {
-            echo '<span class="pd-variant__current">' . esc_html__('Su an inceleniyor', 'polaris') . '</span>';
+            echo '<span class="pd-variant__current">' . esc_html__('Şuan inceleniyor', 'polaris') . '</span>';
         }
 
         echo '  <a class="pd-variant__thumb" href="' . esc_url($link) . '">' . wp_kses_post($image) . '</a>';
@@ -170,7 +170,7 @@ while (have_posts()) :
     $image_ids       = [];
     $featured_image  = (int) $product->get_image_id();
     $gallery_ids     = $product->get_gallery_image_ids();
-    $whatsapp_message = sprintf(__('Merhaba, "%s" urunu hakkinda bilgi alabilir miyim?', 'polaris'), $product->get_name());
+    $whatsapp_message = sprintf(__('Merhaba, *"%s"* ürünü hakkında bilgi alabilir miyim?', 'polaris'), $product->get_name());
     $whatsapp_url     = function_exists('polaris_get_whatsapp_url')
         ? polaris_get_whatsapp_url($whatsapp_message)
         : 'https://wa.me/905462629002?text=' . rawurlencode($whatsapp_message);

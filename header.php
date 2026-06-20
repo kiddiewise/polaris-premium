@@ -26,7 +26,7 @@ $social_links = function_exists('polaris_get_social_links')
         'youtube'   => 'https://youtube.com/',
     ];
 $whatsapp_support_url = function_exists('polaris_get_whatsapp_url')
-    ? polaris_get_whatsapp_url(__('Merhaba, destek hattinizla gorusebilir miyim?', 'polaris'))
+    ? polaris_get_whatsapp_url(__('Merhaba, ürünleriniz hakkında bilgi almak istiyorum.', 'polaris'))
     : esc_url('https://wa.me/905462629002');
 
 $is_checkout_header = function_exists('is_checkout') && is_checkout() && !(function_exists('is_order_received_page') && is_order_received_page());
