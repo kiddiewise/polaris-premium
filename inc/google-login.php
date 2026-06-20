@@ -32,13 +32,42 @@ function polaris_google_login_get_config()
     return apply_filters('polaris_google_login_config', $config);
 }
 
-function polaris_google_login_is_enabled()
+/**
+ * Nextend tarafinda test edilmis ve etkin Google provider nesnesini dondurur.
+ * Provider durumu Nextend'in kendi API'sinden okunur; tema ayariyla taklit edilmez.
+ *
+ * @return object|false
+ */
+function polaris_google_login_get_nextend_provider()
+{
+    if (!class_exists('NextendSocialLogin')
+        || !method_exists('NextendSocialLogin', 'isProviderEnabled')
+        || !NextendSocialLogin::isProviderEnabled('google')) {
+        return false;
+    }
+
+    if (method_exists('NextendSocialLogin', 'getProviderByProviderID')) {
+        return NextendSocialLogin::getProviderByProviderID('google');
+    }
+
+    return isset(NextendSocialLogin::$enabledProviders['google'])
+        ? NextendSocialLogin::$enabledProviders['google']
+        : false;
+}
+
+function polaris_google_login_is_legacy_enabled()
 {
     $config = polaris_google_login_get_config();
 
     return !empty($config['client_id'])
         && !empty($config['client_secret'])
         && !empty($config['redirect_uri']);
+}
+
+function polaris_google_login_is_enabled()
+{
+    return false !== polaris_google_login_get_nextend_provider()
+        || polaris_google_login_is_legacy_enabled();
 }
 
 function polaris_google_login_log($message, array $context = [])
@@ -117,6 +146,27 @@ function polaris_google_login_validate_redirect($redirect_raw = '')
     }
 
     return !empty($redirect) ? $redirect : $default;
+}
+
+/**
+ * Nextend'in resmi provider URL'sine guvenli bir site ici donus hedefi ekler.
+ */
+function polaris_google_login_get_nextend_url($redirect_raw = '')
+{
+    $provider = polaris_google_login_get_nextend_provider();
+    if (!$provider || !method_exists($provider, 'getLoginUrl')) {
+        return '';
+    }
+
+    $redirect_url = polaris_google_login_validate_redirect($redirect_raw);
+    $login_url    = $provider->getLoginUrl();
+
+    if (empty($login_url)) {
+        return '';
+    }
+
+    // Nextend kendi butonunda redirect degerini bu formatta tasir.
+    return esc_url_raw(add_query_arg('redirect', rawurlencode($redirect_url), $login_url));
 }
 
 function polaris_google_login_send_error($code, $message, $http_status = 400, array $context = [])
@@ -219,7 +269,7 @@ function polaris_google_login_prepare_state_ajax()
 {
     check_ajax_referer('polaris_google_login_nonce', 'nonce');
 
-    if (!polaris_google_login_is_enabled()) {
+    if (!polaris_google_login_is_legacy_enabled()) {
         polaris_google_login_send_error('not_configured', 'Google ile giriş şu anda aktif değil.', 500);
     }
 
@@ -249,7 +299,7 @@ function polaris_google_login_exchange_ajax()
 {
     check_ajax_referer('polaris_google_login_nonce', 'nonce');
 
-    if (!polaris_google_login_is_enabled()) {
+    if (!polaris_google_login_is_legacy_enabled()) {
         polaris_google_login_send_error('not_configured', 'Google ile giriş şu anda aktif değil.', 500);
     }
 
@@ -430,16 +480,57 @@ function polaris_google_login_exchange_ajax()
 function polaris_google_login_render_button($context = 'default')
 {
     $context = sanitize_html_class((string) $context);
-    $is_enabled = polaris_google_login_is_enabled();
+    $nextend_provider = polaris_google_login_get_nextend_provider();
+    $has_nextend      = false !== $nextend_provider;
 
-    $redirect_to = esc_url_raw(polaris_get_request_string($_GET, 'redirect_to'));
+    $redirect_raw = polaris_get_request_string($_GET, 'redirect_to');
+    if ('' === $redirect_raw
+        && function_exists('is_checkout')
+        && is_checkout()
+        && !(function_exists('is_order_received_page') && is_order_received_page())
+        && function_exists('wc_get_checkout_url')) {
+        $redirect_raw = wc_get_checkout_url();
+    }
+    $redirect_to  = polaris_google_login_validate_redirect($redirect_raw);
+    $nextend_url  = $has_nextend ? polaris_google_login_get_nextend_url($redirect_to) : '';
+    $uses_nextend = $has_nextend && !empty($nextend_url);
+    $is_enabled   = $uses_nextend || polaris_google_login_is_legacy_enabled();
 
     get_template_part('template-parts/auth/google-login-button', null, [
         'context'          => $context,
         'redirect_to'      => $redirect_to,
         'is_enabled'       => $is_enabled,
+        'uses_nextend'     => $uses_nextend,
+        'nextend_url'      => $nextend_url,
+        'popup_width'      => $has_nextend && method_exists($nextend_provider, 'getPopupWidth') ? (int) $nextend_provider->getPopupWidth() : 600,
+        'popup_height'     => $has_nextend && method_exists($nextend_provider, 'getPopupHeight') ? (int) $nextend_provider->getPopupHeight() : 600,
         'disabled_message' => $is_enabled ? '' : __('Google ile giriş şu anda aktif değil.', 'polaris'),
     ]);
+}
+
+/**
+ * Nextend ile yeni acilan Google hesaplarini WooCommerce musterisi yapar.
+ * Mevcut kullanicilarin rollerine dokunulmaz.
+ */
+function polaris_google_login_assign_customer_role($user_id, $provider = null)
+{
+    if (!get_role('customer')) {
+        return;
+    }
+
+    $user = get_user_by('id', (int) $user_id);
+    if ($user instanceof WP_User) {
+        $user->set_role('customer');
+    }
+}
+
+/**
+ * Dogrulanmis Google e-postasini ayni e-postali mevcut hesaba baglamaya izin verir.
+ * E-posta dogrulama ve baglama islemleri Nextend tarafinda yapilmaya devam eder.
+ */
+function polaris_google_login_allow_email_auto_link($allowed, $provider = null, $user_id = 0)
+{
+    return true;
 }
 
 function polaris_google_login_render_woo_login_button()
@@ -465,7 +556,10 @@ function polaris_google_login_shortcode($atts = [])
 
 function polaris_google_login_should_enqueue_assets()
 {
-    if (is_admin() || !polaris_google_login_is_enabled()) {
+    // Nextend kendi OAuth scriptlerini yonetir; eski tema GSI akisi ayni anda calismamali.
+    if (is_admin()
+        || false !== polaris_google_login_get_nextend_provider()
+        || !polaris_google_login_is_legacy_enabled()) {
         return false;
     }
 
@@ -553,5 +647,8 @@ add_action('wp_ajax_polaris_google_login_exchange', 'polaris_google_login_exchan
 
 add_action('woocommerce_login_form_end', 'polaris_google_login_render_woo_login_button', 25);
 add_action('woocommerce_register_form_end', 'polaris_google_login_render_woo_register_button', 25);
+
+add_action('nsl_google_register_new_user', 'polaris_google_login_assign_customer_role', 10, 2);
+add_filter('nsl_google_auto_link_allowed', 'polaris_google_login_allow_email_auto_link', 20, 3);
 
 add_shortcode('polaris_google_login_button', 'polaris_google_login_shortcode');

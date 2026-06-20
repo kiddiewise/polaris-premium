@@ -6,16 +6,34 @@ if (!defined('ABSPATH')) {
 $context = isset($args['context']) ? sanitize_html_class((string) $args['context']) : 'default';
 $redirect_to = isset($args['redirect_to']) ? esc_url($args['redirect_to']) : '';
 $is_enabled = isset($args['is_enabled']) ? (bool) $args['is_enabled'] : false;
+$uses_nextend = !empty($args['uses_nextend']);
+$nextend_url = isset($args['nextend_url']) ? esc_url_raw($args['nextend_url']) : '';
+$popup_width = isset($args['popup_width']) ? absint($args['popup_width']) : 600;
+$popup_height = isset($args['popup_height']) ? absint($args['popup_height']) : 600;
 $disabled_message = isset($args['disabled_message']) ? sanitize_text_field((string) $args['disabled_message']) : '';
 ?>
 <div class="polaris-google-login" data-google-login-wrap data-context="<?php echo esc_attr($context); ?>">
-  <button
-    class="polaris-google-login__button"
-    type="button"
-    data-google-login-btn
-    data-redirect="<?php echo esc_attr($redirect_to); ?>"
-    <?php echo $is_enabled ? '' : 'disabled aria-disabled="true"'; ?>
-  >
+  <?php if ($uses_nextend && !empty($nextend_url)) : ?>
+    <a
+      class="polaris-google-login__button"
+      href="<?php echo esc_url($nextend_url); ?>"
+      rel="nofollow"
+      aria-label="<?php echo esc_attr__('Google ile giriş yap', 'polaris'); ?>"
+      data-plugin="nsl"
+      data-action="connect"
+      data-provider="google"
+      data-popupwidth="<?php echo esc_attr($popup_width); ?>"
+      data-popupheight="<?php echo esc_attr($popup_height); ?>"
+    >
+  <?php else : ?>
+    <button
+      class="polaris-google-login__button"
+      type="button"
+      data-google-login-btn
+      data-redirect="<?php echo esc_attr($redirect_to); ?>"
+      <?php echo $is_enabled ? '' : 'disabled aria-disabled="true"'; ?>
+    >
+  <?php endif; ?>
     <span class="polaris-google-login__icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
         <path fill="#EA4335" d="M12 10.2v3.9h5.4c-.2 1.3-1.6 3.9-5.4 3.9-3.2 0-5.9-2.7-5.9-6s2.6-6 5.9-6c1.8 0 3 .8 3.7 1.5l2.5-2.4C16.6 3.7 14.5 3 12 3 7 3 3 7 3 12s4 9 9 9c5.2 0 8.6-3.6 8.6-8.7 0-.6-.1-1.1-.1-1.6H12z"/>
@@ -25,7 +43,11 @@ $disabled_message = isset($args['disabled_message']) ? sanitize_text_field((stri
       </svg>
     </span>
     <span class="polaris-google-login__label"><?php esc_html_e('Google ile giriş yap', 'polaris'); ?></span>
-  </button>
+  <?php if ($uses_nextend && !empty($nextend_url)) : ?>
+    </a>
+  <?php else : ?>
+    </button>
+  <?php endif; ?>
   <p class="polaris-google-login__status<?php echo !$is_enabled && !empty($disabled_message) ? ' is-info' : ''; ?>" data-google-login-status aria-live="polite">
     <?php echo !$is_enabled && !empty($disabled_message) ? esc_html($disabled_message) : ''; ?>
   </p>
