@@ -289,7 +289,7 @@ body.is-locked {
   border-bottom: 1.8px solid rgba(225, 237, 249, .9);
   transform: translateY(-50%) rotate(45deg);
   position: absolute;
-  right: 10px;
+  right: 5px;
   top: 50%;
   transition: transform .2s var(--ease), border-color .2s var(--ease);
 }
