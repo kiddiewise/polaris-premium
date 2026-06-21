@@ -533,6 +533,30 @@ function polaris_google_login_allow_email_auto_link($allowed, $provider = null, 
     return true;
 }
 
+/**
+ * Nextend yonlendirme katmanindaki iki sabit mesaji tema icinden Turkcelestirir.
+ * Filtre yalnizca Nextend text domain'i ve birebir eslesen kaynak metinler icin calisir.
+ */
+function polaris_google_login_translate_nextend_overlay($translation, $text, $domain)
+{
+    if ('nextend-facebook-connect' !== $domain) {
+        return $translation;
+    }
+
+    if ('Hold On' === $text) {
+        return 'Lütfen bekleyin';
+    }
+
+    if (in_array($text, [
+        'You are being redirected to another page,<br>it may take a few seconds.',
+        'You are being redirected to another page, it may take a few seconds.',
+    ], true)) {
+        return 'Giriş işleminiz tamamlanıyor, birkaç saniye içinde yönlendirileceksiniz.';
+    }
+
+    return $translation;
+}
+
 function polaris_google_login_render_woo_login_button()
 {
     polaris_google_login_render_button('woo-login');
@@ -650,5 +674,6 @@ add_action('woocommerce_register_form_end', 'polaris_google_login_render_woo_reg
 
 add_action('nsl_google_register_new_user', 'polaris_google_login_assign_customer_role', 10, 2);
 add_filter('nsl_google_auto_link_allowed', 'polaris_google_login_allow_email_auto_link', 20, 3);
+add_filter('gettext', 'polaris_google_login_translate_nextend_overlay', 20, 3);
 
 add_shortcode('polaris_google_login_button', 'polaris_google_login_shortcode');
