@@ -657,6 +657,23 @@ function polaris_single_related_products_heading($heading)
 add_filter('woocommerce_product_related_products_heading', 'polaris_single_related_products_heading');
 
 /**
+ * Adapt WooCommerce's native review form copy to the theme.
+ * Purchase verification and form visibility remain managed by WooCommerce.
+ *
+ * @param array $args Comment form arguments.
+ * @return array
+ */
+function polaris_product_review_form_args($args)
+{
+    $args['title_reply']         = __('Ürünü değerlendirin', 'polaris');
+    $args['label_submit']        = __('Yorumu gönder', 'polaris');
+    $args['comment_notes_before'] = '<p class="pd-review-form-intro">' . esc_html__('Ürünle ilgili deneyiminizi ve değerlendirmenizi paylaşın.', 'polaris') . '</p>';
+
+    return $args;
+}
+add_filter('woocommerce_product_review_comment_form_args', 'polaris_product_review_form_args');
+
+/**
  * Match the theme's article cards with valid related-products container markup.
  *
  * @param string $html Default loop opening markup.
