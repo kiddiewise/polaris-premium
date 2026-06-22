@@ -21,6 +21,11 @@ body.single-product .pd-shell {
   padding: 20px 0 42px;
 }
 
+body.single-product .site-content {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 body.single-product .pd-container {
   width: min(96%, 1540px);
 }
@@ -713,6 +718,12 @@ body.single-product .pd-family-item__qty > span { min-width: 18px; text-align: c
 
 body.single-product .pd-below-summary { margin-top: 28px; }
 
+body.single-product .pd-below-summary,
+body.single-product .related.products {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body.single-product .pd-tags {
   padding: 16px 0 24px;
   border-top: 1px solid rgba(255, 255, 255, .11);
@@ -743,8 +754,14 @@ body.single-product .related.products .products {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 12px;
+  width: 100%;
+  max-width: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  contain: layout paint;
   list-style: none;
 }
 
@@ -832,7 +849,10 @@ body.single-product .pd-lightbox__nav--next { right: 18px; }
 
 @media (max-width: 760px) {
   body.single-product .pd-shell { padding: 0 0 28px; }
-  body.single-product .pd-container { width: min(92%, var(--container)); }
+  body.single-product .pd-container {
+    width: 100%;
+    max-width: 100%;
+  }
 
   body.single-product .pd-layout {
     grid-template-columns: minmax(0, 1fr);
@@ -845,9 +865,9 @@ body.single-product .pd-lightbox__nav--next { right: 18px; }
   }
 
   body.single-product .pd-gallery {
-    width: calc(100% + 8vw);
-    max-width: none;
-    margin-inline: -4vw;
+    width: 100%;
+    max-width: 100%;
+    margin-inline: 0;
     overflow: hidden;
   }
 
@@ -881,6 +901,15 @@ body.single-product .pd-lightbox__nav--next { right: 18px; }
     width: 9px;
     height: 9px;
     background: var(--accent);
+  }
+
+  body.single-product .pd-summary,
+  body.single-product .pd-family,
+  body.single-product .pd-accordion {
+    width: 92%;
+    max-width: 92%;
+    margin-inline: auto;
+    justify-self: center;
   }
 
   body.single-product .pd-summary { padding-top: 10px; }
@@ -920,7 +949,11 @@ body.single-product .pd-lightbox__nav--next { right: 18px; }
   body.single-product.woocommerce #review_form .comment-form-author,
   body.single-product.woocommerce #review_form .comment-form-email { grid-column: 1; }
 
-  body.single-product .pd-below-summary { margin-top: 22px; }
+  body.single-product .pd-below-summary {
+    width: 92%;
+    max-width: 92%;
+    margin: 22px auto 0;
+  }
 
   body.single-product .related.products .products {
     display: flex;
