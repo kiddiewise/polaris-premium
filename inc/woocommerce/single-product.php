@@ -39,8 +39,6 @@ function polaris_configure_single_product_hooks()
     add_action('woocommerce_single_product_summary', 'woocommerce_template_single_price', 15);
     add_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
     add_action('woocommerce_single_product_summary', 'polaris_render_product_highlights', 25);
-    add_action('woocommerce_single_product_summary', 'polaris_render_native_add_to_cart', 30);
-    add_action('woocommerce_single_product_summary', 'polaris_render_product_accordion', 40);
 
     remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10);
     remove_action('woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15);
@@ -370,22 +368,6 @@ function polaris_render_product_highlights()
 }
 
 /**
- * Always use WooCommerce's native add-to-cart template for the main product.
- */
-function polaris_render_native_add_to_cart()
-{
-    global $product;
-
-    if (!$product instanceof WC_Product) {
-        return;
-    }
-
-    echo '<div class="pd-native-cart">';
-    woocommerce_template_single_add_to_cart();
-    echo '</div>';
-}
-
-/**
  * Render one accessible accordion item.
  *
  * @param string   $key      Stable key.
@@ -427,14 +409,14 @@ function polaris_render_product_accordion()
     ?>
     <div class="pd-accordion" data-pd-accordion>
         <?php
-        polaris_render_accordion_item('description', __('Ürün uzun açıklaması', 'polaris'), static function () use ($product) {
+        polaris_render_accordion_item('description', __('Tüm detaylar', 'polaris'), static function () use ($product) {
             $description = apply_filters('the_content', $product->get_description());
             if (trim(wp_strip_all_tags($description)) === '') {
                 echo '<p class="pd-empty">' . esc_html__('Bu ürün için uzun açıklama eklenmemiş.', 'polaris') . '</p>';
                 return;
             }
             echo '<div class="pd-richtext">' . wp_kses_post($description) . '</div>';
-        }, true);
+        });
 
         polaris_render_accordion_item(
             'reviews',

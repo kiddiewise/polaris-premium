@@ -31,6 +31,8 @@ if (post_password_required()) {
             </section>
 
             <?php polaris_render_product_family(); ?>
+
+            <?php polaris_render_product_accordion(); ?>
         </div>
 
         <div class="pd-below-summary">
